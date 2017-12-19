@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  trader_id: 1
+  order_guid: 1
+  price: 9.99
+  qty: 9.99
+  side: MyString
+  open: false
+
+two:
+  trader_id: 1
+  order_guid: 1
+  price: 9.99
+  qty: 9.99
+  side: MyString
+  open: false
