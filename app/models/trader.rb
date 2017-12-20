@@ -4,8 +4,8 @@ class Trader < ApplicationRecord
   belongs_to  :strategy
   has_many  :limit_orders
   
-  def process
-    
+  def current_order
+    limit_orders.where( open: true ).first
   end
   
 end
