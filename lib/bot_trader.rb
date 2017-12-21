@@ -29,6 +29,9 @@ module BotTrader
     
     traders.each do |trader|
       
+      ## trading_strategy.new
+      ## trading_strategy.process
+      
       if trader.limit_orders.any?
         ## Get current order
         limit_order = trader.current_order
