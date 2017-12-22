@@ -1,3 +1,5 @@
+require './lib/alpha_strategy.rb' 
+
 module BotTrader
 
   module_function
@@ -27,6 +29,45 @@ module BotTrader
       return false
     end
     
+    ## Has max ratio been reached?
+    if trading_pair.max_price.to_f < @tps[:high_price]
+      ## Freeze bots!
+      puts "WARNING: Max price reached. High price #{ @tps[:high_price]} > max price #{trading_pair.max_price.to_f}."
+      traders.each do |trader|
+        if trader.current_order and trader.current_order.side == 'BUY'
+          ## Get local limit order
+          limit_order = trader.current_order
+          ## Cancel order
+          result = @client.cancel_order( symbol: trader.trading_pair.symbol, orderId: limit_order.order_guid )
+          if result['code']
+            puts "ERROR: #{result['code']} #{result['msg']}" 
+          else
+            puts "Order #{limit_order.order_guid} canceled."
+          end
+          ## Cancel local limit order
+          limit_order.update( open: false )
+        end
+        ## Deactivate trader
+        trader.update( active: false )
+        puts "Bot #{trader.id} deactivated."
+      end
+      return false
+    end
+    
+    traders.each do |trader|
+      case trader.strategy.name
+      when 'ALPHA'
+        strategy = AlphaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      when 'GAMMA'
+        strategy = GammaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      else
+        puts "ERROR: Invalid strategy - #{trader.strategy.name}."
+        next
+      end
+      strategy.process
+    end
+    
+=begin
     traders.each do |trader|
       
       ## trading_strategy.new
@@ -152,8 +193,8 @@ module BotTrader
       end
 
     end
-    
-  end
+=end    
+  end ## process
   
 =begin
 Get 24 hour weighted average
