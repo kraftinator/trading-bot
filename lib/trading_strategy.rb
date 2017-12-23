@@ -24,7 +24,7 @@ class TradingStrategy
         case @current_order['status']
         when 'FILLED'
           process_filled_buy_order
-        when 'OPEN'
+        when 'NEW'
           process_open_buy_order
         when 'CANCELED'
           process_canceled_buy_order
@@ -123,7 +123,7 @@ class TradingStrategy
   def process_open_buy_order
     ## Determine if limit order needs to be replaced.
     limit_order = @trader.current_order
-    if @trader.wait_period.minutes.ago > limit_order.created_at
+    #if @trader.wait_period.minutes.ago > limit_order.created_at
       ## Determine new limit price
       limit_price = buy_order_limit_price
       ## If new limit price > original limit price, replace original order
@@ -134,12 +134,13 @@ class TradingStrategy
           puts "ERROR: #{result['code']} #{result['msg']}"
           return false
         end
+        puts "Order #{limit_order.order_guid} canceled."
         ## Cancel local limit order
-        limit_price.update( open: false )        
+        limit_order.update( open: false )        
         ## Create new limit order
         create_buy_order( limit_price )
       end
-    end    
+    #end    
   end
    
   def process_open_sell_order
