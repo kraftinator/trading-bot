@@ -1,6 +1,7 @@
 require './lib/alpha_strategy.rb' 
 require './lib/beta_strategy.rb' 
 require './lib/gamma_strategy.rb' 
+require './lib/delta_strategy.rb' 
 
 module BotTrader
 
@@ -60,8 +61,12 @@ module BotTrader
       case trader.strategy.name
       when 'ALPHA'
         strategy = AlphaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      when 'BETA'
+        strategy = BetaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       when 'GAMMA'
         strategy = GammaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      when 'DELTA'
+        strategy = DeltaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       else
         puts "ERROR: Invalid strategy - #{trader.strategy.name}."
         next
