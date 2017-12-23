@@ -1,4 +1,6 @@
 require './lib/alpha_strategy.rb' 
+require './lib/beta_strategy.rb' 
+require './lib/gamma_strategy.rb' 
 
 module BotTrader
 
