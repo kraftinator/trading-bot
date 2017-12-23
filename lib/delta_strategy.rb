@@ -16,8 +16,9 @@ class DeltaStrategy < TradingStrategy
           puts "ERROR: #{result['code']} #{result['msg']}"
           return false
         end
+        puts "Order #{limit_order.order_guid} canceled."
         ## Cancel local limit order
-        limit_price.update( open: false )        
+        limit_order.update( open: false )        
         ## Create new limit order
         create_buy_order( limit_price )
       end
