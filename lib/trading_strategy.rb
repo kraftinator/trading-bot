@@ -196,13 +196,15 @@ class TradingStrategy
     ## Calculate expected SELL coin total
     buy_coin_total = @current_order['executedQty'].to_f * @current_order['price'].to_f
     sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
-    sell_coin_total = sell_coin_total.floor( @precision )
+    #sell_coin_total = sell_coin_total.floor( @precision )
+    sell_coin_total = sell_coin_total #.round( @precision )
     ## Calculate limit price from SELL coin total
     limit_price = sell_coin_total / qty
     ## If last price > limit price, set limit price to last price
     limit_price = @tps['last_price'] if limit_price < @tps['last_price']
     ## Add precision to limit price. API will reject if too long. 
-    limit_price = limit_price.floor( @precision )
+    #limit_price = limit_price.floor( @precision )
+    limit_price = limit_price.round( @precision )
     limit_price
   end
   
