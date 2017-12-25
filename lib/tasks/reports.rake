@@ -26,17 +26,16 @@ namespace :reports do
     end
     
     results = []
-    results << ""
-    results << trading_pair.symbol
-    results << "--------------------------------------------"
-    bots = Trader.order( :sell_count ).reverse
+    bots = Trader.where( active: true ).order( :sell_count ).reverse
     bots.each do |bot|
-      results << "#{bot.strategy.name}  #{bot.buy_count}  #{bot.sell_count}  #{bot.percentage_range}" 
+      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}" 
     end
-    results << ""
     
-    ## Print results
+    puts "\nBasic Report For #{trading_pair.symbol}\n\n"
+    puts "#{'%-8s' % 'STRATEGY'}  #{'%4s' % 'BUYS'}  #{'%4s' % 'SELLS'}  #{'%4s' % 'PCT'}"
+    puts "--------------------------------------------"
     results.each { |r| puts r }
+    puts "\n"
     
   end
   
