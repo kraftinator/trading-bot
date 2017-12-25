@@ -32,7 +32,7 @@ namespace :reports do
     
     bots = Trader.where( active: true ).order( :sell_count ).reverse
     bots.each do |bot|
-      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_qty}" 
+      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}" 
     end
     
     results.each { |r| puts r }
