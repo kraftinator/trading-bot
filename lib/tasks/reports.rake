@@ -26,14 +26,15 @@ namespace :reports do
     end
     
     results = []
+    results << "\nBasic Report For #{trading_pair.symbol}\n\n"
+    results << "#{'%-8s' % 'STRATEGY'}  #{'%4s' % 'BUYS'}  #{'%4s' % 'SELLS'}  #{'%4s' % 'PCT'}  #{'%7s' % 'TOTAL ' + trading_pair.coin.symbol}"
+    results << "--------------------------------------------"
+    
     bots = Trader.where( active: true ).order( :sell_count ).reverse
     bots.each do |bot|
-      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}" 
+      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_qty}" 
     end
     
-    puts "\nBasic Report For #{trading_pair.symbol}\n\n"
-    puts "#{'%-8s' % 'STRATEGY'}  #{'%4s' % 'BUYS'}  #{'%4s' % 'SELLS'}  #{'%4s' % 'PCT'}"
-    puts "--------------------------------------------"
     results.each { |r| puts r }
     puts "\n"
     

@@ -8,4 +8,9 @@ class Trader < ApplicationRecord
     limit_orders.where( open: true ).first
   end
   
+  def coin_amount
+    order = current_order
+    return 0 unless order
+  end
+  
 end
