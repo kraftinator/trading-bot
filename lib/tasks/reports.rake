@@ -25,16 +25,18 @@ namespace :reports do
       exit
     end
     
-    ## bots.each { |b| puts "#{b.strategy.name}  #{b.buy_count}  #{b.sell_count}  #{b.percentage_range}" };0
-    
-    puts ""
-    puts trading_pair.symbol
-    puts "--------------------------------------------"
+    results = []
+    results << ""
+    results << trading_pair.symbol
+    results << "--------------------------------------------"
     bots = Trader.order( :sell_count ).reverse
     bots.each do |bot|
-      puts "#{bot.strategy.name}  #{bot.buy_count}  #{bot.sell_count}  #{bot.percentage_range}" 
+      results << "#{bot.strategy.name}  #{bot.buy_count}  #{bot.sell_count}  #{bot.percentage_range}" 
     end
-    puts ""
+    results << ""
+    
+    ## Print results
+    results.each { |r| puts r }
     
   end
   
