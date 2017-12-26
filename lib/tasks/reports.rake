@@ -40,4 +40,42 @@ namespace :reports do
     
   end
   
+  desc 'Revenue report by trading pair'
+  task :revenue => :environment do
+    
+    ## Get params
+    coin = Coin.where( symbol: ENV["COIN"] ).first
+    unless coin
+      puts "ERROR: Coin #{ENV['COIN']} not found."
+      exit
+    end
+    
+    token = Token.where( symbol: ENV["TOKEN"] ).first
+    unless token
+      puts "ERROR: Token #{ENV['TOKEN']} not found."
+      exit
+    end
+    
+    trading_pair = TradingPair.where( coin: coin, token: token ).first
+    unless trading_pair
+      puts "ERROR: Trading Pair #{token.symbol}#{coin.symbol} not found."
+      exit
+    end
+
+    results = []
+    results << "\nRevenue Report For #{trading_pair.symbol}\n\n"
+    results << "#{'%-8s' % 'STRATEGY'}  #{'%4s' % 'BUYS'}  #{'%4s' % 'SELLS'}  #{'%4s' % 'PCT'}  #{'%7s' % 'TOTAL ' + trading_pair.coin.symbol}"
+    results << "--------------------------------------------"
+    
+    bots = Trader.where( active: true ).to_a.sort_by( &:coin_amount ).reverse
+    bots.each do |bot|
+      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}" 
+    end
+    
+    results.each { |r| puts r }
+    puts "\n"
+
+    
+  end
+  
 end
