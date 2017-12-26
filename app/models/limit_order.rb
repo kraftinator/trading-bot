@@ -4,7 +4,7 @@ class LimitOrder < ApplicationRecord
   
   def buy_order
     return nil if side == 'BUY'
-    self.where( side: 'BUY', trader: trader ).order( 'created_at desc' ).first
+    LimitOrder.where( side: 'BUY', trader: trader ).order( 'created_at desc' ).first
   end
   
 end
