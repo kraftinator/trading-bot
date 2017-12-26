@@ -18,4 +18,16 @@ class Trader < ApplicationRecord
     end
   end
   
+  def fiat_amount( exchange_rate )
+    coin_amount * exchange_rate
+  end
+  
+  def profit
+    coin_amount - 0.05
+  end
+  
+  def fiat_profit( exchange_rate )
+    profit * exchange_rate
+  end
+
 end
