@@ -11,7 +11,8 @@ class Trader < ApplicationRecord
   def coin_amount
     order = current_order
     if order and order.side == 'SELL'
-      coin_qty + (order.price * order.qty)
+      buy_order = order.buy_order
+      coin_qty + ( buy_order.price * buy_order.qty )
     else
       coin_qty
     end
