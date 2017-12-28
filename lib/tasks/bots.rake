@@ -55,6 +55,7 @@ namespace :bots do
     trader = Trader.create( trading_pair: trading_pair,
                             strategy: strategy, 
                             coin_qty: coin_qty,
+                            original_coin_qty: coin_qty,
                             percentage_range: percentage_range,
                             wait_period: wait_period,
                             active: true )

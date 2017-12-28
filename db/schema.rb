@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171219201345) do
+ActiveRecord::Schema.define(version: 20171228045230) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -40,18 +40,19 @@ ActiveRecord::Schema.define(version: 20171219201345) do
 
   create_table "traders", force: :cascade do |t|
     t.integer  "trading_pair_id"
-    t.decimal  "coin_qty",                    default: "0.0"
-    t.decimal  "{:precision=>16, :scale=>8}", default: "0.0"
-    t.decimal  "token_qty",                   default: "0.0"
+    t.decimal  "coin_qty",                                             default: "0.0"
+    t.decimal  "{:precision=>16, :scale=>8}",                          default: "0.0"
+    t.decimal  "token_qty",                                            default: "0.0"
     t.integer  "strategy_id"
-    t.decimal  "percentage_range",            default: "0.05"
-    t.decimal  "{:precision=>5, :scale=>4}",  default: "0.05"
-    t.integer  "wait_period",                 default: 0
-    t.boolean  "active",                      default: false
-    t.integer  "buy_count",                   default: 0
-    t.integer  "sell_count",                  default: 0
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.decimal  "percentage_range",                                     default: "0.05"
+    t.decimal  "{:precision=>5, :scale=>4}",                           default: "0.05"
+    t.integer  "wait_period",                                          default: 0
+    t.boolean  "active",                                               default: false
+    t.integer  "buy_count",                                            default: 0
+    t.integer  "sell_count",                                           default: 0
+    t.datetime "created_at",                                                            null: false
+    t.datetime "updated_at",                                                            null: false
+    t.decimal  "original_coin_qty",           precision: 16, scale: 8, default: "0.0"
   end
 
   create_table "trading_pairs", force: :cascade do |t|
