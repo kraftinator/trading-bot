@@ -41,9 +41,18 @@ class TradingStrategy
       end
   
     else
-      # New bot! Create first buy order.
-      puts "Calling create_initial_buy_order"
-      create_initial_buy_order
+      
+      # New bot! Create first order.
+      if @trader.coin_qty.to_f > 0 and @trader.token_qty == 0
+        puts "Calling create_initial_buy_order"
+        create_initial_buy_order
+      elsif @trader.coin_qty.to_f == 0 and @trader.token_qty > 0
+        puts "Calling create_initial_sell_order"
+        create_initial_sell_order
+      else
+        puts "WARNING: Unknown scenario for initial order for Trader #{@trader.id}."
+      end
+      
     end
     true
    end
@@ -55,6 +64,12 @@ class TradingStrategy
   #############################################
   def create_initial_buy_order
     create_buy_order( initial_buy_order_limit_price )
+  end
+  
+  def create_initial_sell_order
+    limit_price = @tps['last_price'] * 1.01
+    limit_price = limit_price.round( @precision )
+    create_sell_order( limit_price )    
   end
    
   def create_buy_order( limit_price )
