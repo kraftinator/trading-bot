@@ -1,3 +1,5 @@
+include ActionView::Helpers::DateHelper
+
 namespace :reports do
   
   desc 'Print report by trading pair'
@@ -32,7 +34,7 @@ namespace :reports do
     
     bots = Trader.where( trading_pair: trading_pair, active: true ).order( :sell_count ).reverse
     bots.each do |bot|
-      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}" 
+      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}"
     end
     
     results.each { |r| puts r }
@@ -64,8 +66,8 @@ namespace :reports do
 
     results = []
     results << "\nRevenue Report For #{trading_pair.symbol}\n\n"
-    results << "#{'%-8s' % 'STRATEGY'}  #{'%4s' % 'BUYS'}  #{'%4s' % 'SELLS'}  #{'%4s' % 'PCT'}  #{'%5s' % 'TOTAL'}  #{'%20s' % 'PROFIT'}"
-    results << "--------------------------------------------------------------------------------"
+    results << "#{'%-8s' % 'STRATEGY'}  #{'%4s' % 'BUYS'}  #{'%4s' % 'SELLS'}  #{'%4s' % 'PCT'}  #{'%5s' % 'TOTAL'}  #{'%20s' % 'PROFIT'}  #{'%25s' % 'LAST ACTION'}"
+    results << "------------------------------------------------------------------------------------------------"
     
     ## Get current coint price
     if coin.symbol == 'ETH'
@@ -89,7 +91,15 @@ namespace :reports do
     coin_total = 0.0
     profit_total = 0.0
     bots.each do |bot|
-      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}  $#{'%.2f' % bot.fiat_amount(current_price)}   #{'%.8f' % bot.profit }  $#{'%.2f' % bot.fiat_profit(current_price)}" 
+      
+      last_action_date = bot.show_last_fulfilled_order_date
+      if last_action_date
+        last_action_words = "#{time_ago_in_words( last_action_date ) } ago"
+      else
+        last_action_words = ''
+      end
+      
+      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}  $#{'%.2f' % bot.fiat_amount(current_price)}   #{'%.8f' % bot.profit }  $#{'%.2f' % bot.fiat_profit(current_price)}  #{'%14s' % last_action_words }"
       coin_total += bot.coin_amount
       profit_total += bot.profit
     end

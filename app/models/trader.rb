@@ -8,6 +8,16 @@ class Trader < ApplicationRecord
     limit_orders.where( open: true ).first
   end
   
+  def last_fulfilled_order
+    limit_orders.where( open: false ).order( 'created_at desc' ).first
+  end
+  
+  def show_last_fulfilled_order_date
+    order = last_fulfilled_order
+    return order.updated_at if order
+    nil
+  end
+  
   def coin_amount
     order = current_order
     if order and order.side == 'SELL' and limit_orders.size > 1
