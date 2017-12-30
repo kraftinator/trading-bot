@@ -15,7 +15,8 @@ class Trader < ApplicationRecord
   def show_last_fulfilled_order_date
     order = last_fulfilled_order
     return order.updated_at if order
-    nil
+    #nil
+    1.year.ago
   end
   
   def coin_amount
