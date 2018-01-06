@@ -25,7 +25,8 @@ module BotTrader
     ## Any active bots found?
     if traders.any?
       ## Set precision
-      @precision = 8
+      #@precision = 8
+      @precision = trading_pair.precision
       ## Load 24 hour trading pair stats.
       twenty_four_hour = @client.twenty_four_hour( symbol: trading_pair.symbol )
       @tps = TradingPairStatus.new( twenty_four_hour['lastPrice'].to_f, twenty_four_hour['weightedAvgPrice'].to_f, twenty_four_hour['highPrice'].to_f )

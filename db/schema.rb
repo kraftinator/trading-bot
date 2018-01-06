@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171228045230) do
+ActiveRecord::Schema.define(version: 20180106214946) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -59,8 +59,9 @@ ActiveRecord::Schema.define(version: 20171228045230) do
     t.integer  "coin_id"
     t.integer  "token_id"
     t.decimal  "max_price",  precision: 15, scale: 8
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
+    t.integer  "precision",                           default: 8
   end
 
 end
