@@ -96,8 +96,8 @@ namespace :reports do
     #response = HTTParty.get("https://api.coinmarketcap.com/v1/ticker/#{ticker_name}/?convert=USD")
     #current_price = response.parsed_response.first['price_usd'].to_f
     
-    #bots = Trader.where( trading_pair: trading_pair, active: true ).to_a.sort_by( &:coin_amount ).reverse
-    bots = Trader.where( trading_pair: trading_pair ).to_a.sort_by( &:coin_amount ).reverse
+    bots = Trader.where( trading_pair: trading_pair, active: true ).to_a.sort_by( &:coin_amount ).reverse
+    #bots = Trader.where( trading_pair: trading_pair ).to_a.sort_by( &:coin_amount ).reverse
     coin_total = 0.0
     profit_total = 0.0
     bots.each do |bot|
