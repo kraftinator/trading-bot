@@ -114,8 +114,14 @@ class TradingStrategy
     ## Update trader's coin and token quantities
     coin_qty = ( @current_order['executedQty'].to_f * @current_order['price'].to_f ).round( @precision )
     token_qty = @current_order['executedQty'].to_f
+    
     ## Subtract trading fee
-    token_qty = ( token_qty - (token_qty * 0.001) ).floor
+    ## NOTE: Modify to remove fee, if necessary
+    token_total = current_token_balance
+    if token_total < token_qty
+      token_qty = ( token_qty - (token_qty * 0.001) ).floor
+    end
+        
     ## Update trader
     @trader.update( coin_qty: @trader.coin_qty - coin_qty, token_qty: @trader.token_qty + token_qty,  buy_count: @trader.buy_count + 1 )
     ## Create sell order
@@ -229,6 +235,13 @@ class TradingStrategy
     ## Add precision to limit price. API will reject if too long.           
     limit_price = limit_price.round( @precision )
     limit_price
+  end
+  
+  def current_token_balance
+    account_info = @client.account_info
+    balances = account_info['balances']
+    asset = balances.select { |b| b['asset'] == @trader.trading_pair.token.symbol }.first
+    asset['free'].to_f
   end
   
 end
