@@ -33,7 +33,7 @@ class TradingStrategy
         case @current_order['status']
         when 'FILLED'
           process_filled_sell_order
-        when 'OPEN'
+        when 'NEW'
           process_open_sell_order
         when 'CANCELED'
           process_canceled_sell_order
@@ -163,7 +163,33 @@ class TradingStrategy
   end
    
   def process_open_sell_order
-    ## Do nothing. Sell orders are never canceled.
+    ## Get current limit order
+    limit_order = @trader.current_order
+    ## Lower limit price after 24 hours
+    if 1.day.ago > limit_order.created_at
+      ## Get buy price
+      buy_order = limit_order.buy_order
+      if buy_order      
+        ## Lower price to 1 percent above buy
+        limit_price = buy_order.price.to_f * 1.01
+        limit_price = @tps['last_price'] if limit_price < @tps['last_price']
+        ## Add precision to limit price. API will reject if too long.           
+        limit_price = limit_price.round( @precision )
+        if limit_price < limit_order.price.to_f
+          ## Cancel current order
+          result = @client.cancel_order( symbol: @trader.trading_pair.symbol, orderId: limit_order.order_guid )
+          if result['code']
+            puts "ERROR: #{result['code']} #{result['msg']}"
+            return false
+          end
+          puts "Order #{limit_order.order_guid} canceled."
+          ## Cancel local limit order
+          limit_order.update( open: false )        
+          ## Create new limit order
+          create_sell_order( limit_price )
+        end
+      end      
+    end
   end
    
   def process_canceled_buy_order
