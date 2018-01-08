@@ -4,13 +4,15 @@ require './lib/gamma_strategy.rb'
 require './lib/delta_strategy.rb' 
 require './lib/epsilon_strategy.rb'
 require './lib/zeta_strategy.rb'
+require './lib/eta_strategy.rb'
 require './lib/theta_strategy.rb'
+require './lib/iota_strategy.rb'
 
 module BotTrader
 
   module_function
   
-  TradingPairStatus = Struct.new( :last_price, :weighted_avg_price, :high_price )
+  TradingPairStatus = Struct.new( :last_price, :weighted_avg_price, :high_price, :low_price )
   
   def process( trading_pair )
     
@@ -30,7 +32,7 @@ module BotTrader
       @precision = trading_pair.precision
       ## Load 24 hour trading pair stats.
       twenty_four_hour = @client.twenty_four_hour( symbol: trading_pair.symbol )
-      @tps = TradingPairStatus.new( twenty_four_hour['lastPrice'].to_f, twenty_four_hour['weightedAvgPrice'].to_f, twenty_four_hour['highPrice'].to_f )
+      @tps = TradingPairStatus.new( twenty_four_hour['lastPrice'].to_f, twenty_four_hour['weightedAvgPrice'].to_f, twenty_four_hour['highPrice'].to_f, twenty_four_hour['lowPrice'].to_f )
     else
       puts "No active bots found."
       return false
@@ -75,8 +77,12 @@ module BotTrader
         strategy = EpsilonStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       when 'ZETA'
         strategy = ZetaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      when 'ETA'
+        strategy = EtaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       when 'THETA'
         strategy = ThetaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      when 'IOTA'
+        strategy = IotaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       else
         puts "ERROR: Invalid strategy - #{trader.strategy.name}."
         next
