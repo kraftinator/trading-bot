@@ -33,12 +33,24 @@ class Trader < ApplicationRecord
     coin_amount * exchange_rate
   end
   
+  def formatted_fiat_amount( exchange_rate )
+    amount = fiat_amount( exchange_rate )
+    amount = '%.2f' % amount
+    '$' + amount
+  end
+  
   def profit
     coin_amount - original_coin_qty
   end
   
   def fiat_profit( exchange_rate )
     profit * exchange_rate
+  end
+  
+  def formatted_fiat_profit( exchange_rate )
+    amount = fiat_profit( exchange_rate )
+    amount = '%.2f' % amount
+    '$' + amount
   end
 
 end
