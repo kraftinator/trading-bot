@@ -4,6 +4,7 @@ require './lib/gamma_strategy.rb'
 require './lib/delta_strategy.rb' 
 require './lib/epsilon_strategy.rb'
 require './lib/zeta_strategy.rb'
+require './lib/theta_strategy.rb'
 
 module BotTrader
 
@@ -74,6 +75,8 @@ module BotTrader
         strategy = EpsilonStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       when 'ZETA'
         strategy = ZetaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      when 'THETA'
+        strategy = ThetaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       else
         puts "ERROR: Invalid strategy - #{trader.strategy.name}."
         next
