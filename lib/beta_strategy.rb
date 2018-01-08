@@ -17,7 +17,7 @@ class BetaStrategy < TradingStrategy
           return false
         end
         ## Cancel local limit order
-        limit_order.update( open: false )        
+        limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
         ## Create new limit order
         create_buy_order( limit_price )
       end

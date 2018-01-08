@@ -45,7 +45,7 @@ class KappaStrategy < TradingStrategy
           end
           puts "Order #{limit_order.order_guid} canceled."
           ## Cancel local limit order
-          limit_order.update( open: false )        
+          limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )        
           ## Create new limit order
           create_sell_order( limit_price )
         end

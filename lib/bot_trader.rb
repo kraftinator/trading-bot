@@ -55,7 +55,7 @@ module BotTrader
             puts "Order #{limit_order.order_guid} canceled."
           end
           ## Cancel local limit order
-          limit_order.update( open: false )
+          limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
         end
         ## Deactivate trader
         trader.update( active: false )

@@ -84,7 +84,7 @@ class TradingStrategy
       return false
     end
     ## Create local limit order
-    limit_order = LimitOrder.create( trader: @trader, order_guid: new_order['orderId'], price: new_order['price'], qty: new_order['origQty'], side: new_order['side'], open: true )
+    limit_order = LimitOrder.create( trader: @trader, order_guid: new_order['orderId'], price: new_order['price'], qty: new_order['origQty'], side: new_order['side'], open: true, state: LimitOrder::STATES[:new] )
     puts "BUY order created for Bot #{@trader.id}."
   end
    
@@ -104,13 +104,13 @@ class TradingStrategy
       puts "ERROR: #{new_order['code']} #{new_order['msg']}"
       return false
     end
-    limit_order = LimitOrder.create( trader: @trader, order_guid: new_order['orderId'], price: new_order['price'], qty: new_order['origQty'], side: new_order['side'], open: true )
+    limit_order = LimitOrder.create( trader: @trader, order_guid: new_order['orderId'], price: new_order['price'], qty: new_order['origQty'], side: new_order['side'], open: true, state: LimitOrder::STATES[:new] )
     puts "SELL order created for Bot #{@trader.id}."
   end
    
   def process_filled_buy_order
     ## Close the limit order.
-    @trader.current_order.update( open: false )
+    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current )
     ## Update trader's coin and token quantities
     coin_qty = ( @current_order['executedQty'].to_f * @current_order['price'].to_f ).round( @precision )
     token_qty = @current_order['executedQty'].to_f
@@ -131,7 +131,7 @@ class TradingStrategy
   def process_filled_sell_order
     ## Yay! The order was successfully filled!
     ## Close the limit order.
-    @trader.current_order.update( open: false )
+    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current )
     ## Update trader's coin and token quantities
     coin_qty = ( @current_order['executedQty'].to_f * @current_order['price'].to_f ).round( @precision )
     token_qty = @current_order['executedQty'].to_f
@@ -156,7 +156,7 @@ class TradingStrategy
       end
       puts "Order #{limit_order.order_guid} canceled."
       ## Cancel local limit order
-      limit_order.update( open: false )        
+      limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
       ## Create new limit order
       create_buy_order( limit_price )
     end
@@ -184,7 +184,7 @@ class TradingStrategy
           end
           puts "Order #{limit_order.order_guid} canceled."
           ## Cancel local limit order
-          limit_order.update( open: false )        
+          limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )        
           ## Create new limit order
           create_sell_order( limit_price )
         end
@@ -195,7 +195,7 @@ class TradingStrategy
   def process_canceled_buy_order
     ## Close limit order
     limit_order = @trader.current_order
-    limit_order.update( open: false )
+    limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
     puts "WARNING: Buy order #{limit_order.order_guid} canceled."
     ## Create new BUY order
     create_buy_order( buy_order_limit_price )
@@ -204,7 +204,7 @@ class TradingStrategy
   def process_canceled_sell_order
     ## Close limit order
     limit_order = @trader.current_order
-    limit_order.update( open: false )
+    limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
     puts "WARNING: Sell order #{limit_order.order_guid} canceled."
     ## Create new SELL order
     limit_price = limit_order.price.to_f
