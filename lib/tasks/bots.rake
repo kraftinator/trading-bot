@@ -1,3 +1,5 @@
+require './lib/bot_trader.rb' 
+
 namespace :bots do
   
   desc 'Create bot'
@@ -201,5 +203,68 @@ namespace :bots do
     
   end
 
+  desc 'Merge bots'
+  task :merge => :environment do
+    
+    ## Usage:
+    ## rake bots:merge COIN=ETH TOKEN=LINK STRATEGY=ALPHA
+    
+    ## Get params
+    coin = Coin.where( symbol: ENV["COIN"] ).first
+    unless coin
+      puts "ERROR: Coin #{ENV['COIN']} not found."
+      exit
+    end
+    
+    token = Token.where( symbol: ENV["TOKEN"] ).first
+    unless token
+      puts "ERROR: Token #{ENV['TOKEN']} not found."
+      exit
+    end
+    
+    trading_pair = TradingPair.where( coin: coin, token: token ).first
+    unless trading_pair
+      puts "ERROR: Trading Pair #{token.symbol}#{coin.symbol} not found."
+      exit
+    end
+    
+    strategy = Strategy.where( name: ENV["STRATEGY"] ).first
+    unless strategy
+      puts "ERROR: Strategy #{strategy} not found."
+      exit
+    end
+    
+    ## Find bots to merge
+    bots = Trader.where( trading_pair: trading_pair, strategy: strategy, active: true  ).to_a
+    bots.each do |bot|
+      ## Find siblings
+      siblings = bot.siblings
+      siblings.each do |sibling|
+        ## Validate sibling
+        if bot.sibling?( sibling )
+          bot_order = bot.current_order
+          next unless bot_order and bot_order.side == "BUY"
+          sibling_order = sibling.current_order
+          next unless sibling_order and sibling_order.side == "BUY"
+          
+          ## Do buy order prices match?
+          if bot_order.price == sibling_order.price
+            ## Merge!
+            if bot.created_at < sibling.created_at
+              BotTrader.merge( bot, sibling )
+            else
+              BotTrader.merge( sibling, bot )
+            end
+          end
+          
+          ## Exit
+          exit
+          
+        end
+      end
+      
+    end
+
+  end
  
 end

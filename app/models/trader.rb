@@ -3,9 +3,22 @@ class Trader < ApplicationRecord
   belongs_to  :trading_pair
   belongs_to  :strategy
   has_many  :limit_orders
+
+  belongs_to :merged_trader, :class_name => "Trader", optional: true
+  has_many :children, :class_name => "Trader", :foreign_key => "merged_trader_id"
   
   def current_order
     limit_orders.where( open: true ).first
+  end
+  
+  def siblings
+    traders = Trader.where( trading_pair: trading_pair, strategy: strategy, percentage_range: percentage_range, wait_period: wait_period, active: active ).to_a
+    traders.delete( self )
+    traders
+  end
+  
+  def sibling?( sibling )
+    trading_pair == sibling.trading_pair && strategy == sibling.strategy && percentage_range == sibling.percentage_range && wait_period == sibling.wait_period
   end
   
   def last_fulfilled_order

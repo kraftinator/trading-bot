@@ -94,5 +94,61 @@ module BotTrader
     end
     
   end ## process
+  
+  def merge( bot1, bot2 )
+    
+    ## Get client
+    api_key    = ENV['BINANCE_API_KEY']
+    secret_key = ENV['BINANCE_SECRET_KEY']
+    @client = Binance::Client::REST.new( api_key: api_key, secret_key: secret_key )
+    OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE)
+    
+    ## Deactivate bot2's current order
+    if bot2.current_order and bot2.current_order.side == 'BUY'
+      ## Get local limit order
+      limit_order = bot2.current_order
+      ## Cancel order
+      result = @client.cancel_order( symbol: bot2.trading_pair.symbol, orderId: limit_order.order_guid )
+      if result['code']
+        puts "ERROR: #{result['code']} #{result['msg']}" 
+      else
+        puts "Order #{limit_order.order_guid} canceled."
+      end
+      ## Cancel local limit order
+      limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
+    else
+      puts "WARNING: Bot2 (#{bot2.id}) current order is not a BUY side."
+      exit
+    end
+    
+    ## Deactivate bot2
+    bot2.update( active: false, merged_at: Time.current, merged_trader: bot1 )
+    puts "Bot2 (#{bot2.id}) deactivated and merged."
+    
+    ## Deactivate bot1's current order
+    if bot1.current_order and bot1.current_order.side == 'BUY'
+      ## Get local limit order
+      limit_order = bot1.current_order
+      ## Cancel order
+      result = @client.cancel_order( symbol: bot1.trading_pair.symbol, orderId: limit_order.order_guid )
+      if result['code']
+        puts "ERROR: #{result['code']} #{result['msg']}" 
+      else
+        puts "Order #{limit_order.order_guid} canceled."
+      end
+      ## Cancel local limit order
+      limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
+    else
+      puts "WARNING: Bot2 (#{bot1.id}) current order is not a BUY side."
+      exit
+    end
+    
+    ## Move bot2's coin quantities to bot1
+    bot1.update( coin_qty: bot1.coin_qty + bot2.coin_qty, original_coin_qty: bot1.original_coin_qty + bot2.original_coin_qty )
+    puts "Bot2 (#{bot2.id}) coins transferred to Bot1 (#{bot1.id})."
+    
+    puts "Successfully merged #{bot1.id} and #{bot2.id}!"
+    
+  end
       
 end
