@@ -48,4 +48,24 @@ namespace :scheduler do
     BotTrader.process_all
   end
   
+  desc 'Run specific bot'
+  task :process_trader => :environment do
+    
+    ## Validate parameters
+    trader_id = ENV["TRADER_ID"]
+    unless trader_id
+      puts "ERROR: Parameter TRADER_ID not found."
+      exit
+    end
+    
+    trader = Trader.find( trader_id )
+    unless trader
+      puts "ERROR: Invalid TRADER_ID - #{trader_id}"
+      exit
+    end
+        
+    BotTrader.process_trader( trader )
+    
+  end
+  
 end

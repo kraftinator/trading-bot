@@ -110,7 +110,7 @@ module BotTrader
   
   def process_trader( trader )
     set_client
-    @tps = trading_pair_status( trading_pair )
+    @tps = trading_pair_status( trader.trading_pair )
     strategy = load_strategy( trader )
     if strategy
       strategy.process
