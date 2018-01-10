@@ -165,8 +165,9 @@ class TradingStrategy
   def process_open_sell_order
     ## Get current limit order
     limit_order = @trader.current_order
-    ## Lower limit price after 24 hours
-    if 1.day.ago > limit_order.created_at
+    ## Lower limit price after 12 hours
+    #if 1.day.ago > limit_order.created_at
+    if 12.hours.ago > limit_order.created_at
       ## Get buy price
       buy_order = limit_order.buy_order
       if buy_order      
