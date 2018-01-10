@@ -2,7 +2,7 @@ require './lib/bot_trader.rb'
 
 namespace :scheduler do
   
-  desc 'Run bots'
+  desc 'Run bots by trading pair'
   task :process => :environment do
     
     ## Validate parameters
@@ -41,6 +41,11 @@ namespace :scheduler do
     #############################################
     BotTrader.process( trading_pair )
         
+  end
+  
+  desc 'Run all bots'
+  task :process => :environment do
+    BotTrader.process_all
   end
   
 end
