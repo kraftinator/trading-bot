@@ -44,7 +44,7 @@ namespace :scheduler do
   end
   
   desc 'Run all bots'
-  task :process => :environment do
+  task :process_all => :environment do
     BotTrader.process_all
   end
   
