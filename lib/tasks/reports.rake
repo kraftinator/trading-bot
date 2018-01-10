@@ -29,7 +29,7 @@ namespace :reports do
     
     results = []
     results << "\nBasic Report For #{trading_pair.symbol}\n\n"
-    results << "#{'%-8s' % 'STRATEGY'}  #{'%4s' % 'BUYS'}  #{'%4s' % 'SELLS'}  #{'%4s' % 'PCT'}  #{'%7s' % 'TOTAL ' + trading_pair.coin.symbol}  #{'%20s' % 'LAST ACTION'}"
+    results << "#{'%-3s' % 'ID'}  #{'%-8s' % 'STRATEGY'}  #{'%4s' % 'BUYS'}  #{'%4s' % 'SELLS'}  #{'%4s' % 'PCT'}  #{'%7s' % 'TOTAL ' + trading_pair.coin.symbol}  #{'%20s' % 'LAST ACTION'}"
     results << "------------------------------------------------------------------"
     
     bots = Trader.where( trading_pair: trading_pair, active: true ).order( :sell_count ).reverse
@@ -42,7 +42,7 @@ namespace :reports do
         last_action_words = ''
       end
       
-      results << "#{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}  #{'%20s' % last_action_words }"
+      results << "#{'%-3s' % bot.id.to_s}  #{'%-8s' % bot.strategy.name}  #{'%4s' % bot.buy_count}  #{'%4s' % bot.sell_count}  #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}  #{'%20s' % last_action_words }"
       
     end
     
