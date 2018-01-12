@@ -68,7 +68,7 @@ class TradingStrategy
   end
   
   def create_initial_sell_order
-    limit_price = @tps['last_price'] * 1.01
+    limit_price = @tps['last_price'] * 1.005
     limit_price = limit_price.round( @precision )
     create_sell_order( limit_price )    
   end
