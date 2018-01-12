@@ -8,6 +8,7 @@ require './lib/eta_strategy.rb'
 require './lib/theta_strategy.rb'
 require './lib/iota_strategy.rb'
 require './lib/kappa_strategy.rb'
+require './lib/lambda_strategy.rb'
 
 module BotTrader
 
@@ -70,6 +71,8 @@ module BotTrader
       strategy = IotaStrategy.new( client: @client, tps: @tps, trader: trader )
     when 'KAPPA'
       strategy = KappaStrategy.new( client: @client, tps: @tps, trader: trader )
+    when 'LAMBDA'
+      strategy = LambdaStrategy.new( client: @client, tps: @tps, trader: trader )
     end
     strategy
   end
@@ -234,6 +237,8 @@ module BotTrader
         strategy = IotaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       when 'KAPPA'
         strategy = KappaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      when 'LAMBDA'
+        strategy = LambdaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       else
         puts "ERROR: Invalid strategy - #{trader.strategy.name}."
         next
