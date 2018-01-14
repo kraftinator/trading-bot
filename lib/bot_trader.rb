@@ -10,12 +10,14 @@ require './lib/iota_strategy.rb'
 require './lib/kappa_strategy.rb'
 require './lib/lambda_strategy.rb'
 require './lib/omicron_strategy.rb'
+require './lib/pi_strategy.rb'
 
 module BotTrader
 
   module_function
   
-  TradingPairStatus = Struct.new( :last_price, :weighted_avg_price, :high_price, :low_price, :bid_total, :ask_total )
+  TradingPairStatus = Struct.new( :last_price, :weighted_avg_price, :high_price, :low_price, :bid_total, :ask_total, :price_change_pct )
+  EthStatus = Struct.new( :bid_total, :ask_total, :price_change_pct )
   
   ## Set client
   def set_client
@@ -23,6 +25,21 @@ module BotTrader
     secret_key = ENV['BINANCE_SECRET_KEY']
     @client = Binance::Client::REST.new( api_key: api_key, secret_key: secret_key )
     OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE)
+  end
+  
+  def load_eth_status
+    twenty_four_hour = @client.twenty_four_hour( symbol: 'ETHUSDT' )
+    depth = @client.depth( symbol: 'ETHUSDT' )
+    ## Calculate bid total
+    bids = depth['bids']
+    bid_total = 0
+    bids.each { |b| bid_total += b[0].to_f * b[1].to_f }
+    ## Calculate ask total
+    asks = depth['asks']
+    ask_total = 0
+    asks.each { |a| ask_total += a[0].to_f * a[1].to_f }
+    ## Create 
+    EthStatus.new( bid_total, ask_total, twenty_four_hour['priceChangePercent'].to_f )
   end
   
   def trading_pair_status( trading_pair )
@@ -39,7 +56,7 @@ module BotTrader
     ask_total = 0
     asks.each { |a| ask_total += a[0].to_f * a[1].to_f }
     ## Create Trading Pair Status sctruct
-    TradingPairStatus.new( twenty_four_hour['lastPrice'].to_f, twenty_four_hour['weightedAvgPrice'].to_f, twenty_four_hour['highPrice'].to_f, twenty_four_hour['lowPrice'].to_f, bid_total, ask_total )
+    TradingPairStatus.new( twenty_four_hour['lastPrice'].to_f, twenty_four_hour['weightedAvgPrice'].to_f, twenty_four_hour['highPrice'].to_f, twenty_four_hour['lowPrice'].to_f, bid_total, ask_total, twenty_four_hour['priceChangePercent'].to_f )
   end
   
   def freeze_trader( trader )
@@ -88,6 +105,8 @@ module BotTrader
       strategy = LambdaStrategy.new( client: @client, tps: @tps, trader: trader )
     when 'OMICRON'
       strategy = OmicronStrategy.new( client: @client, tps: @tps, trader: trader )
+    when 'PI'
+      strategy = PiStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: eth_status )
     end
     strategy
   end
@@ -105,6 +124,8 @@ module BotTrader
       if traders.any?
         ## Load 24 hour trading pair stats
         @tps = trading_pair_status( trading_pair )
+        ## Load ETH status
+        eth_status = load_eth_status
         ## Has max ratio been reached?
         if trading_pair.max_price.to_f < @tps[:high_price]
           ## Freeze bots!
@@ -256,6 +277,8 @@ module BotTrader
         strategy = LambdaStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       when 'OMICRON'
         strategy = OmicronStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+      when 'PI'
+        strategy = PiStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       else
         puts "ERROR: Invalid strategy - #{trader.strategy.name}."
         next
