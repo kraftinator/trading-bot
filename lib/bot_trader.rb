@@ -106,7 +106,7 @@ module BotTrader
     when 'OMICRON'
       strategy = OmicronStrategy.new( client: @client, tps: @tps, trader: trader )
     when 'PI'
-      strategy = PiStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: eth_status )
+      strategy = PiStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     end
     strategy
   end
@@ -125,7 +125,7 @@ module BotTrader
         ## Load 24 hour trading pair stats
         @tps = trading_pair_status( trading_pair )
         ## Load ETH status
-        eth_status = load_eth_status
+        @eth_status = load_eth_status
         ## Has max ratio been reached?
         if trading_pair.max_price.to_f < @tps[:high_price]
           ## Freeze bots!
@@ -278,7 +278,7 @@ module BotTrader
       when 'OMICRON'
         strategy = OmicronStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
       when 'PI'
-        strategy = PiStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision )
+        strategy = PiStrategy.new( client: @client, tps: @tps, trader: trader, precision: @precision, eth_status: @eth_status )
       else
         puts "ERROR: Invalid strategy - #{trader.strategy.name}."
         next

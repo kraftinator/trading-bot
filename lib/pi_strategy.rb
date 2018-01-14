@@ -12,32 +12,46 @@ class PiStrategy < TradingStrategy
     ## Choose last price or weighted avg price, whichever is less.
     limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
     
-    ## Set target price based on depth chart
-    # 
-    #if bid_total > ask_total
-    #  place low buy order
-    #else
-    #  place normal buy order 
-    #end
-
-    #if bid_total > ask_total
-    #  place normal sell order
-    #else
-    #  place low buy order
-    #end
-    
-    if @tps['bid_total'] > @tps['ask_total']
-      limit_price = limit_price * ( 1 - 0.005 )
+=begin
+    if eth_percent_diff > 0.1
+      ## Token price should go down
+      ## Place very low buy order
+      buy limit price is normal * 3
+    elsif eth_percent_diff < 0.1
+      ## Token price should go up
+      ## Place high buy order
+      buy limit price is 0.0025
+    elsif eth_prcent_diff > 0.05
+      buy limit price is normal * 2
+    elsif eth_percent_diff < 0.05
+      buy limit price is 0.005
+    elsif eth_bid_total > ets_bid_total
+      buy limit price is 0.005
     else
-      ## Calculate percentage difference
-      percentage_diff = ( 1 - @tps['bid_total'] / @tps['ask_total'] )
-      if percentage_diff < 0.2
-        limit_price = limit_price * ( 1 - 0.005 )
-      else
-        limit_price = limit_price * ( 1 - @trader.percentage_range.to_f )
-      end
+      buy limit price is normal
     end
-    
+=end
+       
+    if @eth_status['price_change_pct'] > 10
+      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.1 )
+    elsif @eth_status['price_change_pct'] > 5
+      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.05 )
+    elsif @eth_status['price_change_pct'] < -10
+      limit_price = limit_price * ( 1 - 0.005 )
+    elsif @eth_status['price_change_pct'] < -5
+      limit_price = limit_price * ( 1 - 0.005 )
+    elsif @tps['price_change_pct'] > 10
+      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.1 )
+    elsif @tps['price_change_pct'] > 5
+      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.05 )
+    elsif @tps['price_change_pct'] < -10
+      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.1 )
+    elsif @tps['price_change_pct'] < -5
+      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.05 )
+    else
+      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f )
+    end
+        
     ## Add precision to limit price. API will reject if too long.
     limit_price = limit_price.round( @precision )
     limit_price
@@ -48,19 +62,30 @@ class PiStrategy < TradingStrategy
     qty = ( @trader.token_qty.to_f ).floor
     ## Calculate expected SELL coin total
     buy_coin_total = @current_order['executedQty'].to_f * @current_order['price'].to_f
-    
-    if @tps['bid_total'] > @tps['ask_total']
-      ## Calculate percentage difference
-      percentage_diff = ( 1 - @tps['ask_total'] / @tps['bid_total'] )
-      if percentage_diff < 0.2
-        sell_coin_total = buy_coin_total * ( 1 + 0.005 )
-      else
-        sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
-      end
-    else
+
+    if @eth_status['price_change_pct'] > 10
+      ## Token price expected to decrease
       sell_coin_total = buy_coin_total * ( 1 + 0.005 )
+    elsif @eth_status['price_change_pct'] > 5
+      ## Token price expected to decrease
+      sell_coin_total = buy_coin_total * ( 1 + 0.005 )
+    elsif @eth_status['price_change_pct'] < -10
+      ## Token price expected to increase
+      sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
+    elsif @eth_status['price_change_pct'] < -5
+      ## Token price expected to increase
+      sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
+    elsif @tps['price_change_pct'] > 10
+      sell_coin_total = buy_coin_total * ( 1 + 0.005 )
+    elsif @tps['price_change_pct'] > 5
+      sell_coin_total = buy_coin_total * ( 1 + 0.005 )
+    elsif @tps['price_change_pct'] < -10
+      sell_coin_total = buy_coin_total * ( 1 + 0.005 )
+    elsif @tps['price_change_pct'] < -5
+      sell_coin_total = buy_coin_total * ( 1 + 0.005 )
+    else
+      sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
     end
-    
     
     ## Calculate limit price from SELL coin total
     limit_price = sell_coin_total / qty
