@@ -169,8 +169,8 @@ namespace :reports do
     
     results = []
     results << "\nActivity Report For #{trading_pair.symbol}\n\n"
-    results << "#{'%-3s' % 'ID'}  #{'%-8s' % 'STRATEGY'}  #{'%4s' % 'PCT'}  #{'%8s' % 'TOTAL ' + trading_pair.coin.symbol}  #{'%23s' % 'LAST ACTION'}  #{'%5s' % 'SIDE'} #{'%10s' % 'PRICE'}"
-    results << "-----------------------------------------------------------------------------"
+    results << "#{'%-3s' % 'ID'}  #{'%-8s' % 'STRATEGY'}  #{'%3s' % 'PCT'}  #{'%6s' % 'SELLS'}  #{'%6s' % 'TOTAL ' + trading_pair.coin.symbol}  #{'%23s' % 'LAST ACTION'}  #{'%5s' % 'SIDE'} #{'%10s' % 'PRICE'}"
+    results << "----------------------------------------------------------------------------------"
     
     bots = Trader.where( trading_pair: trading_pair, active: true ).to_a.sort_by( &:show_last_fulfilled_order_date ).reverse
     bots.each do |bot|
@@ -184,7 +184,7 @@ namespace :reports do
 
       side = bot.current_order ? bot.current_order.side : '---'
       price = bot.current_order ? bot.current_order.price : 0
-      results << "#{'%-3s' % bot.id.to_s}  #{'%-8s' % bot.strategy.name}   #{'%.3f' % bot.percentage_range}  #{'%.8f' % bot.coin_amount}  #{'%22s' % last_action_words }  #{'%4s' % side}  #{'%.8f' % price}"
+      results << "#{'%-3s' % bot.id.to_s}  #{'%-8s' % bot.strategy.name}  #{'%.3f' % bot.percentage_range}  #{'%4s' % bot.sell_count}  #{'%.8f' % bot.coin_amount}  #{'%22s' % last_action_words }  #{'%4s' % side}  #{'%.8f' % price}"
       
     end
     
