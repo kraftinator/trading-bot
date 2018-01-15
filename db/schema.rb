@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180109185403) do
+ActiveRecord::Schema.define(version: 20180115222637) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,6 +57,9 @@ ActiveRecord::Schema.define(version: 20180109185403) do
     t.decimal  "original_coin_qty",           precision: 16, scale: 8, default: "0.0"
     t.datetime "merged_at"
     t.integer  "merged_trader_id"
+    t.decimal  "buy_pct",                     precision: 5,  scale: 4, default: "0.0"
+    t.decimal  "sell_pct",                    precision: 5,  scale: 4, default: "0.0"
+    t.decimal  "ceiling_pct",                 precision: 5,  scale: 4, default: "0.0"
   end
 
   create_table "trading_pairs", force: :cascade do |t|
