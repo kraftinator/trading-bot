@@ -66,6 +66,7 @@ class Trader < ApplicationRecord
     '$' + amount
   end
   
+=begin  
   def display_name
     case strategy.name
     when 'ALPHA', 'BETA', 'IOTA', 'LAMBDA', 'OMICRON', 'PI'
@@ -82,7 +83,23 @@ class Trader < ApplicationRecord
       strategy.name
     end    
   end
+=end 
   
+  def display_name
+    case strategy.name
+    when 'ALPHA', 'BETA', 'IOTA', 'LAMBDA', 'OMICRON', 'PI'
+      "#{strategy.name} #{market_type}"
+    when 'GAMMA', 'DELTA', 'THETA', 'EPSILON', 'ZETA'
+      if ceiling_pct > 0
+        "#{strategy.name} #{market_type} CAP #{( ceiling_pct * 100 ).to_i}%"
+      else
+        "#{strategy.name} #{market_type}"
+      end
+    else
+      strategy.name
+    end    
+  end
+   
   def market_type
     return "BEAR" if buy_pct > sell_pct
     return "BULL" if buy_pct < sell_pct
