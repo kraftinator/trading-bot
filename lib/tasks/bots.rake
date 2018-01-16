@@ -53,10 +53,15 @@ namespace :bots do
       exit
     end
     
-    ceiling_pct = BigDecimal.new( ENV["CEILING_PCT"] )
-    if ceiling_pct >= 1
-      puts "ERROR: Ceiling percentage cannot be 1 or higher."
-      exit
+    ceiling_pct = ENV["CEILING_PCT"]
+    if ceiling_pct
+      ceiling_pct = BigDecimal.new( ceiling_pct )
+      if ceiling_pct >= 1
+        puts "ERROR: Ceiling percentage cannot be 1 or higher."
+        exit
+      end
+    else
+      ceiling_pct = 0
     end
 
     wait_period = ENV["WAIT_PERIOD"].to_i
@@ -131,10 +136,15 @@ namespace :bots do
       exit
     end
     
-    ceiling_pct = BigDecimal.new( ENV["CEILING_PCT"] )
-    if ceiling_pct >= 1
-      puts "ERROR: Ceiling percentage cannot be 1 or higher."
-      exit
+    ceiling_pct = ENV["CEILING_PCT"]
+    if ceiling_pct
+      ceiling_pct = BigDecimal.new( ceiling_pct )
+      if ceiling_pct >= 1
+        puts "ERROR: Ceiling percentage cannot be 1 or higher."
+        exit
+      end
+    else
+      ceiling_pct = 0
     end
     
     wait_period = ENV["WAIT_PERIOD"].to_i
@@ -208,10 +218,15 @@ namespace :bots do
       exit
     end
     
-    ceiling_pct = BigDecimal.new( ENV["CEILING_PCT"] )
-    if ceiling_pct >= 1
-      puts "ERROR: Ceiling percentage cannot be 1 or higher."
-      exit
+    ceiling_pct = ENV["CEILING_PCT"]
+    if ceiling_pct
+      ceiling_pct = BigDecimal.new( ceiling_pct )
+      if ceiling_pct >= 1
+        puts "ERROR: Ceiling percentage cannot be 1 or higher."
+        exit
+      end
+    else
+      ceiling_pct = 0
     end
     
     wait_period = ENV["WAIT_PERIOD"].to_i
