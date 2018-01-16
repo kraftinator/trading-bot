@@ -89,12 +89,12 @@ namespace :reports do
     end
 
     
-    #puts "Getting coin price..."
-    #OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE)
-    #response = HTTParty.get("https://api.etherscan.io/api?module=stats&action=ethprice")
-    #current_price = response.parsed_response['result']['ethusd'].to_f
+    puts "Getting coin price..."
+    OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE)
+    response = HTTParty.get("https://api.etherscan.io/api?module=stats&action=ethprice")
+    current_price = response.parsed_response['result']['ethusd'].to_f
     
-    current_price = 1100
+    #current_price = 1100
     
     #response = HTTParty.get("https://api.coinmarketcap.com/v1/ticker/#{ticker_name}/?convert=USD")
     #current_price = response.parsed_response.first['price_usd'].to_f

@@ -161,7 +161,7 @@ namespace :bots do
   task :create_from_tokens_with_original_qty => :environment do
     
     ## Usage:
-    ## rake bots:create_from_tokens_with_original_qty COIN=ETH TOKEN=REQ TOKEN_QTY=200 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
+    ## rake bots:create_from_tokens_with_original_qty COIN=ETH TOKEN=REQ TOKEN_QTY=100 BUY_PCT=0.005 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
     
     puts "Creating bot..."
     
