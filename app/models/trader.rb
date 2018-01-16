@@ -65,5 +65,32 @@ class Trader < ApplicationRecord
     amount = '%.2f' % amount
     '$' + amount
   end
-
+  
+  def display_name
+    case strategy.name
+    when 'ALPHA', 'BETA', 'IOTA', 'LAMBDA', 'OMICRON', 'PI'
+      "#{strategy.name} #{market_type} #{market_ratio}"
+    when 'GAMMA', 'DELTA', 'THETA', 'EPSILON', 'ZETA'
+      if ceiling_pct > 0
+        "#{strategy.name} #{market_type} #{market_ratio} CAP #{( ceiling_pct * 1000 ).to_i}"
+      else
+        "#{strategy.name} #{market_type} #{market_ratio}"
+      end
+    when 'ETA'
+      "#{strategy.name} #{( sell_pct * 1000 ).to_i}"
+    else
+      strategy.name
+    end    
+  end
+  
+  def market_type
+    return "BEAR" if buy_pct > sell_pct
+    return "BULL" if buy_pct < sell_pct
+    market_type = "NEUTRAL"
+  end
+  
+  def market_ratio
+    "#{( buy_pct * 1000 ).to_i}-#{( sell_pct * 1000 ).to_i}"
+  end
+  
 end
