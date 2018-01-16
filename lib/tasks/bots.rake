@@ -6,7 +6,7 @@ namespace :bots do
   task :create => :environment do
     
     ## Usage:
-    ## rake bots:create COIN=ETH TOKEN=REQ COIN_QTY=0.05 PERCENTAGE_RANGE=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
+    ## rake bots:create COIN=ETH TOKEN=REQ COIN_QTY=0.05 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
     
     puts "Creating bot..."
     
@@ -41,12 +41,24 @@ namespace :bots do
       exit
     end
     
-    percentage_range = BigDecimal.new( ENV["PERCENTAGE_RANGE"] )
-    if percentage_range >= 1
-      puts "ERROR: Percentage range cannot be 1 or higher."
+    buy_pct = BigDecimal.new( ENV["BUY_PCT"] )
+    if buy_pct >= 1
+      puts "ERROR: Buy percentage cannot be 1 or higher."
       exit
     end
     
+    sell_pct = BigDecimal.new( ENV["SELL_PCT"] )
+    if sell_pct >= 1
+      puts "ERROR: Sell percentage cannot be 1 or higher."
+      exit
+    end
+    
+    ceiling_pct = BigDecimal.new( ENV["CEILING_PCT"] )
+    if ceiling_pct >= 1
+      puts "ERROR: Ceiling percentage cannot be 1 or higher."
+      exit
+    end
+
     wait_period = ENV["WAIT_PERIOD"].to_i
     if wait_period < 60
       puts "ERROR: Wait period cannot be less than 60 minutes."
@@ -58,11 +70,13 @@ namespace :bots do
                             strategy: strategy, 
                             coin_qty: coin_qty,
                             original_coin_qty: coin_qty,
-                            percentage_range: percentage_range,
+                            buy_pct: buy_pct,
+                            sell_pct: sell_pct,
+                            ceiling_pct: ceiling_pct,
                             wait_period: wait_period,
                             active: true )
     
-    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.coin_qty.to_s} #{trader.trading_pair.coin.symbol}, Percent = #{trader.percentage_range.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}."
+    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.coin_qty.to_s} #{trader.trading_pair.coin.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}."
     
   end
 
@@ -70,7 +84,7 @@ namespace :bots do
   task :create_from_tokens => :environment do
     
     ## Usage:
-    ## rake bots:create_from_tokens COIN=ETH TOKEN=REQ TOKEN_QTY=200 PERCENTAGE_RANGE=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
+    ## rake bots:create_from_tokens COIN=ETH TOKEN=REQ TOKEN_QTY=200 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
     
     puts "Creating bot..."
     
@@ -105,9 +119,21 @@ namespace :bots do
       exit
     end
     
-    percentage_range = BigDecimal.new( ENV["PERCENTAGE_RANGE"] )
-    if percentage_range >= 1
-      puts "ERROR: Percentage range cannot be 1 or higher."
+    buy_pct = BigDecimal.new( ENV["BUY_PCT"] )
+    if buy_pct >= 1
+      puts "ERROR: Buy percentage cannot be 1 or higher."
+      exit
+    end
+    
+    sell_pct = BigDecimal.new( ENV["SELL_PCT"] )
+    if sell_pct >= 1
+      puts "ERROR: Sell percentage cannot be 1 or higher."
+      exit
+    end
+    
+    ceiling_pct = BigDecimal.new( ENV["CEILING_PCT"] )
+    if ceiling_pct >= 1
+      puts "ERROR: Ceiling percentage cannot be 1 or higher."
       exit
     end
     
@@ -121,11 +147,13 @@ namespace :bots do
     trader = Trader.create( trading_pair: trading_pair,
                             strategy: strategy, 
                             token_qty: token_qty,
-                            percentage_range: percentage_range,
+                            buy_pct: buy_pct,
+                            sell_pct: sell_pct,
+                            ceiling_pct: ceiling_pct,
                             wait_period: wait_period,
                             active: true )
     
-    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.token_qty.to_s} #{trader.trading_pair.token.symbol}, Percent = #{trader.percentage_range.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}."
+    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.token_qty.to_s} #{trader.trading_pair.token.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Ceiling Pct = #{trader.ceiling_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}."
     
   end
 
@@ -133,7 +161,7 @@ namespace :bots do
   task :create_from_tokens_with_original_qty => :environment do
     
     ## Usage:
-    ## rake bots:create_from_tokens_with_original_qty COIN=ETH TOKEN=REQ TOKEN_QTY=200 PERCENTAGE_RANGE=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
+    ## rake bots:create_from_tokens_with_original_qty COIN=ETH TOKEN=REQ TOKEN_QTY=200 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
     
     puts "Creating bot..."
     
@@ -168,9 +196,21 @@ namespace :bots do
       exit
     end
     
-    percentage_range = BigDecimal.new( ENV["PERCENTAGE_RANGE"] )
-    if percentage_range >= 1
-      puts "ERROR: Percentage range cannot be 1 or higher."
+    buy_pct = BigDecimal.new( ENV["BUY_PCT"] )
+    if buy_pct >= 1
+      puts "ERROR: Buy percentage cannot be 1 or higher."
+      exit
+    end
+    
+    sell_pct = BigDecimal.new( ENV["SELL_PCT"] )
+    if sell_pct >= 1
+      puts "ERROR: Sell percentage cannot be 1 or higher."
+      exit
+    end
+    
+    ceiling_pct = BigDecimal.new( ENV["CEILING_PCT"] )
+    if ceiling_pct >= 1
+      puts "ERROR: Ceiling percentage cannot be 1 or higher."
       exit
     end
     
@@ -195,11 +235,13 @@ namespace :bots do
                             strategy: strategy, 
                             token_qty: token_qty,
                             original_coin_qty: original_coin_qty,
-                            percentage_range: percentage_range,
+                            buy_pct: buy_pct,
+                            sell_pct: sell_pct,
+                            ceiling_pct: ceiling_pct,
                             wait_period: wait_period,
                             active: true )
     
-    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.token_qty.to_s} #{trader.trading_pair.token.symbol}, Percent = #{trader.percentage_range.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}, Original Coin Qty = #{trader.original_coin_qty}."
+    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.token_qty.to_s} #{trader.trading_pair.token.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Ceiling Pct = #{trader.ceiling_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}, Original Coin Qty = #{trader.original_coin_qty}."
     
   end
 

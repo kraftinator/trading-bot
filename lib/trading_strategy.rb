@@ -7,7 +7,6 @@ class TradingStrategy
     @tps = opts[:tps] ## Trading Pair Stats
     @trader = opts[:trader]
     @precision = @trader.trading_pair.precision
-    #@precision = opts[:precision]
   end
    
   def process
@@ -231,7 +230,7 @@ class TradingStrategy
     ## Choose last price or weighted avg price, whichever is less.
     limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
     ## Get target limit price based on percentage range.
-    limit_price = limit_price * ( 1 - @trader.percentage_range.to_f )
+    limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
     ## Add precision to limit price. API will reject if too long.
     limit_price = limit_price.round( @precision )
     limit_price
@@ -242,9 +241,8 @@ class TradingStrategy
     qty = ( @trader.token_qty.to_f ).floor
     ## Calculate expected SELL coin total
     buy_coin_total = @current_order['executedQty'].to_f * @current_order['price'].to_f
-    sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
+    sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct.to_f )
     #sell_coin_total = sell_coin_total.floor( @precision )
-    sell_coin_total = sell_coin_total #.round( @precision )
     ## Calculate limit price from SELL coin total
     limit_price = sell_coin_total / qty
     ## If last price > limit price, set limit price to last price
@@ -257,7 +255,7 @@ class TradingStrategy
   
   def old_sell_order_limit_price
     ## Get initial limit price.
-    limit_price = @current_order['price'].to_f * ( 1 + @trader.percentage_range.to_f )
+    limit_price = @current_order['price'].to_f * ( 1 + @trader.sell_pct.to_f )
     ## If last price > limit price, set limit price to last price
     limit_price = @tps['last_price'] if limit_price < @tps['last_price']
     ## Add precision to limit price. API will reject if too long.           

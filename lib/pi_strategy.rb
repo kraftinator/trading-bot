@@ -33,23 +33,23 @@ class PiStrategy < TradingStrategy
 =end
        
     if @eth_status['price_change_pct'] > 10
-      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.1 )
+      limit_price = limit_price * ( 1 - @trader.buy_pct.to_f - 0.1 )
     elsif @eth_status['price_change_pct'] > 5
-      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.05 )
+      limit_price = limit_price * ( 1 - @trader.buy_pct.to_f - 0.05 )
     elsif @eth_status['price_change_pct'] < -10
       limit_price = limit_price * ( 1 - 0.005 )
     elsif @eth_status['price_change_pct'] < -5
       limit_price = limit_price * ( 1 - 0.005 )
     elsif @tps['price_change_pct'] > 10
-      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.1 )
+      limit_price = limit_price * ( 1 - @trader.buy_pct.to_f - 0.1 )
     elsif @tps['price_change_pct'] > 5
-      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.05 )
+      limit_price = limit_price * ( 1 - @trader.buy_pct.to_f - 0.05 )
     elsif @tps['price_change_pct'] < -10
-      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.1 )
+      limit_price = limit_price * ( 1 - @trader.buy_pct.to_f - 0.1 )
     elsif @tps['price_change_pct'] < -5
-      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f - 0.05 )
+      limit_price = limit_price * ( 1 - @trader.buy_pct.to_f - 0.05 )
     else
-      limit_price = limit_price * ( 1 - @trader.percentage_range.to_f )
+      limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
     end
         
     ## Add precision to limit price. API will reject if too long.
@@ -71,10 +71,10 @@ class PiStrategy < TradingStrategy
       sell_coin_total = buy_coin_total * ( 1 + 0.005 )
     elsif @eth_status['price_change_pct'] < -10
       ## Token price expected to increase
-      sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
+      sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct.to_f )
     elsif @eth_status['price_change_pct'] < -5
       ## Token price expected to increase
-      sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
+      sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct.to_f )
     elsif @tps['price_change_pct'] > 10
       sell_coin_total = buy_coin_total * ( 1 + 0.005 )
     elsif @tps['price_change_pct'] > 5
@@ -84,7 +84,7 @@ class PiStrategy < TradingStrategy
     elsif @tps['price_change_pct'] < -5
       sell_coin_total = buy_coin_total * ( 1 + 0.005 )
     else
-      sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
+      sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct.to_f )
     end
     
     ## Calculate limit price from SELL coin total

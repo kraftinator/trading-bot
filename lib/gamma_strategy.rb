@@ -13,7 +13,7 @@ class GammaStrategy < TradingStrategy
     ## Choose last price.
     limit_price = @tps['last_price']
     ## Get target limit price based on percentage range.
-    limit_price = limit_price * ( 1 - @trader.percentage_range.to_f )
+    limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
     ## Add precision to limit price. API will reject if too long.
     limit_price = limit_price.round( @precision )
     limit_price

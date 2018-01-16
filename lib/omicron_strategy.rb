@@ -28,7 +28,7 @@ class OmicronStrategy < TradingStrategy
       if percentage_diff < 0.2
         limit_price = limit_price * ( 1 - 0.005 )
       else
-        limit_price = limit_price * ( 1 - @trader.percentage_range.to_f )
+        limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
       end
     end
     
@@ -49,7 +49,7 @@ class OmicronStrategy < TradingStrategy
       if percentage_diff < 0.2
         sell_coin_total = buy_coin_total * ( 1 + 0.005 )
       else
-        sell_coin_total = buy_coin_total * ( 1 + @trader.percentage_range.to_f )
+        sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct.to_f )
       end
     else
       sell_coin_total = buy_coin_total * ( 1 + 0.005 )

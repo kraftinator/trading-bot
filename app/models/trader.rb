@@ -12,13 +12,13 @@ class Trader < ApplicationRecord
   end
   
   def siblings
-    traders = Trader.where( trading_pair: trading_pair, strategy: strategy, percentage_range: percentage_range, wait_period: wait_period, active: active ).to_a
+    traders = Trader.where( trading_pair: trading_pair, strategy: strategy, buy_pct: buy_pct, sell_pct: sell_pct, ceiling_pct: ceiling_pct, wait_period: wait_period, active: active ).to_a
     traders.delete( self )
     traders
   end
   
   def sibling?( sibling )
-    trading_pair == sibling.trading_pair && strategy == sibling.strategy && percentage_range == sibling.percentage_range && wait_period == sibling.wait_period
+    trading_pair == sibling.trading_pair && strategy == sibling.strategy && buy_pct == sibling.buy_pct && sell_pct == sibling.sell_pct && ceiling_pct = sibling.ceiling_pct && wait_period == sibling.wait_period
   end
   
   def last_fulfilled_order
