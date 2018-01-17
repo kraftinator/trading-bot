@@ -91,7 +91,8 @@ class Trader < ApplicationRecord
       "#{strategy.name} #{market_type}"
     when 'GAMMA', 'DELTA', 'THETA', 'EPSILON', 'ZETA'
       if ceiling_pct > 0
-        "#{strategy.name} #{market_type} CAP #{( ceiling_pct * 100 ).to_i}%"
+        #"#{strategy.name} #{market_type} CAP #{( ceiling_pct * 100 ).to_i}%"
+        "#{strategy.name} #{( ceiling_pct * 100 ).to_i} #{market_type}"
       else
         "#{strategy.name} #{market_type}"
       end
