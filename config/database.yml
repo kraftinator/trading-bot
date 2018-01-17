@@ -20,8 +20,7 @@ development:
   host: localhost
   pool: 5
   timeout: 5000
-  username: akraft
-  password: secret
+
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
