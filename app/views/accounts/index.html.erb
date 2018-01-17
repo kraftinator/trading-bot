@@ -1,5 +1,38 @@
-<h1>Accounts#index</h1>
-<p>Find me in app/views/accounts/index.html.erb</p>
-
-<br><br>
+<h1>Welcome, <%= current_user.first_name%>!</h1>
+<table>
+	<tr>
+		<th>Id</th>
+		<th>Trading Pair</th>
+		<th>Strategy</th>
+		<th>Buys</th>
+		<th>Sells</th>
+		<th>Pct</th>
+		<th>Total</th>
+		<th>Profit</th>
+		<th>Last Action</th>
+		<th>Active</th>
+		
+	</tr>
+	<% @traders.each do |x| %>
+    	<%last_action_date = x.show_last_fulfilled_order_date
+    	if last_action_date
+      	  last_action_words = "#{time_ago_in_words( last_action_date ) } ago"
+    	else
+      	  last_action_words = ''
+    	end%>
+		<tr>
+			<td><%= x.id %></td>
+			<% y = TradingPair.where(id: x.trading_pair_id).first %>
+			<td><%= y.symbol %></td>
+			<td><%= x.strategy.name %></td>
+			<td><%= x.buy_count %></td>
+			<td><%= x.sell_count %></td>
+			<td><%= x.percentage_range.to_f %></td>
+			<td><%= x.coin_amount %></td>
+			<td><%= x.profit %></td>
+			<td><%= last_action_words %></td>
+			<td><%= x.active %></td>
+		</tr>
+	<% end %>
+</table>
 <%= link_to "Logout", destroy_user_session_path, method: :delete %>
