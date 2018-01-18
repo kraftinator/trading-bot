@@ -17,7 +17,7 @@ module BotTrader
   module_function
   
   TradingPairStatus = Struct.new( :last_price, :weighted_avg_price, :high_price, :low_price, :bid_total, :ask_total, :price_change_pct )
-  EthStatus = Struct.new( :bid_total, :ask_total, :price_change_pct )
+  EthStatus = Struct.new( :bid_total, :ask_total, :price_change_pct, :last_price )
   
   ## Set client
   def set_client
@@ -39,7 +39,7 @@ module BotTrader
     ask_total = 0
     asks.each { |a| ask_total += a[0].to_f * a[1].to_f }
     ## Create 
-    EthStatus.new( bid_total, ask_total, twenty_four_hour['priceChangePercent'].to_f )
+    EthStatus.new( bid_total, ask_total, twenty_four_hour['priceChangePercent'].to_f, twenty_four_hour['lastPrice'].to_f )
   end
   
   def trading_pair_status( trading_pair )
