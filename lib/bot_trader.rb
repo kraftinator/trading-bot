@@ -332,7 +332,7 @@ module BotTrader
       ## Cancel local limit order
       limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
     else
-      puts "WARNING: Bot2 (#{bot1.id}) current order is not a BUY side."
+      puts "WARNING: Bot1 (#{bot1.id}) current order is not a BUY side."
       exit
     end
     
