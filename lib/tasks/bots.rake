@@ -6,11 +6,17 @@ namespace :bots do
   task :create => :environment do
     
     ## Usage:
-    ## rake bots:create COIN=ETH TOKEN=REQ COIN_QTY=0.05 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
+    ## rake bots:create COIN=ETH TOKEN=REQ COIN_QTY=0.05 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA USER_ID=1
     
     puts "Creating bot..."
     
     ## Get params
+    user = User.find( ENV["USER_ID"].to_i )
+    unless user
+      puts "ERROR: User #{user_id} not found."
+      exit
+    end
+    
     coin = Coin.where( symbol: ENV["COIN"] ).first
     unless coin
       puts "ERROR: Coin #{ENV['COIN']} not found."
@@ -79,9 +85,14 @@ namespace :bots do
                             sell_pct: sell_pct,
                             ceiling_pct: ceiling_pct,
                             wait_period: wait_period,
+                            user: user,
                             active: true )
-    
-    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.coin_qty.to_s} #{trader.trading_pair.coin.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}."
+                            
+    if trader.errors.any?
+      puts "ERROR: #{trader.errors.full_messages}"
+    else
+      puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.coin_qty.to_s} #{trader.trading_pair.coin.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}."
+    end
     
   end
 
@@ -89,11 +100,18 @@ namespace :bots do
   task :create_from_tokens => :environment do
     
     ## Usage:
-    ## rake bots:create_from_tokens COIN=ETH TOKEN=REQ TOKEN_QTY=200 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
+    ## rake bots:create_from_tokens COIN=ETH TOKEN=REQ TOKEN_QTY=200 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA USER_ID=1
     
     puts "Creating bot..."
     
     ## Get params
+    user = User.find( ENV["USER_ID"].to_i )
+    unless user
+      puts "ERROR: User #{user_id} not found."
+      exit
+    end
+    
+    
     coin = Coin.where( symbol: ENV["COIN"] ).first
     unless coin
       puts "ERROR: Coin #{ENV['COIN']} not found."
@@ -161,6 +179,7 @@ namespace :bots do
                             sell_pct: sell_pct,
                             ceiling_pct: ceiling_pct,
                             wait_period: wait_period,
+                            user: user,
                             active: true )
     
     puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.token_qty.to_s} #{trader.trading_pair.token.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Ceiling Pct = #{trader.ceiling_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}."
@@ -171,11 +190,17 @@ namespace :bots do
   task :create_from_tokens_with_original_qty => :environment do
     
     ## Usage:
-    ## rake bots:create_from_tokens_with_original_qty COIN=ETH TOKEN=REQ TOKEN_QTY=100 BUY_PCT=0.005 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA
+    ## rake bots:create_from_tokens_with_original_qty COIN=ETH TOKEN=REQ TOKEN_QTY=100 BUY_PCT=0.005 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA USER_ID=1
     
     puts "Creating bot..."
     
     ## Get params
+    user = User.find( ENV["USER_ID"].to_i )
+    unless user
+      puts "ERROR: User #{user_id} not found."
+      exit
+    end
+    
     coin = Coin.where( symbol: ENV["COIN"] ).first
     unless coin
       puts "ERROR: Coin #{ENV['COIN']} not found."
@@ -254,6 +279,7 @@ namespace :bots do
                             sell_pct: sell_pct,
                             ceiling_pct: ceiling_pct,
                             wait_period: wait_period,
+                            user: user,
                             active: true )
     
     puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.token_qty.to_s} #{trader.trading_pair.token.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Ceiling Pct = #{trader.ceiling_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}, Original Coin Qty = #{trader.original_coin_qty}."

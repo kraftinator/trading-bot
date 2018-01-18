@@ -24,6 +24,8 @@ class TradingStrategy
         case @current_order['status']
         when 'FILLED'
           process_filled_buy_order
+        when 'PARTIALLY_FILLED'
+          process_partially_filled_buy_order
         when 'NEW'
           process_open_buy_order
         when 'CANCELED'
@@ -126,6 +128,10 @@ class TradingStrategy
     @trader.update( coin_qty: @trader.coin_qty - coin_qty, token_qty: @trader.token_qty + token_qty,  buy_count: @trader.buy_count + 1 )
     ## Create sell order
     create_sell_order( sell_order_limit_price )
+  end
+  
+  def process_partially_filled_buy_order
+    ## For now, do nothing
   end
    
   def process_filled_sell_order
