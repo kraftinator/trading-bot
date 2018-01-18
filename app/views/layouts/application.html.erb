@@ -9,6 +9,12 @@
   </head>
 
   <body>
+    <% if current_user %>
+      <%= render partial: "layouts/header" %>
+    <% end %>
     <%= yield %>
+    <% if current_user %>
+      <%= render partial: "layouts/footer" %>
+    <% end %>
   </body>
 </html>
