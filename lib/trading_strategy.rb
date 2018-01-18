@@ -7,6 +7,7 @@ class TradingStrategy
     @tps = opts[:tps] ## Trading Pair Stats
     @trader = opts[:trader]
     @precision = @trader.trading_pair.precision
+    @eth_status = opts[:eth_status]
   end
    
   def process

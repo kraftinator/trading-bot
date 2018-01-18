@@ -2,10 +2,10 @@ require './lib/trading_strategy.rb'
 
 class PiStrategy < TradingStrategy
   
-  def initialize( opts={} )
-    super( opts )
-    @eth_status = opts[:eth_status]
-  end
+  #def initialize( opts={} )
+  #  super( opts )
+  #  @eth_status = opts[:eth_status]
+  #end
   
   
   def buy_order_limit_price
