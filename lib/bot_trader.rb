@@ -82,29 +82,29 @@ module BotTrader
     strategy = nil
     case trader.strategy.name
     when 'ALPHA'
-      strategy = AlphaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = AlphaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'BETA'
-      strategy = BetaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = BetaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'GAMMA'
-      strategy = GammaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = GammaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'DELTA'
-      strategy = DeltaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = DeltaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'EPSILON'
-      strategy = EpsilonStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = EpsilonStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'ZETA'
-      strategy = ZetaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = ZetaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'ETA'
-      strategy = EtaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = EtaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'THETA'
-      strategy = ThetaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = ThetaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'IOTA'
-      strategy = IotaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = IotaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'KAPPA'
-      strategy = KappaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = KappaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'LAMBDA'
-      strategy = LambdaStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = LambdaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'OMICRON'
-      strategy = OmicronStrategy.new( client: @client, tps: @tps, trader: trader )
+      strategy = OmicronStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'PI'
       strategy = PiStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     end
