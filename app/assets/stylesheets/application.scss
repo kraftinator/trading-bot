@@ -1,4 +1,5 @@
 // Custom bootstrap variables must be set or imported *before* bootstrap.
+//@import "bootstrap-sprockets";
 //@import "bootstrap";
 @import "../../../vendor/assets/stylesheets/bootstrap/bootstrap.scss";
 //body{
