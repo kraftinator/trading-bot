@@ -1,2 +1,46 @@
-<h1>TradingPairs#show</h1>
-<p>Find me in app/views/trading_pairs/show.html.erb</p>
+<div class="page-header">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class=""><%= @trading_pair.display_name %></h1>
+    </div>
+  </div>
+</div>
+
+<br><br>
+
+<div class="row">
+  <div class="col-lg-12">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>STRATEGY</th>
+          <th>BUY%</th>
+          <th>SELL%</th>
+          <th>CLG%</th>
+          <th>SELLS</th>
+          <th>TOTAL VALUE</th>
+          <th>LAST ACTION</th>
+          <th>SIDE</th>
+          <th>PRICE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @traders.each do |trader| %>
+          <tr>
+            <td><%= trader.id.to_s %></td>
+            <td><%= trader.display_name %></td>
+            <td><%= number_to_percentage( trader.buy_pct * 100, precision: 1, format: "%n" ) %></td>
+            <td><%= number_to_percentage( trader.sell_pct * 100, precision: 1, format: "%n" ) %></td>
+            <td><%= trader.ceiling_pct > 0 ? number_to_percentage( trader.ceiling_pct * 100, precision: 1, format: "%n" ) : '---' %></td>
+            <td><%= trader.sell_count.to_s %></td>
+            <td><%= number_with_precision( trader.coin_amount, precision: trader.trading_pair.precision ) %></td>
+            <td><%= trader.last_fulfilled_order ? time_ago_in_words( trader.last_fulfilled_order.updated_at ) + ' ago' : '---' %></td>
+            <td><%= trader.current_order ? trader.current_order.side : '---' %>
+            <td><%= trader.current_order ? number_with_precision( trader.current_order.price, precision: trader.trading_pair.precision ) : '---'  %></td>
+          </tr>  
+        <% end %>
+      </tbody>
+    </table>
+  </div>  
+</div>
