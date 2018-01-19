@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
 
+  #get 'trading_pairs/edit'
+  #get 'trading_pairs/index'
+  #get 'trading_pairs/new'
+  #get 'trading_pairs/show'
+
   get 'accounts/index'
   get 'accounts/inactive'
 
@@ -9,7 +14,7 @@ Rails.application.routes.draw do
   get 'home/index'
   get 'home/index2'
   
-
+  resources :trading_pairs
 
   devise_for :users
   

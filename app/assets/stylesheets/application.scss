@@ -1,5 +1,6 @@
 // Custom bootstrap variables must be set or imported *before* bootstrap.
-@import "bootstrap";
-body{
-  margin-left:5em;
-  margin-top:1em;}
+//@import "bootstrap";
+@import "../../../vendor/assets/stylesheets/bootstrap/bootstrap.scss";
+//body{
+//  margin-left:5em;
+  //margin-top:4em;}

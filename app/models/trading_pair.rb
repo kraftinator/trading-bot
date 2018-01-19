@@ -9,4 +9,8 @@ class TradingPair < ApplicationRecord
     "#{token.symbol}#{coin.symbol}"
   end
   
+  def display_name
+    "#{token.symbol}/#{coin.symbol}"
+  end
+  
 end
