@@ -18,7 +18,10 @@ Rails.application.routes.draw do
 
   devise_for :users
   
+  #add devise_scope :user do get '/users/sign_out' => 'devise/sessions#destroy'
+  
   devise_scope :user do
+    
     authenticated :user do
       root "accounts#index", as: :authenticated_root
     end
@@ -26,7 +29,11 @@ Rails.application.routes.draw do
     unauthenticated do
       root "devise/sessions#new", as: :unauthenticated_root
     end
+    
+    get '/users/sign_out' => 'devise/sessions#destroy'
+    
   end
+  
 
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
 end
