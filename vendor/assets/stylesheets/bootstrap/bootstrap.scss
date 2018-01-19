@@ -1,12 +1,6 @@
-@import "cosmo-min-old";
+//@import "cosmo-min";
+@import "flatly-min";
 
-/*
-$bootstrap-sass-asset-helper: false;
-$icon-font-name: 'glyphicons-halflings-regular';
-$icon-font-svg-id: 'glyphicons_halflingsregular';
-$icon-font-path: '../fonts/';
-@import "glyphicons";
-*/
 @font-face {
   font-family: 'Glyphicons Halflings';
   src: url('/assets/fonts/glyphicons-halflings-regular.eot');
