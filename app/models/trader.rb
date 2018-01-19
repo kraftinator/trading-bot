@@ -8,6 +8,8 @@ class Trader < ApplicationRecord
   belongs_to :merged_trader, :class_name => "Trader", optional: true
   has_many :children, :class_name => "Trader", :foreign_key => "merged_trader_id"
   
+  scope :active, -> { where( active: true ) }
+  
   def current_order
     limit_orders.where( open: true ).first
   end
