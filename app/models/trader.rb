@@ -18,7 +18,8 @@ class Trader < ApplicationRecord
     return 0 if sell_count == 0
     start_date = created_at.to_date
     end_date = Time.current.to_date
-    days = ( end_date - start_date ).to_i
+    #days = ( end_date - start_date ).to_i
+    days = ( start_date..end_date).count
     ( sell_count.to_f / days )
   end
   
