@@ -1,6 +1,8 @@
 class TradersController < ApplicationController
   
   def edit
+    @trader = Trader.where(id:params[:id]).first
+    @strategies = Strategy.all
   end
 
   def index
@@ -13,6 +15,19 @@ class TradersController < ApplicationController
   end
 
   def show
+  
+  end
+  
+  def update
+    @trader = Trader.where(id:params[:id]).first
+    @trader.update(trader_params)
+    redirect_to :controller => "trading_pairs", :action => "show", :id => @trader.trading_pair_id
+  end
+  
+  private
+  
+  def trader_params
+    params.require(:trader).permit(:id, :strategy_id, :buy_pct, :sell_pct, :ceiling_pct)
   end
   
   
