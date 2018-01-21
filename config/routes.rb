@@ -22,7 +22,11 @@ Rails.application.routes.draw do
   get 'home/index'
   get 'home/index2'
   
-  resources :trading_pairs
+  
+  resources :trading_pairs do
+    get :revenue, on: :member
+  end
+  
   resources :traders
 
   devise_for :users

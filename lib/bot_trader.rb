@@ -27,6 +27,11 @@ module BotTrader
     OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE)
   end
   
+  def client
+    set_client
+    @client
+  end
+  
   def load_eth_status
     twenty_four_hour = @client.twenty_four_hour( symbol: 'ETHUSDT' )
     depth = @client.depth( symbol: 'ETHUSDT' )
