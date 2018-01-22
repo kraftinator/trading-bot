@@ -1,3 +1,5 @@
+require './lib/bot_trader.rb'
+
 class AccountsController < ApplicationController
   
   before_action :authenticate_user!

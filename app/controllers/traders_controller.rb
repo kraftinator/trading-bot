@@ -1,13 +1,12 @@
 class TradersController < ApplicationController
   
+  before_action :set_trader, only: [:show, :edit, :update]
+  
   def edit
-    @trader = Trader.where(id:params[:id]).first
-    @strategies = Strategy.all
+    @strategies = Strategy.all.order( 'name' )
   end
 
   def index
-    #@traders = current_user.traders.active.to_a.sort_by( &:show_last_fulfilled_order_date ).reverse
-    #@traders = current_user.traders.active.order( 'sell_count desc' )
     @traders = current_user.traders.active.to_a.sort_by( &:avg_sells_per_day ).reverse
   end
 
@@ -15,7 +14,7 @@ class TradersController < ApplicationController
   end
 
   def show
-    @trader = Trader.where(id:params[:id]).first
+
     ## Get USD value
     client = BotTrader.client
     twenty_four_hour = client.twenty_four_hour( symbol: 'ETHUSDT' )
@@ -31,15 +30,18 @@ class TradersController < ApplicationController
   end
   
   def update
-    @trader = Trader.where(id:params[:id]).first
     @trader.update(trader_params)
-    redirect_to :controller => "trading_pairs", :action => "show", :id => @trader.trading_pair_id
+    redirect_to trading_pair_path( @trader.trading_pair )
   end
   
   private
   
   def trader_params
     params.require(:trader).permit(:id, :strategy_id, :buy_pct, :sell_pct, :ceiling_pct)
+  end
+  
+  def set_trader
+    @trader = Trader.find( params[:id] )
   end
   
   
