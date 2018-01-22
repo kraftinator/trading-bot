@@ -16,6 +16,23 @@ class TradingPairsController < ApplicationController
 
   def show
     @traders = @trading_pair.traders.active.to_a.sort_by( &:show_last_fulfilled_order_date ).reverse
+    OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE)
+    response = HTTParty.get("https://api.etherscan.io/api?module=stats&action=ethprice")
+    @current_price = response.parsed_response['result']['ethusd'].to_f
+    @coin_total = 0.0
+    @profit_total = 0.0
+    @original_total = 0.0
+    
+    @traders.each do |trader|
+      @coin_total += trader.coin_amount
+      @profit_total +=trader.profit
+      @original_total += trader.original_coin_qty
+    end
+    
+    @coin_total_dollars = formatted_currency(@coin_total * @current_price)
+    @profit_total_dollars = formatted_currency(@profit_total * @current_price)
+    @original_total_dollars = formatted_currency(@original_total * @current_price)
+    
   end
   
   def revenue
@@ -38,6 +55,11 @@ class TradingPairsController < ApplicationController
   
   def set_trading_pair
     @trading_pair = TradingPair.find( params[:id] )
+  end
+  
+  def formatted_currency( amount )
+    amount = '%.2f' % amount
+    '$' + amount
   end
   
 end
