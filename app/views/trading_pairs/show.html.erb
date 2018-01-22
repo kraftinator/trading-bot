@@ -1,3 +1,4 @@
+<% javascript_include_tag "sorttable" %>
 <div class="page-header">
   <div class="row">
     <div class="col-lg-12">
@@ -43,5 +44,10 @@
         <% end %>
       </tbody>
     </table>
+	<div style="float:left; width:20%"> Amount invested: <%= @original_total %> </div> <%= @original_total_dollars %>
+	<br>
+	<div style="float:left; width:20%"> Total profit: <%= @profit_total %> </div> <%= @profit_total_dollars %> &nbsp&nbsp|&nbsp&nbsp <%= '%.2f' % ((@profit_total/@original_total)*100) %>%
+	<br>
+	<div style="float:left; width:20%"> Grand total: <%= @coin_total %> </div> <%= @coin_total_dollars %>
   </div>  
 </div>
