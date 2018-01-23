@@ -17,3 +17,18 @@
 //= require jquery3
 //= require popper
 //= require_tree .
+	
+	var dataTable;
+	document.addEventListener("turbolinks:load", function() {
+		dataTable = $('.datatable-list').DataTable( {
+			"lengthMenu":[[-1, 25, 50, 100], ["All", 25, 50, 100]],
+			"order":[],
+		});
+	});
+	
+	document.addEventListener("turbolinks:before-cache", function() {
+		if (dataTable !== null) {
+			dataTable.destroy();
+			dataTable = null;
+		}	
+	});

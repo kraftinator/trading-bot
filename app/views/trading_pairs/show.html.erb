@@ -12,7 +12,7 @@
 
 <div class="row">
   <div class="col-lg-12">
-    <table class="table table-striped table-hover sortable">
+    <table class="table table-striped table-hover datatable-list">
       <thead>
         <tr>
           <th>ID</th>
@@ -30,7 +30,7 @@
       <tbody>
         <% @traders.each do |trader| %>
           <tr>
-            <td><%= link_to trader.id.to_s, edit_trader_path( trader ) %></td>
+            <td><%= link_to trader.id.to_s, trader_path( trader ) %></td>
             <td><%= trader.display_name %></td>
             <td><%= number_to_percentage( trader.buy_pct * 100, precision: 1, format: "%n" ) %></td>
             <td><%= number_to_percentage( trader.sell_pct * 100, precision: 1, format: "%n" ) %></td>
