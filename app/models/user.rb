@@ -35,4 +35,10 @@ class User < ApplicationRecord
     return coin_total, results
   end
   
+  def partially_filled_orders
+    pfos = []
+    traders.each { |t| pfos << t.current_order.partially_filled_order if t.current_order and t.current_order.partially_filled_order }
+    pfos
+  end
+  
 end

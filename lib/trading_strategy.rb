@@ -36,6 +36,8 @@ class TradingStrategy
         case @current_order['status']
         when 'FILLED'
           process_filled_sell_order
+        when 'PARTIALLY_FILLED'
+          process_partially_filled_sell_order
         when 'NEW'
           process_open_sell_order
         when 'CANCELED'
@@ -132,7 +134,15 @@ class TradingStrategy
   end
   
   def process_partially_filled_buy_order
-    ## For now, do nothing
+    unless @trader.current_order.partially_filled_order
+      PartiallyFilledOrder.create( limit_order: @trader.current_order, executed_qty: @current_order['executedQty'].to_f )
+    end
+  end
+  
+  def process_partially_filled_sell_order
+    unless @trader.current_order.partially_filled_order
+      PartiallyFilledOrder.create( limit_order: @trader.current_order, executed_qty: @current_order['executedQty'].to_f )
+    end
   end
    
   def process_filled_sell_order

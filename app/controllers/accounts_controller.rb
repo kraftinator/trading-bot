@@ -37,6 +37,7 @@ class AccountsController < ApplicationController
     #twenty_four_hour = client.twenty_four_hour( symbol: 'ETHUSDT' )
     #@eth_price = twenty_four_hour['lastPrice'].to_f
     #@eth_price = 1100.00
+    @partially_filled_orders = current_user.partially_filled_orders
   end
   
   def inactive

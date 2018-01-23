@@ -22,6 +22,10 @@ class Trader < ApplicationRecord
     ( sell_count.to_f / days )
   end
   
+  def partially_filled_order
+    current_order.partially_filled_order
+  end
+  
   def siblings
     traders = Trader.where( trading_pair: trading_pair, strategy: strategy, buy_pct: buy_pct, sell_pct: sell_pct, ceiling_pct: ceiling_pct, wait_period: wait_period, active: active ).to_a
     traders.delete( self )
