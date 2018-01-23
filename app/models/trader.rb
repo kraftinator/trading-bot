@@ -18,7 +18,6 @@ class Trader < ApplicationRecord
     return 0 if sell_count == 0
     start_date = created_at.to_date
     end_date = Time.current.to_date
-    #days = ( end_date - start_date ).to_i
     days = ( start_date..end_date).count
     ( sell_count.to_f / days )
   end
@@ -78,32 +77,12 @@ class Trader < ApplicationRecord
     '$' + amount
   end
   
-=begin  
-  def display_name
-    case strategy.name
-    when 'ALPHA', 'BETA', 'IOTA', 'LAMBDA', 'OMICRON', 'PI'
-      "#{strategy.name} #{market_type} #{market_ratio}"
-    when 'GAMMA', 'DELTA', 'THETA', 'EPSILON', 'ZETA'
-      if ceiling_pct > 0
-        "#{strategy.name} #{market_type} #{market_ratio} CAP #{( ceiling_pct * 1000 ).to_i}"
-      else
-        "#{strategy.name} #{market_type} #{market_ratio}"
-      end
-    when 'ETA'
-      "#{strategy.name} #{( sell_pct * 1000 ).to_i}"
-    else
-      strategy.name
-    end    
-  end
-=end 
-  
   def display_name
     case strategy.name
     when 'ALPHA', 'BETA', 'IOTA', 'LAMBDA', 'OMICRON', 'PI'
       "#{strategy.name} #{market_type}"
     when 'GAMMA', 'DELTA', 'THETA', 'EPSILON', 'ZETA'
       if ceiling_pct > 0
-        #"#{strategy.name} #{market_type} CAP #{( ceiling_pct * 100 ).to_i}%"
         "#{strategy.name} #{( ceiling_pct * 100 ).to_i} #{market_type}"
       else
         "#{strategy.name} #{market_type}"
@@ -114,9 +93,19 @@ class Trader < ApplicationRecord
   end
    
   def market_type
-    return "BEAR" if buy_pct > sell_pct
-    return "BULL" if buy_pct < sell_pct
-    market_type = "NEUTRAL"
+    if buy_pct > sell_pct
+      spread = ( ( buy_pct - sell_pct ) * 100 )
+      spread = ( spread == spread.floor ) ? spread.to_i : spread
+      "BEAR #{spread}-S"
+    elsif buy_pct < sell_pct
+      spread = ( ( sell_pct - buy_pct ) * 100 )
+      spread = ( spread == spread.floor ) ? spread.to_i : spread
+      "BULL #{spread}-S"
+    else
+      spread = sell_pct * 100
+      spread = ( spread == spread.floor ) ? spread.to_i : spread
+      "NEUTRAL #{spread}"
+    end
   end
   
   def market_ratio
