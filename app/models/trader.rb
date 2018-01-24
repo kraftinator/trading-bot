@@ -95,22 +95,33 @@ class Trader < ApplicationRecord
       strategy.name
     end    
   end
-   
+
   def market_type
     if buy_pct > sell_pct
-      spread = ( ( buy_pct - sell_pct ) * 100 )
-      spread = ( spread == spread.floor ) ? spread.to_i : spread
-      "BEAR #{spread}-S"
+      "BEAR"
     elsif buy_pct < sell_pct
-      spread = ( ( sell_pct - buy_pct ) * 100 )
-      spread = ( spread == spread.floor ) ? spread.to_i : spread
-      "BULL #{spread}-S"
+      "BULL"
     else
-      spread = sell_pct * 100
-      spread = ( spread == spread.floor ) ? spread.to_i : spread
-      "NEUTRAL #{spread}"
+      ""
     end
   end
+
+   
+  #def market_type
+  #  if buy_pct > sell_pct
+  #    spread = ( ( buy_pct - sell_pct ) * 100 )
+  #    spread = ( spread == spread.floor ) ? spread.to_i : spread
+  #    "BEAR #{spread}-S"
+  #  elsif buy_pct < sell_pct
+  #    spread = ( ( sell_pct - buy_pct ) * 100 )
+  #    spread = ( spread == spread.floor ) ? spread.to_i : spread
+  #    "BULL #{spread}-S"
+  #  else
+  #    spread = sell_pct * 100
+  #    spread = ( spread == spread.floor ) ? spread.to_i : spread
+  #    "NEUTRAL #{spread}"
+  #  end
+  #end
   
   def market_ratio
     "#{( buy_pct * 1000 ).to_i}-#{( sell_pct * 1000 ).to_i}"
