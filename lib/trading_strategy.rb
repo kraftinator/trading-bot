@@ -13,6 +13,10 @@ class TradingStrategy
   def process
      
     if @trader.current_order
+      
+      if @trader.current_order.side == "SELL" &&  @tps['high_price'] < @trader.current_order.price
+        return true
+      end
               
       ## Retrieve order from API
       @current_order = @client.query_order( symbol: @trader.trading_pair.symbol, orderId: @trader.current_order.order_guid )
