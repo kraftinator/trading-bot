@@ -1,6 +1,6 @@
 class TradersController < ApplicationController
   
-  before_action :set_trader, only: [:show, :edit, :update]
+  before_action :set_trader, only: [:show, :edit, :update, :order_history]
   
   def edit
     @strategies = Strategy.all.order( 'name' )
@@ -32,6 +32,10 @@ class TradersController < ApplicationController
   def update
     @trader.update(trader_params)
     redirect_to trading_pair_path( @trader.trading_pair )
+  end
+  
+  def order_history
+    @orders = @trader.limit_orders.order( 'created_at desc' )
   end
   
   private

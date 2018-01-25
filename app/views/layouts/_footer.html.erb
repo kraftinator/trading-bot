@@ -3,6 +3,12 @@
 <hr>
   <%= link_to "Home", accounts_index_path %>
   &nbsp;|&nbsp;
+  <%= link_to "Dashboard", accounts_index_path %>
+  &nbsp;|&nbsp;
+  <%= link_to "Trading Pairs", trading_pairs_path %>
+  &nbsp;|&nbsp;
+  <%= link_to "Bots", traders_path %>
+  &nbsp;|&nbsp;
   <%= link_to "Logout", destroy_user_session_path, method: :delete %>
 <br>
 </div>

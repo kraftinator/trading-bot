@@ -27,7 +27,9 @@ Rails.application.routes.draw do
     get :revenue, on: :member
   end
   
-  resources :traders
+  resources :traders do
+    get :order_history, on: :member
+  end
 
   devise_for :users
   
