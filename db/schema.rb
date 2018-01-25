@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180123171730) do
+ActiveRecord::Schema.define(version: 20180125183158) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20180123171730) do
     t.decimal  "sell_pct",                    precision: 5,  scale: 4, default: "0.0"
     t.decimal  "ceiling_pct",                 precision: 5,  scale: 4, default: "0.0"
     t.integer  "user_id"
+    t.integer  "sell_count_trigger",                                   default: 0
   end
 
   create_table "trading_pairs", force: :cascade do |t|

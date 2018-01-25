@@ -6,7 +6,7 @@ namespace :bots do
   task :create => :environment do
     
     ## Usage:
-    ## rake bots:create COIN=ETH TOKEN=REQ COIN_QTY=0.05 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 STRATEGY=ALPHA USER_ID=1
+    ## rake bots:create COIN=ETH TOKEN=REQ COIN_QTY=0.05 BUY_PCT=0.05 SELL_PCT=0.05 CEILING_PCT=0.05 WAIT_PERIOD=1440 SELL_COUNT_TRIGGER=10 STRATEGY=SIGMA USER_ID=1
     
     puts "Creating bot..."
     
@@ -70,6 +70,12 @@ namespace :bots do
       ceiling_pct = 0
     end
 
+    if ENV["SELL_COUNT_TRIGGER"]
+      sell_count_trigger = ENV["SELL_COUNT_TRIGGER"]
+    else
+      sell_count_trigger = 0
+    end
+    
     wait_period = ENV["WAIT_PERIOD"].to_i
     if wait_period < 60
       puts "ERROR: Wait period cannot be less than 60 minutes."
@@ -85,13 +91,14 @@ namespace :bots do
                             sell_pct: sell_pct,
                             ceiling_pct: ceiling_pct,
                             wait_period: wait_period,
+                            sell_count_trigger: sell_count_trigger,
                             user: user,
                             active: true )
                             
     if trader.errors.any?
       puts "ERROR: #{trader.errors.full_messages}"
     else
-      puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.coin_qty.to_s} #{trader.trading_pair.coin.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}."
+      puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.coin_qty.to_s} #{trader.trading_pair.coin.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Trigger = #{trader.sell_count_trigger}, Strategy = #{trader.strategy.name}."
     end
     
   end
@@ -254,6 +261,12 @@ namespace :bots do
       ceiling_pct = 0
     end
     
+    if ENV["SELL_COUNT_TRIGGER"]
+      sell_count_trigger = ENV["SELL_COUNT_TRIGGER"]
+    else
+      sell_count_trigger = 0
+    end
+    
     wait_period = ENV["WAIT_PERIOD"].to_i
     if wait_period < 60
       puts "ERROR: Wait period cannot be less than 60 minutes."
@@ -279,10 +292,11 @@ namespace :bots do
                             sell_pct: sell_pct,
                             ceiling_pct: ceiling_pct,
                             wait_period: wait_period,
+                            sell_count_trigger: sell_count_trigger,
                             user: user,
                             active: true )
     
-    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.token_qty.to_s} #{trader.trading_pair.token.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Ceiling Pct = #{trader.ceiling_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Strategy = #{trader.strategy.name}, Original Coin Qty = #{trader.original_coin_qty}."
+    puts "SUCCES: Bot Created! Symbol = #{trader.trading_pair.symbol}, Initial Qty = #{trader.token_qty.to_s} #{trader.trading_pair.token.symbol}, Buy Pct = #{trader.buy_pct.to_s}, Sell Pct = #{trader.sell_pct.to_s}, Ceiling Pct = #{trader.ceiling_pct.to_s}, Wait Period = #{trader.wait_period} minutes, Trigger = #{trader.sell_count_trigger}, Strategy = #{trader.strategy.name}, Original Coin Qty = #{trader.original_coin_qty}."
     
   end
 
