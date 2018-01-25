@@ -52,6 +52,7 @@ GEM
       sass (>= 3.5.2)
     builder (3.2.3)
     byebug (9.1.0)
+    chartkick (2.2.5)
     coffee-rails (4.2.2)
       coffee-script (>= 2.2.0)
       railties (>= 4.0.0)
@@ -193,6 +194,7 @@ DEPENDENCIES
   binance
   bootstrap (~> 4.0.0.beta3)
   byebug
+  chartkick
   coffee-rails (~> 4.2)
   devise
   httparty
@@ -211,4 +213,4 @@ DEPENDENCIES
   web-console (>= 3.3.0)
 
 BUNDLED WITH
-   1.13.7
+   1.16.1

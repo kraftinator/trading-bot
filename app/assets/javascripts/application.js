@@ -32,3 +32,53 @@
 			dataTable = null;
 		}	
 	});
+	
+	document.addEventListener("turbolinks:load", function() {
+	var ctx = document.getElementById("myChart");
+	var coinName = [];
+	var ethQuantity = [];
+	var x = 0;
+	$("td[id^='coin']").each( function() {
+		coinName[x] = this.id.slice(4);
+		x += 1;
+	});
+	x=0;
+	$("td[id^='value']").each( function() {
+		ethQuantity[x] = this.id.slice(5);
+		x += 1;
+	});
+	var myChart = new Chart(ctx, {
+	    type: 'pie',
+	    data: {
+	        labels: coinName,
+	        datasets: [{
+	            label: '',
+	            data: ethQuantity,
+	            backgroundColor: [
+	                'rgba(255, 99, 132, 0.2)',
+	                'rgba(54, 162, 235, 0.2)',
+	                'rgba(255, 206, 86, 0.2)',
+	                'rgba(75, 192, 192, 0.2)',
+	                'rgba(153, 102, 255, 0.2)',
+	                'rgba(255, 159, 64, 0.2)'
+	            ],
+	            borderColor: [
+	                'rgba(255,99,132,1)',
+	                'rgba(54, 162, 235, 1)',
+	                'rgba(255, 206, 86, 1)',
+	                'rgba(75, 192, 192, 1)',
+	                'rgba(153, 102, 255, 1)',
+	                'rgba(255, 159, 64, 1)'
+	            ],
+	            borderWidth: 1
+	        }]
+	    },
+		options: {
+			responsive: false,
+			title: {
+				display: true,
+				text: 'Crypto Holdings'
+			}
+		}
+	});
+	});
