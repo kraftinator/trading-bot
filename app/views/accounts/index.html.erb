@@ -5,7 +5,7 @@
     </div>
   </div>
 </div>
-
+<canvas style="float:right;margin-right:200px;" id="myChart" width="250" height="200"></canvas>
 <div class="row">
   <div class="col-lg-4">
     <table class="table table-striped table-hover">
@@ -44,15 +44,15 @@
       <tbody>
         <% @token_holdings.each do |token_holding| %>
           <tr>
-            <td><%= token_holding[:trading_pair] ? token_holding[:trading_pair].token.symbol : 'ETH' %></td>
+            <td id="coin<%= token_holding[:trading_pair] ? token_holding[:trading_pair].token.symbol : 'ETH' %>"><%= token_holding[:trading_pair] ? token_holding[:trading_pair].token.symbol : 'ETH' %></td>
             <td class="text-right"><%= token_holding[:token_amount] ? token_holding[:token_amount].to_i : '---' %></td>
-            <td class="text-right"><%= number_with_precision( token_holding[:eth_value], precision: @precision ) %></td>
+            <td id="value<%= number_with_precision( token_holding[:eth_value], precision: @precision ) %>"class="text-right"><%= number_with_precision( token_holding[:eth_value], precision: @precision ) %></td>
             <td class="text-right"><%= number_to_currency( token_holding[:fiat_value], precision: 2 ) %></td>
           </tr>
         <% end %>
       </tbody>
     </table>
-  </div>  
+  </div>
 </div>
 
 <% if @partially_filled_orders.any? %>

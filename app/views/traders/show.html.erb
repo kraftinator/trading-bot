@@ -29,7 +29,7 @@
       </thead>
       <tbody>
           <tr>
-            <td><%= @trader.id.to_s %></td>
+            <td><%= link_to @trader.id.to_s, edit_trader_path( @trader ) %></td>
             <td><%= @trader.display_name %></td>
             <td><%= number_to_percentage( @trader.buy_pct * 100, precision: 1, format: "%n" ) %></td>
             <td><%= number_to_percentage( @trader.sell_pct * 100, precision: 1, format: "%n" ) %></td>
