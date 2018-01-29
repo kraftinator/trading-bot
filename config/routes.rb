@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
 
+  #get 'exchanges/index'
+  get "exchanges", to: 'exchanges#index'
+
   #get 'traders/edit'
 
   #get 'traders/index'
