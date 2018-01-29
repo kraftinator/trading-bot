@@ -85,7 +85,7 @@ class Trader < ApplicationRecord
     case strategy.name
     when 'ALPHA', 'BETA', 'IOTA', 'LAMBDA', 'OMICRON', 'PI'
       "#{strategy.name} #{market_type}"
-    when 'GAMMA', 'DELTA', 'THETA', 'EPSILON', 'ZETA'
+    when 'GAMMA', 'DELTA', 'THETA', 'EPSILON', 'ZETA', 'SIGMA'
       if ceiling_pct > 0
         "#{strategy.name} #{( ceiling_pct * 100 ).to_i} #{market_type}"
       else
