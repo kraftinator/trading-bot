@@ -17,4 +17,6 @@ class LimitOrder < ApplicationRecord
     partially_filled_order
   end
   
+  
+  
 end
