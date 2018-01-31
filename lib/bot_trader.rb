@@ -12,6 +12,7 @@ require './lib/lambda_strategy.rb'
 require './lib/omicron_strategy.rb'
 require './lib/pi_strategy.rb'
 require './lib/sigma_strategy.rb'
+require './lib/mu_strategy.rb'
 
 module BotTrader
 
@@ -115,6 +116,8 @@ module BotTrader
       strategy = PiStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'SIGMA'
       strategy = SigmaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
+    when 'MU'
+      strategy = MuStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     end
     strategy
   end
