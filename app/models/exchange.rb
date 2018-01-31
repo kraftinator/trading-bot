@@ -14,12 +14,12 @@ class Exchange < ApplicationRecord
     client
   end
   
-  def binance?
-    name == 'Binance'
+  def authorization
+    authorization = self.authorizations.where( user: current_user )
   end
   
-  def coinbase?
+  def has_pass?
     name == 'Coinbase'
   end
-  
+
 end
