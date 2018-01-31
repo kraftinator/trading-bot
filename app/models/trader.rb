@@ -127,4 +127,26 @@ class Trader < ApplicationRecord
     "#{( buy_pct * 1000 ).to_i}-#{( sell_pct * 1000 ).to_i}"
   end
   
+  #Show bot profit in tables on main page
+  def total_profit(limit_orders, time)
+		buy_total = 0
+		sell_total = 0
+    limit_orders_per_bot = limit_orders.where("filled_at >= ? AND trader_id = ?", time, self.id).order('filled_at')
+    limit_orders_per_bot.each do |limit_order|
+		  if limit_order.side == 'BUY' && limit_order != limit_orders_per_bot.last
+		    buy_total += (limit_order.price * limit_order.qty)
+      end
+		  if limit_order.side == 'SELL'
+		    if limit_order == limit_orders_per_bot.first
+			    all_bot_orders = limit_orders.where("trader_id = ? AND filled_at IS NOT NULL", self.id).order('filled_at')
+          if all_bot_orders[all_bot_orders.length-limit_orders_per_bot.length-1].side == 'BUY'
+			      buy_total += (all_bot_orders[all_bot_orders.length-limit_orders_per_bot.length-1].price * all_bot_orders[all_bot_orders.length-limit_orders_per_bot.length-1].qty)
+          end
+			  end
+			  sell_total += (limit_order.price * limit_order.qty)
+      end
+		end
+    return(sell_total-buy_total)
+  end
+  
 end

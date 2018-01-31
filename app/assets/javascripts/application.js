@@ -10,20 +10,41 @@
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require bootstrap-sprockets
-//= require jquery
-//= require jquery_ujs
-//= require turbolinks
 //= require jquery3
+//= require jquery_ujs
 //= require popper
+//= require bootstrap-sprockets
+//= require turbolinks
 //= require_tree .
 	
 	var dataTable;
 	document.addEventListener("turbolinks:load", function() {
-		dataTable = $('.datatable-list').DataTable( {
-			"lengthMenu":[[-1, 25, 50, 100], ["All", 25, 50, 100]],
-			"order":[],
-		});
+		if ($('.datatable-list').length) {
+			dataTable = $('.datatable-list').DataTable( {
+				"lengthMenu":[[-1, 25, 50, 100], ["All", 25, 50, 100]],
+				"order":[]
+			});
+		} else if ($('.datatable-top-bots').length) {
+			$.fn.DataTable.ext.pager.numbers_length = 5;
+			dataTable = $('.datatable-top-bots').DataTable({
+				"bLengthChange":false,
+				"pageLength":5,
+				"order":[[3, "desc"]],
+				"columnDefs": [
+					{ "orderSequence":["desc", "asc"], "targets":[3, 4] },
+				]
+			});
+			$('.dataTables_wrapper').css("display", "none");
+			$('.dataTables_wrapper:first').css("display", "inline");
+			$('#timeSelector').change(function() {
+				$('.dataTables_wrapper').css("display", "none");
+				if (this.value == -1) {
+					$('.dataTables_wrapper:first').css("display", "inline");
+				} else {
+					$('.dataTables_wrapper:first').nextAll().eq(this.value).css("display", "inline");
+				}
+			});
+		}
 	});
 	
 	document.addEventListener("turbolinks:before-cache", function() {
@@ -31,6 +52,10 @@
 			dataTable.destroy();
 			dataTable = null;
 		}	
+	});
+	
+	document.addEventListener("turbolinks:load", function() {
+		
 	});
 	
 	document.addEventListener("turbolinks:load", function() {

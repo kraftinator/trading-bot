@@ -38,6 +38,12 @@ class AccountsController < ApplicationController
     #@eth_price = twenty_four_hour['lastPrice'].to_f
     #@eth_price = 1100.00
     @partially_filled_orders = current_user.partially_filled_orders
+    
+    
+    ## Top Bots variables
+    @traders = Trader.all
+    @limit_orders = LimitOrder.where("filled_at IS NOT NULL")
+    @limit_order_time = [7.days.ago, 1.month.ago, 3.months.ago, 6.months.ago, 1.year.ago, 50.years.ago]
   end
   
   def inactive
