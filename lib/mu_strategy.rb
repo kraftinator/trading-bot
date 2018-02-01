@@ -3,7 +3,7 @@ require './lib/trading_strategy.rb'
 class MuStrategy < TradingStrategy
   
   ### Gamma-Iota Hybrid
-  ### Currently using sell_count_trigger to save different bot states
+  ### Currently using state to save different bot states
   ### 0 = default Gamma behavior
   ### 1 = normal Kappa buy pricing
   ### 2 = bearish Kappa buy pricing cap
@@ -12,41 +12,41 @@ class MuStrategy < TradingStrategy
   ### Sets buy price
   def buy_order_limit_price
     ### Gamma behavior
-    if @trader.sell_count_trigger == 0
+    if @trader.state == 0
       if ( @trader.ceiling_pct > 0 ) and ( @tps['last_price'] > ( @tps['weighted_avg_price'] * ( 1 + @trader.ceiling_pct.to_f ) ) )
         limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
       else
         limit_price = @tps['last_price']
       end
       if ((@tps['high_price'] * 0.9) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.1))
-        @trader.update(sell_count_trigger: 3)
+        @trader.update(state: 3)
       else
         ## Get target limit price based on buy pct.
         limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
       end
     end
     ### Normal Kappa behavior
-    if @trader.sell_count_trigger == 1
+    if @trader.state == 1
       ## Set limit price to low price
       limit_price =  @tps['low_price']
     end
     ### Bearish Kappa behavior
-    if @trader.sell_count_trigger == 2
+    if @trader.state == 2
       ## Set limit price to low price
       limit_price =  @tps['low_price']
       limit_price =  limit_price * ( 1 - @trader.buy_pct.to_f )
     end
     ### Iota behavior
-    if @trader.sell_count_trigger == 3
+    if @trader.state == 3
       ## Choose last price or weighted avg price, whichever is less.
       limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
       if (@tps['low_price'] * 1.1) >= limit_price
-        @trader.update(sell_count_trigger: 0)
+        @trader.update(state: 0)
       end
-      if @trader.sell_count_trigger == 3
+      if @trader.state == 3
         ## Get target limit price based on percentage range and reduce by 5%. This bot is a conservative Alpha.
         limit_price = limit_price * ( 1 - @trader.sell_pct.to_f - 0.05 )
-      elsif @trader.sell_count_trigger == 0
+      elsif @trader.state == 0
         if ( @trader.ceiling_pct > 0 ) and ( @tps['last_price'] > ( @tps['weighted_avg_price'] * ( 1 + @trader.ceiling_pct.to_f ) ) )
           limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
         else
@@ -67,7 +67,7 @@ class MuStrategy < TradingStrategy
     ## Determine if limit order needs to be replaced.
     limit_order = @trader.current_order
     ### Check if bot is a bearish Kappa and only change price every 24 hours
-    if @trader.sell_count_trigger == 3
+    if @trader.state == 3
       if @trader.wait_period.minutes.ago > limit_order.created_at
         ## Determine new limit price
         limit_price = buy_order_limit_price
@@ -117,10 +117,10 @@ class MuStrategy < TradingStrategy
     ## Update trader
     @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1 )
     ## Checks if bot behavior needs to be changed
-    if rand(100+1) > 95 && @trader.sell_count_trigger == 0
-      @trader.update(sell_count_trigger: 1)
-    elsif @trader.sell_count_trigger == 1 || @trader.sell_count_trigger == 2
-      @trader.update(sell_count_trigger: 3)
+    if rand(100+1) > 95 && @trader.state == 0
+      @trader.update(state: 1)
+    elsif @trader.state == 1 || @trader.state == 2
+      @trader.update(state: 3)
     end
     ## Create new buy order
     create_buy_order( buy_order_limit_price )
