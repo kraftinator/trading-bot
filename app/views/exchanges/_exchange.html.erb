@@ -1,0 +1,10 @@
+<div class="panel panel-default">
+  <div class="panel-heading"><b><%= exchange.name %></b></div>
+  <div class="panel-body">
+    <% if current_user.authorization( exchange ) %>
+      <%= link_to 'DISCONNECT', exchange_authorization_path( exchange_id: exchange, id: current_user.authorization( exchange ).id ), :method => :delete %>
+    <% else %>
+      <%= link_to 'CONNECT', new_exchange_authorization_path( exchange ), { :class => 'btn btn-primary btn-lg' } %>
+    <% end %>
+  </div>
+</div> 

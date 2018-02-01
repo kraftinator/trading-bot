@@ -41,9 +41,9 @@ class AccountsController < ApplicationController
     
     
     ## Top Bots variables
-    @traders = Trader.all
-    @limit_orders = LimitOrder.where("filled_at IS NOT NULL")
-    @limit_order_time = [7.days.ago, 1.month.ago, 3.months.ago, 6.months.ago, 1.year.ago, 50.years.ago]
+    #@traders = Trader.all
+    #@limit_orders = LimitOrder.where("filled_at IS NOT NULL")
+    #@limit_order_time = [7.days.ago, 1.month.ago, 3.months.ago, 6.months.ago, 1.year.ago, 50.years.ago]
   end
   
   def inactive

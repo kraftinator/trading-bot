@@ -1,12 +1,20 @@
 class User < ApplicationRecord
-  
+
+  has_many  :authorizations
   has_many  :traders
   
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :trackable, :validatable
          
+
+  def connected?( exchange )
+    self.authorizations.where( exchange: exchange ).any? ? true : false
+  end
+  
+  def authorization( exchange )
+    self.authorizations.where( exchange: exchange ).first
+  end
 
   def holdings
     trading_pairs = TradingPair.with_active_traders

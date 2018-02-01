@@ -1,17 +1,8 @@
 Rails.application.routes.draw do
 
-  #get 'traders/edit'
-
-  #get 'traders/index'
-
-  #get 'traders/new'
-
-  #get 'traders/show'
-
-  #get 'trading_pairs/edit'
-  #get 'trading_pairs/index'
-  #get 'trading_pairs/new'
-  #get 'trading_pairs/show'
+  resources :exchanges do
+    resources :authorizations
+  end
 
   get 'accounts/index'
   get 'accounts/inactive'
