@@ -18,7 +18,7 @@ class MuStrategy < TradingStrategy
       else
         limit_price = @tps['last_price']
       end
-      if ((@tps['high_price'] * 0.9) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.1))
+      if ((@tps['high_price'] * 0.9) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.15))
         @trader.update(state: 'kappa_bear')
       else
         ## Get target limit price based on buy pct.
