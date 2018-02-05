@@ -117,11 +117,23 @@ class MuStrategy < TradingStrategy
     ## Update trader
     @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1 )
     ## Checks if bot behavior needs to be changed
-    if rand(100+1) > 95 && @trader.state == 'gamma'
+    puts "JMK beginning of if statement in process_filled_sell_order"
+    if @trader.strategy_id == 15
+      puts @trader.id
+      puts @trader.state
+    end
+    if rand(100) + 1 > 95 && @trader.state == 'gamma'
       @trader.update(state: 'kappa')
+      puts "JMK state updated to kappa"
     elsif @trader.state == 'kappa' || @trader.state == 'kappa_bear'
       @trader.update(state: 'iota')
+      puts "JMK state updated to iota"
     end
+    if @trader.strategy_id == 15
+      puts @trader.id
+      puts @trader.state
+    end
+    puts "JMK end of if statement in process_filled_sell_order"
     ## Create new buy order
     create_buy_order( buy_order_limit_price )
   end
