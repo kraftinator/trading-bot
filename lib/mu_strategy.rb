@@ -13,12 +13,15 @@ class MuStrategy < TradingStrategy
   def buy_order_limit_price
     ### Gamma behavior
     if @trader.state == 'gamma'
+      puts "Beginning gamma check"
       if ( @trader.ceiling_pct > 0 ) and ( @tps['last_price'] > ( @tps['weighted_avg_price'] * ( 1 + @trader.ceiling_pct.to_f ) ) )
         limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
       else
         limit_price = @tps['last_price']
       end
       if ((@tps['high_price'] * 0.9) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.15))
+        puts "Changing from gamma to kappa_bear"
+        puts "High price is #{@tps['high_price']} and low price is #{@tps['low_price']}"
         @trader.update(state: 'kappa_bear')
       else
         ## Get target limit price based on buy pct.
@@ -28,16 +31,19 @@ class MuStrategy < TradingStrategy
     ### Normal Kappa behavior
     if @trader.state == 'kappa'
       ## Set limit price to low price
+      puts "Setting kappa price"
       limit_price =  @tps['low_price']
     end
     ### Bearish Kappa behavior
     if @trader.state == 'kappa_bear'
+      puts "Setting kappa_bear price"
       ## Set limit price to low price
       limit_price =  @tps['low_price']
       limit_price =  limit_price * ( 1 - @trader.buy_pct.to_f )
     end
     ### Iota behavior
     if @trader.state == 'iota'
+      puts "Executing iota behavior"
       ## Choose last price or weighted avg price, whichever is less.
       limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
       if (@tps['low_price'] * 1.1) >= limit_price
@@ -118,10 +124,7 @@ class MuStrategy < TradingStrategy
     @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1 )
     ## Checks if bot behavior needs to be changed
     puts "JMK beginning of if statement in process_filled_sell_order"
-    if @trader.strategy_id == 15
-      puts @trader.id
-      puts @trader.state
-    end
+    puts "Bot id is #{@trader.id} and Bot state is #{@trader.state}"
     if rand(100) + 1 > 95 && @trader.state == 'gamma'
       @trader.update(state: 'kappa')
       puts "JMK state updated to kappa"
@@ -133,6 +136,7 @@ class MuStrategy < TradingStrategy
       puts @trader.id
       puts @trader.state
     end
+    puts "Bot id is #{@trader.id} and Bot state is #{@trader.state}"
     puts "JMK end of if statement in process_filled_sell_order"
     ## Create new buy order
     create_buy_order( buy_order_limit_price )
