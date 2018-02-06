@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180201021145) do
+ActiveRecord::Schema.define(version: 20180205235439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,35 @@ ActiveRecord::Schema.define(version: 20180201021145) do
     t.datetime "updated_at",  null: false
   end
 
+  create_table "campaigns", force: :cascade do |t|
+    t.integer  "user_id"
+    t.integer  "exchange_trading_pair_id"
+    t.decimal  "max_price",                precision: 15, scale: 8
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
+  end
+
   create_table "coins", force: :cascade do |t|
     t.string "symbol"
+    t.string "name"
+  end
+
+  create_table "exchange_coins", force: :cascade do |t|
+    t.integer  "exchange_id"
+    t.integer  "coin_id"
+    t.integer  "precision",   default: 0
+    t.string   "symbol"
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  create_table "exchange_trading_pairs", force: :cascade do |t|
+    t.integer  "exchange_id"
+    t.integer  "coin1_id"
+    t.integer  "coin2_id"
+    t.integer  "precision",   default: 0
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
   end
 
   create_table "exchanges", force: :cascade do |t|
@@ -87,6 +114,21 @@ ActiveRecord::Schema.define(version: 20180201021145) do
     t.integer  "user_id"
     t.integer  "sell_count_trigger",                                   default: 0
     t.string   "state"
+    t.integer  "campaign_id"
+  end
+
+  create_table "trading_pair_stats", force: :cascade do |t|
+    t.integer  "exchange_trading_pair_id"
+    t.decimal  "last_price",               precision: 15, scale: 8
+    t.decimal  "low_price",                precision: 15, scale: 8
+    t.decimal  "high_price",               precision: 15, scale: 8
+    t.decimal  "weighted_avg_price",       precision: 15, scale: 8
+    t.decimal  "price_change_pct",         precision: 15, scale: 8
+    t.decimal  "volume",                   precision: 15, scale: 8
+    t.decimal  "bid_total",                precision: 15, scale: 8
+    t.decimal  "ask_total",                precision: 15, scale: 8
+    t.datetime "created_at",                                        null: false
+    t.datetime "updated_at",                                        null: false
   end
 
   create_table "trading_pairs", force: :cascade do |t|

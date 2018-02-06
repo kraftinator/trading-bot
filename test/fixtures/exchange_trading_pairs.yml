@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  exchange_id: 1
+  coin1_id: 1
+  coin2_id: 1
+  precision: 1
+
+two:
+  exchange_id: 1
+  coin1_id: 1
+  coin2_id: 1
+  precision: 1

@@ -34,6 +34,29 @@ module BotTrader
     @client
   end
   
+  ##################################################
+  ##################################################
+  ## New code
+  def process_user( user )
+    ## Get client
+    
+    ## Get campaigns
+    campaigns = user.campaigns
+    campaigns.each do |campaign|
+      traders = campaign.traders
+      if traders.any?
+        ## Get client
+        client = campaign.client
+        ## Get stats
+        trading_pair = campaign.exchange_trading_pair
+        trading_pair.load_stats( client )
+      end
+    end
+    
+  end
+  ##################################################
+  ##################################################
+  
   def load_eth_status
     twenty_four_hour = @client.twenty_four_hour( symbol: 'ETHUSDT' )
     depth = @client.depth( symbol: 'ETHUSDT' )

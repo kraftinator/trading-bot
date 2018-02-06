@@ -1,6 +1,8 @@
 class Exchange < ApplicationRecord
   
   has_many  :authorizations
+  has_many  :coins, :class_name => "ExchangeCoin"
+  has_many  :trading_pairs, :class_name => "ExchangeTradingPair"
   
   default_scope { order('name asc') }
   
@@ -14,8 +16,8 @@ class Exchange < ApplicationRecord
     client
   end
   
-  def authorization
-    authorization = self.authorizations.where( user: current_user )
+  def authorization( user )
+    authorization = self.authorizations.where( user: user )
   end
   
   def has_pass?
