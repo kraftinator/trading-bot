@@ -47,11 +47,13 @@ class MuStrategy < TradingStrategy
       ## Choose last price or weighted avg price, whichever is less.
       limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
       if (@tps['low_price'] * 1.1) >= limit_price
+        puts "Changing state to gamma"
         @trader.update(state: 'gamma')
       end
       if @trader.state == 'iota'
         ## Get target limit price based on percentage range and reduce by 5%. This bot is a conservative Alpha.
         limit_price = limit_price * ( 1 - @trader.sell_pct.to_f - 0.05 )
+        puts "Setting iota pricing"
       elsif @trader.state == 'gamma'
         if ( @trader.ceiling_pct > 0 ) and ( @tps['last_price'] > ( @tps['weighted_avg_price'] * ( 1 + @trader.ceiling_pct.to_f ) ) )
           limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
@@ -131,10 +133,6 @@ class MuStrategy < TradingStrategy
     elsif @trader.state == 'kappa' || @trader.state == 'kappa_bear'
       @trader.update(state: 'iota')
       puts "JMK state updated to iota"
-    end
-    if @trader.strategy_id == 15
-      puts @trader.id
-      puts @trader.state
     end
     puts "Bot id is #{@trader.id} and Bot state is #{@trader.state}"
     puts "JMK end of if statement in process_filled_sell_order"
