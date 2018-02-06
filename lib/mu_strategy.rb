@@ -123,16 +123,17 @@ class MuStrategy < TradingStrategy
     coin_qty = ( @current_order['executedQty'].to_f * @current_order['price'].to_f ).round( @precision )
     token_qty = @current_order['executedQty'].to_f
     ## Update trader
-    @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1 )
     ## Checks if bot behavior needs to be changed
     puts "JMK beginning of if statement in process_filled_sell_order"
     puts "Bot id is #{@trader.id} and Bot state is #{@trader.state}"
-    if rand(100) + 1 > 95 && @trader.state == 'gamma'
-      @trader.update(state: 'kappa')
-      puts "JMK state updated to kappa"
-    elsif @trader.state == 'kappa' || @trader.state == 'kappa_bear'
-      @trader.update(state: 'iota')
+    if @trader.state == 'kappa' || @trader.state == 'kappa_bear'
+      @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1, state: 'iota' )
       puts "JMK state updated to iota"
+    elsif rand(100) + 1 > 95 && @trader.state == 'gamma'
+      @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1, state: 'kappa' )
+      puts "JMK state updated to kappa"
+    else
+      @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1 )
     end
     puts "Bot id is #{@trader.id} and Bot state is #{@trader.state}"
     puts "JMK end of if statement in process_filled_sell_order"
