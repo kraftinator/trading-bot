@@ -5,16 +5,22 @@ class Campaign < ApplicationRecord
   has_many    :traders
   delegate    :exchange, :to => :exchange_trading_pair
   
-  def load_tps
-    tps = exchange_trading_pair.current_trading_pair_stat
-    if tps.nil? or tps.updated_at < 1.minute.ago
-      tps = TradingPairStat.refresh( user.authorization( exchange ) )
-    end
+  scope :active, -> { where( 'deactivated_at is null' ) }
+  
+  def active?
+    deactivated_at.nil?
   end
   
   def client
     authorization = user.authorization( exchange )
     authorization.client
+  end
+  
+  def load_tps
+    tps = exchange_trading_pair.current_trading_pair_stat
+    if tps.nil? or tps.updated_at < 1.minute.ago
+      tps = TradingPairStat.refresh( user.authorization( exchange ) )
+    end
   end
   
   def setup_data

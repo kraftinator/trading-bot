@@ -38,21 +38,46 @@ module BotTrader
   ##################################################
   ## New code
   def process_user( user )
-    ## Get client
-    
     ## Get campaigns
-    campaigns = user.campaigns
+    campaigns = user.campaigns.active
     campaigns.each do |campaign|
-      traders = campaign.traders
+      traders = campaign.traders.active
       if traders.any?
-        ## Get client
-        client = campaign.client
         ## Get stats
         trading_pair = campaign.exchange_trading_pair
-        trading_pair.load_stats( client )
+        trading_pair.load_stats
+        ## Get client
+        client = campaign.client
+        ## If campaign's max price > 24 hour high price, keep processing
+        if campaign.max_price > trading_pair.stats.high_price
+          ## Process bots
+          traders.each do |trader|
+            strategy = load_strategy_new( client: client, trader: trader )
+            if strategy
+              strategy.process
+            else
+              puts "ERROR: Invalid strategy - #{trader.strategy.name}."
+            end
+          end
+        else
+          ## Freeze bots!
+          puts "WARNING: Max price reached. High price #{trading_pair.stats.high_price} > max price #{campaign.max_price.to_f}."
+          traders.each { |t| freeze_trader( t ) }
+          campaign.update( deactivated_at: Time.current )
+        end
       end
     end
-    
+  end
+  
+  def load_strategy_new( opts )
+    strategy = nil
+    case trader.strategy.name
+    when 'ALPHA'
+      strategy = AlphaStrategyNew.new( opts )
+    when 'GAMMA'
+      strategy = GammaStrategyNew.new( opts )
+    end
+    strategy
   end
   ##################################################
   ##################################################
