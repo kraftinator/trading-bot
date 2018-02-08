@@ -7,6 +7,11 @@ class ExchangeTradingPair < ApplicationRecord
    has_many :campaigns
    has_many :trading_pair_stats
    
+   def stats
+     return nil if trading_pair_stats.empty?
+     trading_pair_stats.order( 'created_at desc' ).first
+   end
+   
    def load_stats
      tps = stats
      if tps.nil? or tps.updated_at < 1.minute.ago
@@ -44,21 +49,6 @@ class ExchangeTradingPair < ApplicationRecord
           ## Do nothing
        end
      end
-   end
-   
-
-   
-   def trading_pair_stat
-     tps = current_trading_pair_stat
-     #if tps.nil? or tps.updated_at < 1.minute.ago
-     #   tps = TradingPairStat.refresh( self )
-     # end
-     tps     
-   end
-   
-   def stats
-     return nil if trading_pair_stats.empty?
-     trading_pair_stats.order( 'created_at desc' ).first
    end
    
    def symbol

@@ -1,6 +1,6 @@
 class TradingStrategyNew
   
-  @current_order = nil
+  @api_order = nil
   
   def initialize( opts )
     @client = opts[:client]
@@ -8,7 +8,7 @@ class TradingStrategyNew
     @trading_pair = @trader.campaign.exchange_trading_pair
     @tps = @trading_pair.stats
     @exchange = @trader.campaign.exchange
-    @eth_status = opts[:eth_status]
+    @fiat_tps = @exchange.fiat_stats
   end
    
   def process
@@ -70,7 +70,7 @@ class TradingStrategyNew
   end
   
   def create_initial_sell_order
-    limit_price = @tps['last_price'] * 1.005
+    limit_price = @tps.last_price * 1.005
     limit_price = limit_price.round( @trading_pair.precision )
     create_sell_order( limit_price )    
   end
@@ -95,10 +95,10 @@ class TradingStrategyNew
    
   def process_filled_buy_order
     ## Close the limit order.
-    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, eth_price: @eth_status['last_price'] )
+    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, eth_price: @fiat_stats.last_price )
     ## Update trader's coin and token quantities
-    coin_qty = ( @current_order['executedQty'].to_f * @current_order['price'].to_f ).round( @trading_pair.precision )
-    token_qty = @current_order['executedQty'].to_f
+    coin_qty = ( @api_order.executed_qty * @api_order.price ).round( @trading_pair.precision )
+    token_qty = @api_order.executed_qty
     
     ## Subtract trading fee
     ## NOTE: Modify to remove fee, if necessary
@@ -115,23 +115,23 @@ class TradingStrategyNew
   
   def process_partially_filled_buy_order
     unless @trader.current_order.partially_filled_order
-      PartiallyFilledOrder.create( limit_order: @trader.current_order, executed_qty: @current_order['executedQty'].to_f )
+      PartiallyFilledOrder.create( limit_order: @trader.current_order, executed_qty: @api_order.executed_qty )
     end
   end
   
   def process_partially_filled_sell_order
     unless @trader.current_order.partially_filled_order
-      PartiallyFilledOrder.create( limit_order: @trader.current_order, executed_qty: @current_order['executedQty'].to_f )
+      PartiallyFilledOrder.create( limit_order: @trader.current_order, executed_qty: @api_order.executed_qty )
     end
   end
    
   def process_filled_sell_order
     ## Yay! The order was successfully filled!
     ## Close the limit order.
-    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, eth_price: @eth_status['last_price'] )
+    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, eth_price: @fiat_stats.last_price )
     ## Update trader's coin and token quantities
-    coin_qty = ( @current_order['executedQty'].to_f * @current_order['price'].to_f ).round( @trading_pair.precision )
-    token_qty = @current_order['executedQty'].to_f
+    coin_qty = ( @api_order.executed_qty * @api_order.price ).round( @trading_pair.precision )
+    token_qty = @api_order.executed_qty
     ## Update trader
     @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1 )
     ## Create new buy order
@@ -167,11 +167,11 @@ class TradingStrategyNew
       buy_order = limit_order.buy_order
       if buy_order      
         ## Lower price to 1 percent above buy
-        limit_price = buy_order.price.to_f * 1.01
-        limit_price = @tps['last_price'] if limit_price < @tps['last_price']
+        limit_price = buy_order.price * 1.01
+        limit_price = @tps.last_price if limit_price < @tps.last_price
         ## Add precision to limit price. API will reject if too long.           
         limit_price = limit_price.round( @trading_pair.precision )
-        if limit_price < limit_order.price.to_f
+        if limit_price < limit_order.price
           ## Cancel current order
           cancelled_order = @exchange.cancel_order( client: @client, symbol: @trading_pair.symbol, order_id: limit_order.order_guid )
           if cancelled_order.failed?
@@ -202,8 +202,8 @@ class TradingStrategyNew
     limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
     puts "WARNING: Sell order #{limit_order.order_guid} canceled."
     ## Create new SELL order
-    limit_price = limit_order.price.to_f
-    limit_price = @tps['last_price'] if limit_price < @tps['last_price']
+    limit_price = limit_order.price
+    limit_price = @tps.last_price if limit_price < @tps.last_price
     create_sell_order( limit_price )
    end
    
@@ -218,9 +218,9 @@ class TradingStrategyNew
    
   def buy_order_limit_price
     ## Choose last price or weighted avg price, whichever is less.
-    limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
+    limit_price = ( @tps.last_price < @tps.weighted_avg_price ) ? @tps.last_price : @tps.weighted_avg_price
     ## Get target limit price based on percentage range.
-    limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
+    limit_price = limit_price * ( 1 - @trader.buy_pct )
     ## Add precision to limit price. API will reject if too long.
     limit_price = limit_price.round( @trading_pair.precision )
     limit_price
@@ -228,24 +228,20 @@ class TradingStrategyNew
   
   def sell_order_limit_price
     ## Get token quantity
-    qty = ( @trader.token_qty.to_f ).floor
+    qty = @trader.token_qty.floor
     ## Calculate expected SELL coin total
-    buy_coin_total = @current_order['executedQty'].to_f * @current_order['price'].to_f
-    sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct.to_f )
+    buy_coin_total = @api_order.executed_qty * @api_order.price
+    sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct )
     ## Calculate limit price from SELL coin total
     limit_price = sell_coin_total / qty
     ## If last price > limit price, set limit price to last price
-    limit_price = @tps['last_price'] if limit_price < @tps['last_price']
+    limit_price = @tps.last_price if limit_price < @tps.last_price
     ## Add precision to limit price. API will reject if too long. 
     limit_price = limit_price.round( @trading_pair.precision )
     limit_price
   end
   
   def current_token_balance
-    #account_info = @client.account_info
-    #balances = account_info['balances']
-    #asset = balances.select { |b| b['asset'] == @trader.trading_pair.token.symbol }.first
-    #asset['free'].to_f
     @exchange.coin_balance( client: @client, coin: @trading_pair.coin1 )
   end
   

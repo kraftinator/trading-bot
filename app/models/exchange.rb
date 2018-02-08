@@ -35,8 +35,28 @@ class Exchange < ApplicationRecord
   end
   
   ####################
-  ## API Methods
+  ## Userless API Methods
   ####################
+  
+  def fiat_stats
+    ## Choose API
+    case name
+    when 'Binance'
+      coin1 = coins.where( symbol: 'ETH' ).first
+      coin2 = coins.where( symbol: 'USDT' ).first
+      trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
+      trading_pair.load_stats
+      stats = trading_pair.stats
+    when 'Coinbase'
+      ## Do nothing
+    end
+    stats
+  end
+  
+  ####################
+  ## User API Methods
+  ####################
+  
   def query_order( opts )
     ## Get params
     client = opts[:client]
@@ -184,5 +204,7 @@ class Exchange < ApplicationRecord
     balance
     
   end
+  
+
 
 end

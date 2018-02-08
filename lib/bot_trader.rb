@@ -52,8 +52,9 @@ module BotTrader
         if campaign.max_price > trading_pair.stats.high_price
           ## Process bots
           traders.each do |trader|
-            strategy = load_strategy_new( client: client, trader: trader )
-            if strategy
+            strategy_class = strategy_class( trader.strategy )
+            if strategy_class
+              strategy = strategy_class.new( client: client, trader: trader )
               strategy.process
             else
               puts "ERROR: Invalid strategy - #{trader.strategy.name}."
@@ -67,6 +68,14 @@ module BotTrader
         end
       end
     end
+  end
+  
+  def strategy_class( strategy )
+    case strategy.name
+    when 'TEST'
+      strategy_class = TestStrategy
+    end
+    strategy_class
   end
   
   def load_strategy_new( opts )
