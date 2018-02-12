@@ -21,7 +21,7 @@ class MuStrategy < TradingStrategy
       end
       if ((@tps['high_price'] * 0.9) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.15))
         puts "Changing from gamma to kappa_bear"
-        puts "High price is #{@tps['high_price']} and low price is #{@tps['low_price']}"
+        puts "High price is #{@tps['high_price']} and low price is #{@tps['low_price']} and limit price is #{limit_price}"
         @trader.update(state: 'kappa_bear')
       else
         ## Get target limit price based on buy pct.
