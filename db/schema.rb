@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180206173924) do
+ActiveRecord::Schema.define(version: 20180214000523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -52,9 +52,11 @@ ActiveRecord::Schema.define(version: 20180206173924) do
     t.integer  "exchange_id"
     t.integer  "coin1_id"
     t.integer  "coin2_id"
-    t.integer  "precision",   default: 0
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.integer  "precision",       default: 0
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.integer  "price_precision", default: 0
+    t.integer  "qty_precision",   default: 0
   end
 
   create_table "exchanges", force: :cascade do |t|
@@ -125,7 +127,7 @@ ActiveRecord::Schema.define(version: 20180206173924) do
     t.decimal  "high_price",               precision: 15, scale: 8
     t.decimal  "weighted_avg_price",       precision: 15, scale: 8
     t.decimal  "price_change_pct",         precision: 15, scale: 8
-    t.decimal  "volume",                   precision: 15, scale: 8
+    t.integer  "volume"
     t.decimal  "bid_total",                precision: 15, scale: 8
     t.decimal  "ask_total",                precision: 15, scale: 8
     t.datetime "created_at",                                        null: false

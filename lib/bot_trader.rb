@@ -13,6 +13,7 @@ require './lib/omicron_strategy.rb'
 require './lib/pi_strategy.rb'
 require './lib/sigma_strategy.rb'
 require './lib/mu_strategy.rb'
+require './lib/strategies/test_strategy.rb'
 
 module BotTrader
 

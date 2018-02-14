@@ -13,11 +13,14 @@ class ExchangeTradingPair < ApplicationRecord
    end
    
    def load_stats
+     
      tps = stats
      if tps.nil? or tps.updated_at < 1.minute.ago
+       
        case exchange.name
        when 'Binance'
          
+         ## Get userless client
          client = exchange.userless_client
          ## Get 24 hour trading stats
          twenty_four_hour = client.twenty_four_hour( symbol: symbol )
@@ -46,7 +49,39 @@ class ExchangeTradingPair < ApplicationRecord
              )
              
         when 'Coinbase'
-          ## Do nothing
+          
+          ## Get userless clients
+          client = exchange.userless_client
+          ## Get 24 hour trading stats
+          daily_stats = nil
+          client.daily_stats( product_id: "#{coin1.symbol}-#{coin2.symbol}" ) do |resp|
+            daily_stats = resp
+          end
+          ## Get depth chart
+          depth = nil
+          client.orderbook( level: 2, product_id: "#{coin1.symbol}-#{coin2.symbol}" ) do |resp|
+            depth = resp
+          end
+          ## Calculate bid total
+          bids = depth['bids']
+          bid_total = 0
+          bids.each { |b| bid_total += b[0].to_f * b[1].to_f }
+          ## Calculate ask total
+          asks = depth['asks']
+          ask_total = 0
+          asks.each { |a| ask_total += a[0].to_f * a[1].to_f }
+          
+          ## Create new Trading Pair Stat
+          TradingPairStat.create(
+              exchange_trading_pair: self,
+              last_price: daily_stats['last'],
+              low_price: daily_stats['low'],
+              high_price: daily_stats['high'],
+              volume: daily_stats['volume'],
+              bid_total: bid_total,
+              ask_total: ask_total
+              )
+
        end
      end
    end
@@ -57,6 +92,6 @@ class ExchangeTradingPair < ApplicationRecord
   
    def display_name
      "#{coin1.symbol}/#{coin2.symbol}"
-   end
+   end   
   
 end

@@ -31,4 +31,24 @@ class ApiOrder
     !success?
   end
   
+  def show
+    output = []
+    if success?
+      output << "----------------------------"
+      output << "Uid:          #{uid}"
+      output << "Side:         #{side}"
+      output << "Status:       #{status}"
+      output << "Executed Qty: #{executed_qty}"
+      output << "Original Qty: #{original_qty}"
+      output << "Price:        #{price}"
+      output << "----------------------------"
+    else
+      output << "----------------------------"
+      output << "Error Code: #{error_code}"
+      output << "Error Msg:  #{error_msg}"
+      output << "----------------------------"
+    end
+    puts output
+  end
+  
 end

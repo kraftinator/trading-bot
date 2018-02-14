@@ -1,3 +1,5 @@
+require './lib/api_order.rb'
+
 class Exchange < ApplicationRecord
   
   has_many  :authorizations
@@ -21,6 +23,8 @@ class Exchange < ApplicationRecord
     case name
     when 'Binance'
       client = Binance::Client::REST.new
+    when 'Coinbase'
+      client = Coinbase::Exchange::Client.new
     end
     OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE)
     client
@@ -38,17 +42,23 @@ class Exchange < ApplicationRecord
   ## Userless API Methods
   ####################
   
-  def fiat_stats
+  def fiat_stats( base_coin )
     ## Choose API
     case name
     when 'Binance'
-      coin1 = coins.where( symbol: 'ETH' ).first
+      #coin1 = coins.where( symbol: 'ETH' ).first
+      coin1 = base_coin
       coin2 = coins.where( symbol: 'USDT' ).first
       trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
       trading_pair.load_stats
       stats = trading_pair.stats
     when 'Coinbase'
-      ## Do nothing
+      #coin1 = coins.where( symbol: 'ETH' ).first
+      coin1 = base_coin
+      coin2 = coins.where( symbol: 'USD' ).first
+      trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
+      trading_pair.load_stats
+      stats = trading_pair.stats
     end
     stats
   end
@@ -86,13 +96,21 @@ class Exchange < ApplicationRecord
       
       ## Query order using API
       order = client.query_order( symbol: symbol, orderId: order_id )
+      
       ## Extract fields
-      side = order['side']
-      status = order['status']
-      executed_qty = BigDecimal( order['executedQty'] )
-      price = BigDecimal( order['price'] )
-      ## Create API Order object
-      api_order = ApiOrder.new( side: side, status: status, executed_qty: executed_qty, price: price )
+      unless order['code']
+        side = order['side']
+        status = order['status']
+        executed_qty = BigDecimal( order['executedQty'] )
+        price = BigDecimal( order['price'] )
+        ## Create API Order object
+        api_order = ApiOrder.new( side: side, status: status, executed_qty: executed_qty, price: price )
+      else
+        error_code = order['code']
+        error_msg = order['msg']
+        ## Create API order
+        api_order = ApiOrder.new( error_code: error_code, error_msg: error_msg )
+      end
       
     when 'Coinbase'
       ## Do nothing
@@ -125,21 +143,33 @@ class Exchange < ApplicationRecord
       ##   "status"=>"NEW", 
       ##   "timeInForce"=>"GTC", 
       ##   "type"=>"LIMIT", 
-      ##   "side"=>"BUY"}
+      ##   "side"=>"BUY
+      ##
+      ## Binance API create order failed results
+      ##   "code"=>-1021, 
+      ##   "msg"=>"Timestamp for this request was 1000ms ahead of the server's time."
       ############################################################
       
       ## Create order using API
       order = client.create_order( symbol: symbol, side: side, quantity: qty, price: price, type: 'LIMIT', timeInForce: 'GTC' )
-      ## Extract fields
-      uid = order['orderId']
-      side = order['side']
-      status = order['status']
-      executed_qty = BigDecimal( order['executedQty'] )
-      original_qty = BigDecimal( order['origQty'] )
-      price = BigDecimal( order['price'] )
-      ## Create API Order object
-      api_order = ApiOrder.new( uid: uid, side: side, status: status, executed_qty: executed_qty, original_qty: original_qty, price: price )
       
+      ## Extract fields
+      unless order['code']
+        uid = order['orderId']
+        side = order['side']
+        status = order['status']
+        executed_qty = BigDecimal( order['executedQty'] )
+        original_qty = BigDecimal( order['origQty'] )
+        price = BigDecimal( order['price'] )
+        ## Create API order
+        api_order = ApiOrder.new( uid: uid, side: side, status: status, executed_qty: executed_qty, original_qty: original_qty, price: price )
+      else
+        error_code = order['code']
+        error_msg = order['msg']
+        ## Create API order
+        api_order = ApiOrder.new( error_code: error_code, error_msg: error_msg )
+      end
+        
     when 'Coinbase'
       ## Do nothing
     end
@@ -166,17 +196,22 @@ class Exchange < ApplicationRecord
       ##
       ## Binance API cancel_order failed result:
       ##    "code"=>-2011, 
-      ##    "msg"=>"UNKNOWN_ORDER"} 
+      ##    "msg"=>"UNKNOWN_ORDER"
       ############################################################
 
       ## Cancel order using API
       order = client.cancel_order( symbol: symbol, orderId: order_id )
       ## Extract fields
-      uid = order['orderId']
-      error_code = order['code']
-      error_msg = order['msg']
-      ## Create API Order object
-      api_order = ApiOrder.new( uid: uid, error_code: error_code, error_msg: error_msg )
+      unless order['code']
+        uid = order['orderId']
+        ## Create API order
+        api_order = ApiOrder.new( uid: uid )
+      else
+        error_code = order['code']
+        error_msg = order['msg']
+        ## Create API order
+        api_order = ApiOrder.new( error_code: error_code, error_msg: error_msg )
+      end
       
     when 'Coinbase'
       ## Do nothing
@@ -196,7 +231,7 @@ class Exchange < ApplicationRecord
       account_info = client.account_info
       balances = account_info['balances']
       asset = balances.select { |b| b['asset'] == coin.symbol }.first
-      balance = asset['free']
+      balance = BigDecimal( asset['free'] )
     when 'Coinbase'
       ## Do nothing
     end
@@ -204,7 +239,5 @@ class Exchange < ApplicationRecord
     balance
     
   end
-  
-
 
 end

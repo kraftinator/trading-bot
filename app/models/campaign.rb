@@ -7,6 +7,14 @@ class Campaign < ApplicationRecord
   
   scope :active, -> { where( 'deactivated_at is null' ) }
   
+  def disable
+    update( deactivated_at: Time.current )
+  end
+
+  def enable
+    update( deactivated_at: nil )
+  end
+  
   def active?
     deactivated_at.nil?
   end
@@ -18,6 +26,10 @@ class Campaign < ApplicationRecord
   
   def symbol
     exchange_trading_pair.symbol
+  end
+  
+  def trading_pair_display_name
+    exchange_trading_pair.display_name
   end
   
 end

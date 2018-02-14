@@ -1,3 +1,5 @@
+require './lib/bot_trader.rb'
+
 class TradersController < ApplicationController
   
   before_action :set_trader, only: [:show, :edit, :update, :order_history]
