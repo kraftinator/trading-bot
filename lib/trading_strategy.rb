@@ -158,8 +158,6 @@ class TradingStrategy
     token_qty = @current_order['executedQty'].to_f
     ## Update trader
     @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1 )
-    puts "JMK this is a generic filled sell order"
-    puts "Bot id is #{@trader.id} and Bot state is #{@trader.state}"
     ## Create new buy order
     create_buy_order( buy_order_limit_price )
   end
