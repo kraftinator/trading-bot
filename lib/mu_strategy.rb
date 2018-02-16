@@ -22,6 +22,23 @@ class MuStrategy < TradingStrategy
       if ((@tps['high_price'] * 0.9) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.15))
         puts "High price is #{@tps['high_price']} and low price is #{@tps['low_price']} and limit price is #{limit_price}"
         @trader.update(state: 'kappa_bear')
+        ## Set limit price to low price
+        limit_price =  @tps['low_price']
+        limit_price =  limit_price * ( 1 - @trader.buy_pct.to_f )
+        limit_order = @trader.current_order
+        if limit_order
+          if limit_order.side == 'BUY' && limit_order.open == true
+            result = @client.cancel_order( symbol: @trader.trading_pair.symbol, orderId: limit_order.order_guid )
+            if result['code']
+              puts "ERROR: #{result['code']} #{result['msg']}"
+              return false
+            end
+            ## Cancel local limit order
+            limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
+            ## Create new limit order
+            create_buy_order( limit_price )
+          end
+        end
       else
         ## Get target limit price based on buy pct.
         limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
@@ -39,6 +56,20 @@ class MuStrategy < TradingStrategy
       ## Set limit price to low price
       limit_price =  @tps['low_price']
       limit_price =  limit_price * ( 1 - @trader.buy_pct.to_f )
+      limit_order = @trader.current_order
+      if limit_order
+        if limit_order.side == 'BUY' && limit_order.open == true
+          result = @client.cancel_order( symbol: @trader.trading_pair.symbol, orderId: limit_order.order_guid )
+          if result['code']
+            puts "ERROR: #{result['code']} #{result['msg']}"
+            return false
+          end
+          ## Cancel local limit order
+          limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
+          ## Create new limit order
+          create_buy_order( limit_price )
+        end
+      end
     end
     ### Iota behavior
     if @trader.state == 'iota'
