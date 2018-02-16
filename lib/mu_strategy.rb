@@ -25,6 +25,7 @@ class MuStrategy < TradingStrategy
         ## Set limit price to low price
         limit_price =  @tps['low_price']
         limit_price =  limit_price * ( 1 - @trader.buy_pct.to_f )
+        limit_price = limit_price.round( @precision )
         limit_order = @trader.current_order
         if limit_order
           if limit_order.side == 'BUY' && limit_order.open == true
@@ -56,20 +57,6 @@ class MuStrategy < TradingStrategy
       ## Set limit price to low price
       limit_price =  @tps['low_price']
       limit_price =  limit_price * ( 1 - @trader.buy_pct.to_f )
-      limit_order = @trader.current_order
-      if limit_order
-        if limit_order.side == 'BUY' && limit_order.open == true
-          result = @client.cancel_order( symbol: @trader.trading_pair.symbol, orderId: limit_order.order_guid )
-          if result['code']
-            puts "ERROR: #{result['code']} #{result['msg']}"
-            return false
-          end
-          ## Cancel local limit order
-          limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
-          ## Create new limit order
-          create_buy_order( limit_price )
-        end
-      end
     end
     ### Iota behavior
     if @trader.state == 'iota'
