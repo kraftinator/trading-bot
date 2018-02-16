@@ -45,5 +45,18 @@ namespace :migrations do
     end
     
   end
+  
+  desc 'Run data migration for AddOrderUidToLimitOrders'
+  task :init_order_uid => :environment do
+    
+    ## 20180215190627_add_order_uid_to_limit_orders.rb
+    orders = LimitOrder.all.to_a
+    orders.each do |order|
+      if order.order_uid.nil?
+        order.update( order_uid: order.order_guid )
+      end
+    end
+    
+  end
    
 end

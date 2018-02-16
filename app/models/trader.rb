@@ -18,12 +18,13 @@ class Trader < ApplicationRecord
   def cancel_current_order
     order = current_order
     if order
-      cancelled_order = campaign.exchange.cancel_order( client: campaign.client, symbol: campaign.exchange_trading_pair.symbol, order_id: order.order_guid )
+      cancelled_order = campaign.exchange.cancel_order( client: campaign.client, trading_pair: campaign.exchange_trading_pair, order_id: order.order_uid )
+      #puts cancelled_order.show
       if cancelled_order.success?
         order.update( open: false, state: LimitOrder::STATES[:canceled] )
         return true
       else
-        puts "ERROR: #{cancelled_order.error_code} #{cancelled_order.error_msg}"
+        puts cancelled_order.print_error_msg
         return false
       end
     else

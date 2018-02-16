@@ -71,12 +71,26 @@ class ExchangeTradingPair < ApplicationRecord
           ask_total = 0
           asks.each { |a| ask_total += a[0].to_f * a[1].to_f }
           
+          ## Get weighted avg price from Cryptocompare
+          resp = HTTParty.get("https://min-api.cryptocompare.com/data/dayAvg?fsym=#{coin1.symbol}&tsym=#{coin2.symbol}&e=#{exchange.name}")
+          results = resp.parsed_response
+          if results['Response'] == "Error"
+            puts "ERROR: #{results.message}"
+            resp = HTTParty.get("https://min-api.cryptocompare.com/data/dayAvg?fsym=#{coin1.symbol}&tsym=#{coin2.symbol}")
+            results = resp.parsed_response
+            if results['Response'] == "Error"
+              puts "ERROR: #{results.message}"
+            end
+          end  
+          weighted_avg_price = results[coin2.symbol]
+          
           ## Create new Trading Pair Stat
           TradingPairStat.create(
               exchange_trading_pair: self,
               last_price: daily_stats['last'],
               low_price: daily_stats['low'],
               high_price: daily_stats['high'],
+              weighted_avg_price: weighted_avg_price,
               volume: daily_stats['volume'],
               bid_total: bid_total,
               ask_total: ask_total
@@ -85,6 +99,20 @@ class ExchangeTradingPair < ApplicationRecord
        end
      end
    end
+   
+  def sibling( exchange )
+    c2 = coin2.coin
+    ec2 = ExchangeCoin.where( exchange: exchange, coin: c2 ).first
+    unless ec2
+      case coin2.symbol
+      when 'USD'
+        c2 = Coin.where( symbol: 'USDT' ).first
+        ec2 = ExchangeCoin.where( exchange: exchange, coin: c2 ).first
+      end
+    end
+    return nil unless ec2
+    ec2
+  end
    
    def symbol
      "#{coin1.symbol}#{coin2.symbol}"

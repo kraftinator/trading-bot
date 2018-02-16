@@ -12,7 +12,7 @@ class ApiOrder
   attr_accessor :error_code
   attr_accessor :error_msg
   
-  def initialize( opts )
+  def initialize( opts={} )
     @uid = opts[:uid]
     @side = opts[:side]
     @status = opts[:status]
@@ -24,11 +24,21 @@ class ApiOrder
   end
   
   def success?
-    error_code.nil?
+    error_msg.nil?
   end
   
   def failed?
     !success?
+  end
+  
+  def print_error_msg
+    if failed?
+      if error_code
+        "ERROR: #{error_code} #{error_msg}"
+      else
+        "ERROR: #{error_msg}"
+      end
+    end
   end
   
   def show

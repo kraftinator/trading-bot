@@ -8,7 +8,7 @@ class TradingStrategyNew
     @trading_pair = @trader.campaign.exchange_trading_pair
     @tps = @trading_pair.stats
     @exchange = @trader.campaign.exchange
-    @fiat_tps = @exchange.fiat_stats( @trading_pair.coin2 )
+    @fiat_tps = @exchange.fiat_stats( @trading_pair.coin1 )
   end
    
   def process
@@ -16,7 +16,7 @@ class TradingStrategyNew
     if @trader.current_order
 
       ## Retrieve order from API
-      @api_order = @exchange.query_order( client: @client, symbol: @trading_pair.symbol, order_id: @trader.current_order.order_guid )
+      @api_order = @exchange.query_order( client: @client, trading_pair: @trading_pair, order_id: @trader.current_order.order_uid )
       
       @api_order.show
 
@@ -86,13 +86,13 @@ class TradingStrategyNew
     qty = ( @trader.coin_qty / limit_price ).truncate( @trading_pair.qty_precision )
     puts "qty = #{qty}"
     ## Create limit order via API
-    new_order = @exchange.create_order( client: @client, symbol: @trading_pair.symbol, side: 'BUY', qty: qty, price: limit_price )
+    new_order = @exchange.create_order( client: @client, trading_pair: @trading_pair, side: 'BUY', qty: qty, price: limit_price )
     new_order.show
     if new_order.success?
       ## Create local limit order
-      limit_order = LimitOrder.create( trader: @trader, order_guid: new_order.uid, price: new_order.price, qty: new_order.original_qty, side: new_order.side, open: true, state: LimitOrder::STATES[:new] )
+      limit_order = LimitOrder.create( trader: @trader, order_uid: new_order.uid, price: new_order.price, qty: new_order.original_qty, side: new_order.side, open: true, state: LimitOrder::STATES[:new] )
     else
-      puts "ERROR: #{new_order.error_code} #{new_order.error_msg}"
+      puts new_order.print_error_msg
       return false
     end
   end
@@ -103,13 +103,13 @@ class TradingStrategyNew
     qty = @trader.token_qty.truncate( @trading_pair.qty_precision )
     puts "qty = #{qty}"
     ## Create limit order via API
-    new_order = @exchange.create_order( client: @client, symbol: @trading_pair.symbol, side: 'SELL', qty: qty, price: limit_price )
+    new_order = @exchange.create_order( client: @client, trading_pair: @trading_pair, side: 'SELL', qty: qty, price: limit_price )
     new_order.show
     if new_order.success?
       ## Create local limit order
-      limit_order = LimitOrder.create( trader: @trader, order_guid: new_order.uid, price: new_order.price, qty: new_order.original_qty, side: new_order.side, open: true, state: LimitOrder::STATES[:new] )
+      limit_order = LimitOrder.create( trader: @trader, order_uid: new_order.uid, price: new_order.price, qty: new_order.original_qty, side: new_order.side, open: true, state: LimitOrder::STATES[:new] )
     else
-      puts "ERROR: #{new_order.error_code} #{new_order.error_msg}"
+      puts new_order.print_error_msg
       return false
     end    
   end
@@ -167,9 +167,9 @@ class TradingStrategyNew
     ## If new limit price > original limit price, replace original order
     if limit_price > limit_order.price
       ## Cancel current order
-      cancelled_order = @exchange.cancel_order( client: @client, symbol: @trading_pair.symbol, order_id: limit_order.order_guid )
+      cancelled_order = @exchange.cancel_order( client: @client, trading_pair: @trading_pair, order_id: limit_order.order_uid )
       if cancelled_order.failed?
-        puts "ERROR: #{cancelled_order.error_code} #{cancelled_order.error_msg}"
+        puts cancelled_order.print_error_msg
         return false
       end
       ## Cancel local limit order
@@ -194,9 +194,9 @@ class TradingStrategyNew
         limit_price = limit_price.round( @trading_pair.price_precision )
         if limit_price < limit_order.price
           ## Cancel current order
-          cancelled_order = @exchange.cancel_order( client: @client, symbol: @trading_pair.symbol, order_id: limit_order.order_guid )
+          cancelled_order = @exchange.cancel_order( client: @client, trading_pair: @trading_pair, order_id: limit_order.order_uid )
           if cancelled_order.failed?
-            puts "ERROR: #{cancelled_order.error_code} #{cancelled_order.error_msg}"
+            puts cancelled_order.print_error_msg
             return false
           end
           ## Cancel local limit order
@@ -212,7 +212,7 @@ class TradingStrategyNew
     ## Close limit order
     limit_order = @trader.current_order
     limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
-    puts "WARNING: Buy order #{limit_order.order_guid} canceled."
+    puts "WARNING: Buy order #{limit_order.order_uid} canceled."
     ## Create new BUY order
     create_buy_order( buy_order_limit_price )
   end
@@ -221,7 +221,7 @@ class TradingStrategyNew
     ## Close limit order
     limit_order = @trader.current_order
     limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
-    puts "WARNING: Sell order #{limit_order.order_guid} canceled."
+    puts "WARNING: Sell order #{limit_order.order_uid} canceled."
     ## Create new SELL order
     limit_price = limit_order.price
     limit_price = @tps.last_price if limit_price < @tps.last_price

@@ -13,7 +13,7 @@ class Exchange < ApplicationRecord
     when 'Binance'
       client = Binance::Client::REST.new( api_key: authorization.api_key, secret_key: authorization.api_secret )
     when 'Coinbase'
-      puts name
+      client = Coinbase::Exchange::Client.new( authorization.api_key, authorization.api_secret, authorization.api_pass )
     end
     OpenSSL::SSL.const_set(:VERIFY_PEER, OpenSSL::SSL::VERIFY_NONE)
     client
@@ -70,7 +70,7 @@ class Exchange < ApplicationRecord
   def query_order( opts )
     ## Get params
     client = opts[:client]
-    symbol = opts[:symbol]
+    trading_pair = opts[:trading_pair]
     order_id = opts[:order_id]
     ## Choose API
     case name
@@ -95,7 +95,7 @@ class Exchange < ApplicationRecord
       ############################################################
       
       ## Query order using API
-      order = client.query_order( symbol: symbol, orderId: order_id )
+      order = client.query_order( symbol: trading_pair.symbol, orderId: order_id )
       
       ## Extract fields
       unless order['code']
@@ -113,7 +113,61 @@ class Exchange < ApplicationRecord
       end
       
     when 'Coinbase'
-      ## Do nothing
+      
+      ############################################################
+      ## Coinbase API query_order result:
+      ##   "id"=>"7360fd93-a488-41bc-8d23-35c7d493da8e", 
+      ##   "price"=>"931.01000000", 
+      ##   "size"=>"0.02000000", 
+      ##   "product_id"=>"ETH-USD", 
+      ##   "side"=>"sell", 
+      ##   "type"=>"limit", 
+      ##   "time_in_force"=>"GTC", 
+      ##   "post_only"=>false, 
+      ##   "created_at"=>"2018-02-15T22:53:16.55265Z", 
+      ##   "done_at"=>"2018-02-15T22:55:24.698Z", 
+      ##   "done_reason"=>"filled", 
+      ##   "fill_fees"=>"0.0000000000000000", 
+      ##   "filled_size"=>"0.02000000", 
+      ##   "executed_value"=>"18.6202000000000000", 
+      ##   "status"=>"done", 
+      ##   "settled"=>true
+      ############################################################
+      
+      ## Query order using API
+      begin
+        client.order( order_id ) do |resp|
+          order = resp
+        end
+      rescue
+      end
+      
+      ## Exctract fields
+      unless error_msg
+        side = order.side
+        executed_qty = BigDecimal( order.executed_value )
+        price = BigDecimal( order.price )
+        ## Determine status
+        case order.status
+        when 'open'
+          if order.size == order.filled_size
+            status = 'NEW'
+          else
+            status = 'PARTIALLY_FILLED'
+          end
+        when 'done'
+          status = 'FILLED'
+        end
+        ## Create API Order object
+        api_order = ApiOrder.new( side: side, status: status, executed_qty: executed_qty, price: price )
+      else
+        
+        ## TODO: get error if order id doesn't exist
+        
+        ## Create API order
+        api_order = ApiOrder.new( error_msg: error_msg )
+      end
+      
     end
     
     api_order
@@ -123,7 +177,7 @@ class Exchange < ApplicationRecord
   def create_order( opts )
     ## Get params
     client = opts[:client]
-    symbol = opts[:symbol]
+    trading_pair = opts[:trading_pair]
     side = opts[:side]
     qty = opts[:qty]
     price = opts[:price]
@@ -151,7 +205,7 @@ class Exchange < ApplicationRecord
       ############################################################
       
       ## Create order using API
-      order = client.create_order( symbol: symbol, side: side, quantity: qty, price: price, type: 'LIMIT', timeInForce: 'GTC' )
+      order = client.create_order( symbol: trading_pair.symbol, side: side, quantity: qty, price: price, type: 'LIMIT', timeInForce: 'GTC' )
       
       ## Extract fields
       unless order['code']
@@ -171,7 +225,59 @@ class Exchange < ApplicationRecord
       end
         
     when 'Coinbase'
-      ## Do nothing
+      
+      ############################################################
+      ## Coinbase API create order result:
+      ##   "id"=>"deeebbad-0e08-4c83-acfe-aa25c61de2a7", 
+      ##   "price"=>"2000.00000000", 
+      ##   "size"=>"0.02000000", 
+      ##   "product_id"=>"ETH-USD", 
+      ##   "side"=>"sell", 
+      ##   "stp"=>"dc", 
+      ##   "type"=>"limit", 
+      ##   "time_in_force"=>"GTC", 
+      ##   "post_only"=>false, 
+      ##   "created_at"=>"2018-02-14T17:55:56.219308Z", 
+      ##   "fill_fees"=>"0.0000000000000000", 
+      ##   "filled_size"=>"0.00000000", 
+      ##   "executed_value"=>"0.0000000000000000", 
+      ##   "status"=>"pending", 
+      ##   "settled"=>false
+      ############################################################
+      
+      ## Create order using API
+      if side == 'BUY'
+        begin
+          client.buy( qty, price, { "product_id": "#{trading_pair.coin1.symbol}-#{trading_pair.coin2.symbol}" } ) do |resp|
+            order = resp
+          end
+        rescue
+          error_msg = $!
+        end
+      elsif side == 'SELL'
+        begin
+          client.sell( qty, price, { "product_id": "#{trading_pair.coin1.symbol}-#{trading_pair.coin2.symbol}" } ) do |resp|
+            order = resp
+          end
+        rescue
+          error_msg = $!
+        end
+      end
+      
+      unless error_msg
+        uid = order.id
+        side = order.side
+        status = 'NEW'
+        executed_qty = BigDecimal( order.executed_value )
+        original_qty = BigDecimal( order.size )
+        price = BigDecimal( order.price )
+        ## Create API order
+        api_order = ApiOrder.new( uid: uid, side: side, status: status, executed_qty: executed_qty, original_qty: original_qty, price: price )
+      else
+        ## Create API order
+        api_order = ApiOrder.new( error_msg: error_msg )
+      end
+      
     end
     
     api_order
@@ -181,7 +287,7 @@ class Exchange < ApplicationRecord
   def cancel_order( opts )
     ## Get params
     client = opts[:client]
-    symbol = opts[:symbol]
+    trading_pair = opts[:trading_pair]
     order_id = opts[:order_id]
     ## Choose API
     case name
@@ -200,7 +306,7 @@ class Exchange < ApplicationRecord
       ############################################################
 
       ## Cancel order using API
-      order = client.cancel_order( symbol: symbol, orderId: order_id )
+      order = client.cancel_order( trading_pair: trading_pair.symbol, orderId: order_id )
       ## Extract fields
       unless order['code']
         uid = order['orderId']
@@ -214,7 +320,24 @@ class Exchange < ApplicationRecord
       end
       
     when 'Coinbase'
-      ## Do nothing
+      
+      ## Coinbase API returns nothing if cancellation is successful.
+      begin
+        client.cancel( order_id ) do |resp|
+          order = resp
+        end
+      rescue
+        error_msg = $!
+      end
+      
+      unless error_msg
+        ## Create API order
+        api_order = ApiOrder.new
+      else
+        ## Create API order
+        api_order = ApiOrder.new( error_msg: error_msg )
+      end
+
     end
     
     api_order
@@ -233,7 +356,9 @@ class Exchange < ApplicationRecord
       asset = balances.select { |b| b['asset'] == coin.symbol }.first
       balance = BigDecimal( asset['free'] )
     when 'Coinbase'
-      ## Do nothing
+      accounts = client.accounts
+      account = accounts.select { |a| a['currency'] == coin.symbol }.first
+      balance = BigDecimal( account['available'] )
     end
     
     balance
