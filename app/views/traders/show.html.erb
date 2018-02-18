@@ -19,6 +19,7 @@
           <th>BUY%</th>
           <th>SELL%</th>
           <th>CLG%</th>
+		  <th>STATE</th>
           <th>TRIGGER</th>
           <th>SELLS</th>
           <th class="text-right">TOTAL VALUE</th>
@@ -35,6 +36,7 @@
             <td><%= number_to_percentage( @trader.buy_pct * 100, precision: 1, format: "%n" ) %></td>
             <td><%= number_to_percentage( @trader.sell_pct * 100, precision: 1, format: "%n" ) %></td>
             <td><%= @trader.ceiling_pct > 0 ? number_to_percentage( @trader.ceiling_pct * 100, precision: 1, format: "%n" ) : '---' %></td>
+			<td><%= @trader.state %></td>
             <td><%= @trader.sell_count_trigger.to_s %></td>
             <td><%= @trader.sell_count.to_s %></td>
             <td class="text-right"><%= number_with_precision( @trader.coin_amount, precision: @trader.trading_pair.precision ) %></td>

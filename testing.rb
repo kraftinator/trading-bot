@@ -11,32 +11,32 @@ def three_day_low
 end
 
 #Returns value between 0 and 100, higher number is more bullish
-def aroon_up(pair_symbol)
-  @klines = @client.klines(symbol:pair_symbol, interval:'1d', limit: 25)
-  @high_price = 0
-  @days_ago_high = 0
+def aroon_up(pair_symbol, interval_time)
+  @klines = @client.klines(symbol:pair_symbol, interval:interval_time, limit: 25)
+  high_price = 0
+  days_ago_high = 0
   @klines.each_with_index{ |high, index|
-    if high[2].to_f >= @high_price.to_f
-      @high_price = high[2]
-      @days_ago_high = 25 - index
+    if high[2].to_f >= high_price.to_f
+      high_price = high[2]
+      days_ago_high = 25 - index
     end
   }
-  @aroon_up =((25 - @days_ago_high.to_f)/25)*100
+  @aroon_up =((25 - days_ago_high.to_f)/25)*100
   @aroon_up
 end
 
 #Returns value between 0 and 100, higher number is more bearish
-def aroon_down(pair_symbol)
-  @klines = @client.klines(symbol:pair_symbol, interval:'1d', limit: 25)
-  @low_price = @klines[0][3]
-  @days_ago_low = 0
+def aroon_down(pair_symbol, interval_time)
+  @klines = @client.klines(symbol:pair_symbol, interval:interval_time, limit: 25)
+  low_price = @klines[0][3]
+  days_ago_low = 0
   @klines.each_with_index{ |low, index|
-    if low[3].to_f <= @low_price.to_f
-      @low_price = low[3]
-      @days_ago_low = 25 - index
+    if low[3].to_f <= low_price.to_f
+      low_price = low[3]
+      days_ago_low = 25 - index
     end
   }
-  @aroon_down = ((25 - @days_ago_low.to_f)/25)*100
+  @aroon_down = ((25 - days_ago_low.to_f)/25)*100
   @aroon_down
 end
 
@@ -80,6 +80,29 @@ def awesome_oscillator(pair_symbol, interval_time, limit_size)
   #awesome_oscillator = (fast_sma/5) - (slow_sma/34)
 end
 
+def kline_parser
+  @klines.each do |x|
+    puts "OPEN TIME #{x[0]}"
+    puts "OPEN #{x[1]}"
+    puts "HIGH #{x[2]}"
+    puts "LOW #{x[3]}"
+    puts "CLOSE #{x[4]}"
+    puts "VOLUME #{x[5]}"
+    puts "CLOSE TIME #{x[6]}"
+    puts "QUOTE ASSET VOLUME #{x[7]}"
+    puts "NUMBER OF TRADES #{x[8]}"
+    puts "TAKER BUY BASE ASSET VOLUME #{x[9]}"
+    puts "TAKER BUY QUOTE ASSET VOLUME #{x[10]}"
+    puts "IGNORE #{x[11]}"
+    puts ""
+  end
+  nil
+end
 
+def money_flow_index(pair_symbol, interval_time, limit_size)
+  @klines = @client.klines(symbol:pair_symbol, interval:interval_time, limit:limit_size)
+  typical_price = []
+  raw_money_flow = []
+end
 
 
