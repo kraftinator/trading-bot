@@ -133,24 +133,30 @@ class Exchange < ApplicationRecord
       ##   "status"=>"done", 
       ##   "settled"=>true
       ############################################################
+
+      order_canceled = false
       
       ## Query order using API
       begin
         client.order( order_id ) do |resp|
           order = resp
         end
+      rescue Coinbase::Exchange::NotFoundError
+        error_msg = $!
+        order_canceled = true
       rescue
+        error_msg = $!
       end
       
       ## Exctract fields
       unless error_msg
-        side = order.side
-        executed_qty = BigDecimal( order.executed_value )
+        side = order.side.upcase
+        executed_qty = BigDecimal( order.filled_size )
         price = BigDecimal( order.price )
         ## Determine status
         case order.status
         when 'open'
-          if order.size == order.filled_size
+          if order.filled_size == 0
             status = 'NEW'
           else
             status = 'PARTIALLY_FILLED'
@@ -161,11 +167,11 @@ class Exchange < ApplicationRecord
         ## Create API Order object
         api_order = ApiOrder.new( side: side, status: status, executed_qty: executed_qty, price: price )
       else
-        
-        ## TODO: get error if order id doesn't exist
-        
-        ## Create API order
-        api_order = ApiOrder.new( error_msg: error_msg )
+        if order_canceled
+          api_order = ApiOrder.new( status: 'CANCELED' )
+        else
+          api_order = ApiOrder.new( error_msg: error_msg )
+        end
       end
       
     end
@@ -245,6 +251,8 @@ class Exchange < ApplicationRecord
       ##   "settled"=>false
       ############################################################
       
+      order = nil
+      
       ## Create order using API
       if side == 'BUY'
         begin
@@ -266,7 +274,7 @@ class Exchange < ApplicationRecord
       
       unless error_msg
         uid = order.id
-        side = order.side
+        side = order.side.upcase
         status = 'NEW'
         executed_qty = BigDecimal( order.executed_value )
         original_qty = BigDecimal( order.size )

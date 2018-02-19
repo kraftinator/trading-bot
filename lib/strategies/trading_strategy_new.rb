@@ -21,7 +21,8 @@ class TradingStrategyNew
       @api_order.show
 
       ## Process based on order status
-      if @api_order.side == 'BUY'
+      #if @api_order.side == 'BUY'
+      if @trader.current_order.side == 'BUY'
         case @api_order.status
         when 'FILLED'
           process_filled_buy_order
@@ -32,7 +33,8 @@ class TradingStrategyNew
         when 'CANCELED'
           process_canceled_buy_order
         end
-      elsif @api_order.side == 'SELL'
+        #elsif @api_order.side == 'SELL'
+      elsif @trader.current_order.side == 'SELL'
         case @api_order.status
         when 'FILLED'
           process_filled_sell_order
@@ -43,6 +45,8 @@ class TradingStrategyNew
         when 'CANCELED'
           process_canceled_sell_order
         end
+      else
+        puts 'Unknow scenario'
       end
   
     else
