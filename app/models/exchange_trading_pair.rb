@@ -76,11 +76,6 @@ class ExchangeTradingPair < ApplicationRecord
           results = resp.parsed_response
           if results['Response'] == "Error"
             puts "ERROR: #{results.message}"
-            resp = HTTParty.get("https://min-api.cryptocompare.com/data/dayAvg?fsym=#{coin1.symbol}&tsym=#{coin2.symbol}")
-            results = resp.parsed_response
-            if results['Response'] == "Error"
-              puts "ERROR: #{results.message}"
-            end
           end  
           weighted_avg_price = results[coin2.symbol]
           
