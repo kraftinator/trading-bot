@@ -4,7 +4,13 @@ class SigmaStrategy < TradingStrategy
   
   def buy_order_limit_price
     if @trader.sell_count_trigger > 0 && @trader.sell_count % @trader.sell_count_trigger == 0
-      limit_price =  @tps['low_price']
+      limit_order = @trader.current_order
+      if 24.hours.ago > limit_order.created_at
+        limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
+        limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
+      else
+        limit_price =  @tps['low_price']
+      end
     else
       if ( @trader.ceiling_pct > 0 ) and ( @tps['last_price'] > ( @tps['weighted_avg_price'] * ( 1 + @trader.ceiling_pct.to_f ) ) )
         limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
