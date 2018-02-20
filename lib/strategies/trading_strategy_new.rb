@@ -89,6 +89,7 @@ class TradingStrategyNew
     #qty = ( @trader.coin_qty / limit_price ).round( @trading_pair.precision )
     qty = ( @trader.coin_qty / limit_price ).truncate( @trading_pair.qty_precision )
     puts "qty = #{qty}"
+    puts "limit price = #{limit_price}"
     ## Create limit order via API
     new_order = @exchange.create_order( client: @client, trading_pair: @trading_pair, side: 'BUY', qty: qty, price: limit_price )
     new_order.show
@@ -106,6 +107,7 @@ class TradingStrategyNew
     #qty = @trader.token_qty.floor
     qty = @trader.token_qty.truncate( @trading_pair.qty_precision )
     puts "qty = #{qty}"
+    puts "limit price = #{limit_price}"
     ## Create limit order via API
     new_order = @exchange.create_order( client: @client, trading_pair: @trading_pair, side: 'SELL', qty: qty, price: limit_price )
     new_order.show
@@ -253,7 +255,8 @@ class TradingStrategyNew
   
   def sell_order_limit_price
     ## Get token quantity
-    qty = @trader.token_qty.floor
+    #qty = @trader.token_qty.floor
+    qty = @trader.token_qty.truncate( @trading_pair.qty_precision )
     ## Calculate expected SELL coin total
     buy_coin_total = @api_order.executed_qty * @api_order.price
     sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct )

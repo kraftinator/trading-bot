@@ -20,6 +20,7 @@ Rails.application.routes.draw do
   
   resources :traders do
     get :order_history, on: :member
+    get :transactions, on: :member
   end
 
   devise_for :users
