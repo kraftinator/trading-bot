@@ -1,6 +1,8 @@
+require './lib/bot_trader.rb'
+
 class TradersController < ApplicationController
   
-  before_action :set_trader, only: [:show, :edit, :update, :order_history]
+  before_action :set_trader, only: [:show, :edit, :update, :order_history, :transactions]
   
   def edit
     @strategies = Strategy.all.order( 'name' )
@@ -36,6 +38,27 @@ class TradersController < ApplicationController
   
   def order_history
     @orders = @trader.limit_orders.order( 'created_at desc' )
+  end
+  
+  def transactions
+    orders = @trader.limit_orders.filled.order( "filled_at desc" ).to_a
+    @transactions = []
+    orders.each do |order|
+      transaction = {}
+      if order.side == 'SELL'
+        buy_order = order.previous_order
+        if buy_order
+          transaction[:buy_order] = buy_order
+          orders.delete_if { |o| o == buy_order }
+        end
+        transaction[:sell_order] = order
+      elsif order.side == 'BUY'
+        puts "FLAG 1"
+        transaction[:buy_order] = order
+        puts transaction
+      end
+      @transactions << transaction
+    end
   end
   
   private
