@@ -16,7 +16,7 @@ class LimitOrder < ApplicationRecord
   
   def previous_order
     return nil unless filled?
-    trader.limit_orders.filled.where( "filled_at < '#{created_at}'" ).order( 'filled_at desc' ).first
+    trader.limit_orders.filled.where( "created_at < '#{created_at}'" ).order( 'created_at desc' ).first
   end
   
   def partially_filled?

@@ -41,7 +41,7 @@ class TradersController < ApplicationController
   end
   
   def transactions
-    orders = @trader.limit_orders.filled.order( "filled_at desc" ).to_a
+    orders = @trader.limit_orders.filled.order( "created_at desc" ).to_a
     @transactions = []
     orders.each do |order|
       transaction = {}
@@ -53,9 +53,7 @@ class TradersController < ApplicationController
         end
         transaction[:sell_order] = order
       elsif order.side == 'BUY'
-        puts "FLAG 1"
         transaction[:buy_order] = order
-        puts transaction
       end
       @transactions << transaction
     end
