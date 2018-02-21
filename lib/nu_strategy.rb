@@ -18,7 +18,7 @@ class NuStrategy < TradingStrategy
     ## Set limit price to lowest price based on the number in buy_pct in days
     @klines = @client.klines(symbol:@trader.trading_pair.symbol, interval:'1d', limit: (@trader.buy_pct * 100).to_i)
     @klines = @klines.sort {|a,b| a[3] <=> b[3]}    #returns smallest low price
-    limit_price = @klines[0][3]
+    limit_price = @klines[0][3].to_f
     ## Add precision to limit price. API will reject if too long.
     limit_price = limit_price.round( @precision )
     puts "Setting buy order limit price to #{limit_price}"
