@@ -19,7 +19,7 @@ class MuStrategy < TradingStrategy
       else
         limit_price = @tps['last_price']
       end
-      if ((@tps['high_price'] * 0.9) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.15))
+      if ((@tps['high_price'] * 0.95) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.05))
         puts "High price is #{@tps['high_price']} and low price is #{@tps['low_price']} and limit price is #{limit_price}"
         @trader.update(state: 'kappa_bear')
         ## Set limit price to low price
@@ -63,7 +63,7 @@ class MuStrategy < TradingStrategy
       puts "Executing iota behavior"
       ## Choose last price or weighted avg price, whichever is less.
       limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
-      if @tps['last_price'] >= (@tps['low_price'] * 1.1)
+      if @tps['last_price'] >= (@tps['low_price'] * 1.07)
         puts "Changing state to gamma and running gamma behavior"
         @trader.update(state: 'gamma')
       end
