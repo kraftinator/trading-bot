@@ -28,11 +28,11 @@
           <% buy_order = transaction[:buy_order] %>
           <% sell_order = transaction[:sell_order] %>
           <tr>
-            <td><%= buy_order ? buy_order.id : '---' %>
+            <td><%= buy_order ? buy_order.id : '---' %></td>
             <td><%= buy_order ? buy_order.filled_at.strftime("%Y-%m-%d %H:%M") : '---' %></td>
             <td><%= buy_order ? number_with_precision( buy_order.price, precision: @trader.trading_pair.precision ) : '---' %></td>
             <td><%= buy_order ? number_with_precision( buy_order.qty, precision: @trader.trading_pair.precision ) : '---' %></td>
-            <td><%= sell_order ? sell_order.id : '---' %>
+            <td><%= sell_order ? sell_order.id : '---' %></td>
             <td><%= sell_order ? sell_order.filled_at.strftime("%Y-%m-%d %H:%M") : '---' %></td>
             <td><%= sell_order ? number_with_precision( sell_order.price, precision: @trader.trading_pair.precision ) : '---' %></td>
             <td><%= sell_order ? number_with_precision( sell_order.qty, precision: @trader.trading_pair.precision ) : '---' %></td>
