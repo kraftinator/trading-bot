@@ -63,7 +63,7 @@ class MuStrategy < TradingStrategy
       puts "Executing iota behavior"
       ## Choose last price or weighted avg price, whichever is less.
       limit_price = ( @tps['last_price'] < @tps['weighted_avg_price'] ) ? @tps['last_price'] : @tps['weighted_avg_price']
-      if (@tps['low_price'] * 1.1) >= limit_price
+      if @tps['last_price'] >= (@tps['low_price'] * 1.1)
         puts "Changing state to gamma and running gamma behavior"
         @trader.update(state: 'gamma')
       end
