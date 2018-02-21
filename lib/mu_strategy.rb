@@ -19,7 +19,7 @@ class MuStrategy < TradingStrategy
       else
         limit_price = @tps['last_price']
       end
-      if ((@tps['high_price'] * 0.95) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.05))
+      if ((@tps['high_price'] * 0.95) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.2))
         puts "High price is #{@tps['high_price']} and low price is #{@tps['low_price']} and limit price is #{limit_price}"
         @trader.update(state: 'kappa_bear')
         ## Set limit price to low price
