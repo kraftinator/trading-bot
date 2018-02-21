@@ -76,6 +76,12 @@ namespace :bots do
       sell_count_trigger = 0
     end
     
+    if ENV["STATE"]
+      state = ENV["STATE"]
+    else
+      state = nil
+    end
+    
     wait_period = ENV["WAIT_PERIOD"].to_i
     if wait_period < 60
       puts "ERROR: Wait period cannot be less than 60 minutes."
@@ -93,6 +99,7 @@ namespace :bots do
                             wait_period: wait_period,
                             sell_count_trigger: sell_count_trigger,
                             user: user,
+                            state: state,
                             active: true )
                             
     if trader.errors.any?
