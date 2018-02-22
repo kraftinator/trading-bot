@@ -17,6 +17,7 @@
           <th>BUY%</th>
           <th>SELL%</th>
           <th>CLG%</th>
+		  <th>STATE</th>
           <th>TRIGGER</th>
           <th>SELLS</th>
           <th>TOTAL VALUE</th>
@@ -32,6 +33,7 @@
             <td><%= t.number_field(:buy_pct, step: 0.001, in: 0.000..100.000, value: @trader.buy_pct  ) %></td>
             <td><%= t.number_field(:sell_pct, step: 0.001, in: 0.000..100.000, value: @trader.sell_pct  )%></td>
             <td><%= t.number_field(:ceiling_pct, step: 0.001, in: 0.000..100.000, value: @trader.ceiling_pct  )%></td>
+			<td><%= t.text_field(:state, value: @trader.state )%>
             <td><%= t.number_field(:sell_count_trigger, step: 0, in: 0..100, value: @trader.sell_count_trigger  )%></td>
             <td><%= @trader.sell_count.to_s %></td>
             <td><%= number_with_precision( @trader.coin_amount, precision: @trader.trading_pair.precision ) %></td>
