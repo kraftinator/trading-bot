@@ -62,11 +62,11 @@ module BotTrader
       if traders.any?
         ## Get stats
         trading_pair = campaign.exchange_trading_pair
-        trading_pair.load_stats
+        #trading_pair.load_stats
         ## Get client
         client = campaign.client
         ## If campaign's max price > 24 hour high price, keep processing
-        if campaign.max_price > trading_pair.stats.high_price
+        if campaign.max_price > trading_pair.tps.high_price
           ## Process bots
           traders.each do |trader|
             strategy_class = strategy_class( trader.strategy )

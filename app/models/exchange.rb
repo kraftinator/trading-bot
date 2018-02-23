@@ -50,15 +50,15 @@ class Exchange < ApplicationRecord
       coin1 = base_coin
       coin2 = coins.where( symbol: 'USDT' ).first
       trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
-      trading_pair.load_stats
-      stats = trading_pair.stats
+      #trading_pair.load_stats
+      stats = trading_pair.tps
     when 'Coinbase'
       #coin1 = coins.where( symbol: 'ETH' ).first
       coin1 = base_coin
       coin2 = coins.where( symbol: 'USD' ).first
       trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
-      trading_pair.load_stats
-      stats = trading_pair.stats
+      #trading_pair.load_stats
+      stats = trading_pair.tps
     end
     stats
   end
