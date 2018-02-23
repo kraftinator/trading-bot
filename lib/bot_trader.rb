@@ -64,8 +64,15 @@ module BotTrader
         else
           ## Freeze bots!
           puts "WARNING: Max price reached. High price #{trading_pair.stats.high_price} > max price #{campaign.max_price.to_f}."
-          traders.each { |t| freeze_trader( t ) }
-          campaign.update( deactivated_at: Time.current )
+          traders.each do |trader|
+            if trader.current_order and trader.current_order.side == 'BUY'
+              trader.cancel_current_order
+            end
+            trader.disable
+            puts "Bot #{trader.id} deactivated."
+          end
+          campaign.disable
+          puts "Campaign #{campaign.exchange.name} #{campaign.symbol} deactivated."
         end
       end
     end

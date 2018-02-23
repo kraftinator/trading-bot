@@ -30,7 +30,11 @@ class Trader < ApplicationRecord
     else
       return false
     end
-  end 
+  end
+  
+  def disable
+    update( active: false )
+  end
   
   ## Print trader info
   def show

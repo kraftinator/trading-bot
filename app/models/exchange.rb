@@ -249,6 +249,9 @@ class Exchange < ApplicationRecord
       ##   "executed_value"=>"0.0000000000000000", 
       ##   "status"=>"pending", 
       ##   "settled"=>false
+      ##
+      ## Coinbase API create order failed results:
+      ##   {"message":"size is too small. Minimum size is 0.01"}
       ############################################################
       
       order = nil

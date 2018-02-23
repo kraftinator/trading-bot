@@ -124,7 +124,7 @@ class TradingStrategyNew
     ## Close the limit order.
     @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, eth_price: @fiat_tps.last_price )
     ## Update trader's coin and token quantities
-    coin_qty = ( @api_order.executed_qty * @api_order.price ).round( @trading_pair.price_precision )
+    coin_qty = ( @api_order.executed_qty * @api_order.price )#.truncate( @trading_pair.price_precision )
     token_qty = @api_order.executed_qty
     
     ## Subtract trading fee
@@ -157,7 +157,7 @@ class TradingStrategyNew
     ## Close the limit order.
     @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, eth_price: @fiat_tps.last_price )
     ## Update trader's coin and token quantities
-    coin_qty = ( @api_order.executed_qty * @api_order.price ).round( @trading_pair.price_precision )
+    coin_qty = ( @api_order.executed_qty * @api_order.price )#.truncate( @trading_pair.price_precision )
     token_qty = @api_order.executed_qty
     ## Update trader
     @trader.update( coin_qty: @trader.coin_qty + coin_qty, token_qty: @trader.token_qty - token_qty,  sell_count: @trader.sell_count + 1 )

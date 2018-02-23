@@ -28,15 +28,15 @@
           <% buy_order = transaction[:buy_order] %>
           <% sell_order = transaction[:sell_order] %>
           <tr>
-            <td><%= buy_order.id if buy_order %>
+            <td><%= buy_order ? buy_order.id : '---' %></td>
             <td><%= buy_order ? buy_order.filled_at.strftime("%Y-%m-%d %H:%M") : '---' %></td>
             <td><%= buy_order ? number_with_precision( buy_order.price, precision: @trader.campaign.exchange_trading_pair.price_precision ) : '---' %></td>
             <td><%= buy_order ? number_with_precision( buy_order.qty, precision: @trader.campaign.exchange_trading_pair.qty_precision ) : '---' %></td>
-            <td><%= sell_order.id if sell_order %>
+            <td><%= sell_order ? sell_order.id : '---' %></td>
             <td><%= sell_order ? sell_order.filled_at.strftime("%Y-%m-%d %H:%M") : '---' %></td>
             <td><%= sell_order ? number_with_precision( sell_order.price, precision: @trader.campaign.exchange_trading_pair.price_precision ) : '---' %></td>
             <td><%= sell_order ? number_with_precision( sell_order.qty, precision: @trader.campaign.exchange_trading_pair.qty_precision ) : '---' %></td>
-            <td><%= number_to_percentage( 100 - ( ( buy_order.price / sell_order.price ) * 100 ), precision: 3, format: "%n" ) if buy_order and sell_order %></td>
+            <td><%= buy_order && sell_order ? number_to_percentage(  ( ( sell_order.price / buy_order.price - 1 ) * 100 ), precision: 3, format: "%n" ) : '---'  %></td>
           </tr>  
         <% end %>
       </tbody>
