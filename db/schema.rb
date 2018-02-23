@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180215190627) do
+ActiveRecord::Schema.define(version: 20180223215024) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -78,6 +78,7 @@ ActiveRecord::Schema.define(version: 20180215190627) do
     t.datetime "filled_at"
     t.decimal  "eth_price",  precision: 8,  scale: 2, default: "0.0"
     t.string   "order_uid"
+    t.decimal  "fiat_price", precision: 8,  scale: 2, default: "0.0"
   end
 
   create_table "partially_filled_orders", force: :cascade do |t|

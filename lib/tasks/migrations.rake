@@ -58,5 +58,18 @@ namespace :migrations do
     end
     
   end
+  
+  desc 'Run data migration for AddFiatPriceToLimitOrders'
+  task :init_fiat_price => :environment do
+    
+    ## 20180223215024_add_fiat_price_to_limit_orders.rb
+    orders = LimitOrder.all.to_a
+    orders.each do |order|
+      if order.fiat_price == 0 && order.eth_price > 0
+        order.update( fiat_price: order.eth_price )
+      end
+    end
+    
+  end
    
 end

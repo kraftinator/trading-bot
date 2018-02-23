@@ -122,7 +122,7 @@ class TradingStrategyNew
    
   def process_filled_buy_order
     ## Close the limit order.
-    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, eth_price: @fiat_tps.last_price )
+    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, fiat_price: @fiat_tps.last_price )
     ## Update trader's coin and token quantities
     coin_qty = ( @api_order.executed_qty * @api_order.price )#.truncate( @trading_pair.price_precision )
     token_qty = @api_order.executed_qty
@@ -155,7 +155,7 @@ class TradingStrategyNew
   def process_filled_sell_order
     ## Yay! The order was successfully filled!
     ## Close the limit order.
-    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, eth_price: @fiat_tps.last_price )
+    @trader.current_order.update( open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current, fiat_price: @fiat_tps.last_price )
     ## Update trader's coin and token quantities
     coin_qty = ( @api_order.executed_qty * @api_order.price )#.truncate( @trading_pair.price_precision )
     token_qty = @api_order.executed_qty
