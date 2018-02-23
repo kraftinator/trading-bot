@@ -13,7 +13,23 @@ require './lib/omicron_strategy.rb'
 require './lib/pi_strategy.rb'
 require './lib/sigma_strategy.rb'
 require './lib/mu_strategy.rb'
+
+## New strategies
 require './lib/strategies/test_strategy.rb'
+require './lib/strategies/alpha_strategy_new.rb' 
+require './lib/strategies/beta_strategy_new.rb' 
+require './lib/strategies/gamma_strategy_new.rb' 
+require './lib/strategies/delta_strategy_new.rb' 
+require './lib/strategies/epsilon_strategy_new.rb'
+require './lib/strategies/zeta_strategy_new.rb'
+require './lib/strategies/eta_strategy_new.rb'
+require './lib/strategies/theta_strategy_new.rb'
+require './lib/strategies/iota_strategy_new.rb'
+require './lib/strategies/kappa_strategy_new.rb'
+require './lib/strategies/lambda_strategy_new.rb'
+require './lib/strategies/omicron_strategy_new.rb'
+require './lib/strategies/pi_strategy_new.rb'
+require './lib/strategies/sigma_strategy_new.rb'
 
 module BotTrader
 
@@ -77,25 +93,43 @@ module BotTrader
       end
     end
   end
-  
+
   def strategy_class( strategy )
     case strategy.name
+    when 'ALPHA'
+      strategy_class = AlphaStrategyNew
+    when 'BETA'
+      strategy_class = BetaStrategyNew
+    when 'GAMMA'
+      strategy_class = GammaStrategyNew
+    when 'DELTA'
+      strategy_class = DeltaStrategyNew
+    when 'EPSILON'
+      strategy_class = EpsilonStrategyNew
+    when 'ZETA'
+      strategy_class = ZetaStrategyNew
+    when 'ETA'
+      strategy_class = EtaStrategyNew
+    when 'THETA'
+      strategy_class = ThetaStrategyNew
+    when 'IOTA'
+      strategy_class = IotaStrategyNew
+    when 'KAPPA'
+      strategy_class = KappaStrategyNew
+    when 'LAMBDA'
+      strategy_class = LambdaStrategyNew
+    when 'OMICRON'
+      strategy_class = OmicronStrategyNew
+    when 'PI'
+      strategy_class = PiStrategyNew
+    when 'SIGMA'
+      strategy_class = SigmaStrategyNew
     when 'TEST'
       strategy_class = TestStrategy
     end
     strategy_class
   end
   
-  def load_strategy_new( opts )
-    strategy = nil
-    case trader.strategy.name
-    when 'ALPHA'
-      strategy = AlphaStrategyNew.new( opts )
-    when 'GAMMA'
-      strategy = GammaStrategyNew.new( opts )
-    end
-    strategy
-  end
   ##################################################
   ##################################################
   

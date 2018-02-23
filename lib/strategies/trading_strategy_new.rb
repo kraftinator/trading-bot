@@ -173,13 +173,14 @@ class TradingStrategyNew
     ## If new limit price > original limit price, replace original order
     if limit_price > limit_order.price
       ## Cancel current order
-      cancelled_order = @exchange.cancel_order( client: @client, trading_pair: @trading_pair, order_id: limit_order.order_uid )
-      if cancelled_order.failed?
-        puts cancelled_order.print_error_msg
-        return false
-      end
+      @trader.cancel_current_order
+      #cancelled_order = @exchange.cancel_order( client: @client, trading_pair: @trading_pair, order_id: limit_order.order_uid )
+      #if cancelled_order.failed?
+      #  puts cancelled_order.print_error_msg
+      #  return false
+      #end
       ## Cancel local limit order
-      limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
+      #limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )
       ## Create new limit order
       create_buy_order( limit_price )
     end
@@ -199,14 +200,15 @@ class TradingStrategyNew
         ## Add precision to limit price. API will reject if too long.           
         limit_price = limit_price.round( @trading_pair.price_precision )
         if limit_price < limit_order.price
+          @trader.cancel_current_order
           ## Cancel current order
-          cancelled_order = @exchange.cancel_order( client: @client, trading_pair: @trading_pair, order_id: limit_order.order_uid )
-          if cancelled_order.failed?
-            puts cancelled_order.print_error_msg
-            return false
-          end
+          #cancelled_order = @exchange.cancel_order( client: @client, trading_pair: @trading_pair, order_id: limit_order.order_uid )
+          #if cancelled_order.failed?
+          #  puts cancelled_order.print_error_msg
+          #  return false
+          #end
           ## Cancel local limit order
-          limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )        
+          #limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )        
           ## Create new limit order
           create_sell_order( limit_price )
         end
