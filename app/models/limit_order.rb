@@ -4,7 +4,8 @@ class LimitOrder < ApplicationRecord
   has_one     :partially_filled_order
   
   scope :partially_filled, -> { partially_filled? }
-  scope :filled, -> { where( "filled_at is not null" ) }
+  #scope :filled, -> { where( "filled_at is not null" ) }
+  scope :filled, -> { where( "filled_at is not null or state = 'FILLED'" ) }
   
   ## constants
   STATES = { new: "NEW", canceled: "CANCELED", filled: "FILLED", partially_filled: "PARTIALLY_FILLED" }
@@ -24,7 +25,7 @@ class LimitOrder < ApplicationRecord
   end
   
   def filled?
-    !filled_at.nil?
+    !filled_at.nil? || state == 'FILLED'
   end
   
 end
