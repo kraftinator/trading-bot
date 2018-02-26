@@ -8,7 +8,7 @@ class TradingStrategyNew
     @trading_pair = @trader.campaign.exchange_trading_pair
     @tps = @trading_pair.tps
     @exchange = @trader.campaign.exchange
-    @fiat_tps = @exchange.fiat_stats( @trading_pair.coin1 )
+    @fiat_tps = @exchange.fiat_stats( @trading_pair.coin2 )
   end
    
   def process
