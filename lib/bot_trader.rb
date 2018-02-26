@@ -13,11 +13,13 @@ require './lib/omicron_strategy.rb'
 require './lib/pi_strategy.rb'
 require './lib/sigma_strategy.rb'
 require './lib/mu_strategy.rb'
+require './lib/nu_strategy.rb'
 
 module BotTrader
 
   module_function
   
+  ### Note to self: add bidPrice and askPrice to TradingPairStatus
   TradingPairStatus = Struct.new( :last_price, :weighted_avg_price, :high_price, :low_price, :bid_total, :ask_total, :price_change_pct )
   EthStatus = Struct.new( :bid_total, :ask_total, :price_change_pct, :last_price )
   
@@ -118,6 +120,8 @@ module BotTrader
       strategy = SigmaStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     when 'MU'
       strategy = MuStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
+    when 'NU'
+      strategy = NuStrategy.new( client: @client, tps: @tps, trader: trader, eth_status: @eth_status )
     end
     strategy
   end
