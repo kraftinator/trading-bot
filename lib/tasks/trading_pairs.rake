@@ -1,3 +1,6 @@
+require './lib/exchanges/binance_factory.rb'
+require './lib/exchanges/coinbase_factory.rb'
+
 namespace :trading_pairs do
   
   desc 'List trading_pairs'
@@ -64,6 +67,12 @@ namespace :trading_pairs do
     
     puts "SUCCESS: Trading pair #{trading_pair.symbol} created."
     
+  end
+  
+  desc 'Update all trading pairs'
+  task :update_all => :environment do
+    BinanceFactory.update_trading_pairs
+    CoinbaseFactory.update_trading_pairs
   end
  
 end

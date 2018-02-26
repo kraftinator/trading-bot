@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  exchange_trading_pair_id: 1
+  last_price: 9.99
+  low_price: 9.99
+  high_price: 9.99
+  weighted_avg_price: 9.99
+  price_change_pct: 9.99
+  volume: 9.99
+  bid_total: 9.99
+  ask_total: 9.99
+
+two:
+  exchange_trading_pair_id: 1
+  last_price: 9.99
+  low_price: 9.99
+  high_price: 9.99
+  weighted_avg_price: 9.99
+  price_change_pct: 9.99
+  volume: 9.99
+  bid_total: 9.99
+  ask_total: 9.99

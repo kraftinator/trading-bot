@@ -15,6 +15,23 @@ require './lib/sigma_strategy.rb'
 require './lib/mu_strategy.rb'
 require './lib/nu_strategy.rb'
 
+## New strategies
+require './lib/strategies/test_strategy.rb'
+require './lib/strategies/alpha_strategy_new.rb' 
+require './lib/strategies/beta_strategy_new.rb' 
+require './lib/strategies/gamma_strategy_new.rb' 
+require './lib/strategies/delta_strategy_new.rb' 
+require './lib/strategies/epsilon_strategy_new.rb'
+require './lib/strategies/zeta_strategy_new.rb'
+require './lib/strategies/eta_strategy_new.rb'
+require './lib/strategies/theta_strategy_new.rb'
+require './lib/strategies/iota_strategy_new.rb'
+require './lib/strategies/kappa_strategy_new.rb'
+require './lib/strategies/lambda_strategy_new.rb'
+require './lib/strategies/omicron_strategy_new.rb'
+require './lib/strategies/pi_strategy_new.rb'
+require './lib/strategies/sigma_strategy_new.rb'
+
 module BotTrader
 
   module_function
@@ -35,6 +52,88 @@ module BotTrader
     set_client
     @client
   end
+  
+  ##################################################
+  ##################################################
+  ## New code
+  def process_user( user )
+    ## Get campaigns
+    campaigns = user.campaigns.active
+    campaigns.each do |campaign|
+      traders = campaign.traders.active
+      if traders.any?
+        ## Get stats
+        trading_pair = campaign.exchange_trading_pair
+        #trading_pair.load_stats
+        ## Get client
+        client = campaign.client
+        ## If campaign's max price > 24 hour high price, keep processing
+        if campaign.max_price > trading_pair.tps.high_price
+          ## Process bots
+          traders.each do |trader|
+            strategy_class = strategy_class( trader.strategy )
+            if strategy_class
+              strategy = strategy_class.new( client: client, trader: trader )
+              strategy.process
+            else
+              puts "ERROR: Invalid strategy - #{trader.strategy.name}."
+            end
+          end
+        else
+          ## Freeze bots!
+          puts "WARNING: Max price reached. High price #{trading_pair.stats.high_price} > max price #{campaign.max_price.to_f}."
+          traders.each do |trader|
+            if trader.current_order and trader.current_order.side == 'BUY'
+              trader.cancel_current_order
+            end
+            trader.disable
+            puts "Bot #{trader.id} deactivated."
+          end
+          campaign.disable
+          puts "Campaign #{campaign.exchange.name} #{campaign.symbol} deactivated."
+        end
+      end
+    end
+  end
+
+  def strategy_class( strategy )
+    case strategy.name
+    when 'ALPHA'
+      strategy_class = AlphaStrategyNew
+    when 'BETA'
+      strategy_class = BetaStrategyNew
+    when 'GAMMA'
+      strategy_class = GammaStrategyNew
+    when 'DELTA'
+      strategy_class = DeltaStrategyNew
+    when 'EPSILON'
+      strategy_class = EpsilonStrategyNew
+    when 'ZETA'
+      strategy_class = ZetaStrategyNew
+    when 'ETA'
+      strategy_class = EtaStrategyNew
+    when 'THETA'
+      strategy_class = ThetaStrategyNew
+    when 'IOTA'
+      strategy_class = IotaStrategyNew
+    when 'KAPPA'
+      strategy_class = KappaStrategyNew
+    when 'LAMBDA'
+      strategy_class = LambdaStrategyNew
+    when 'OMICRON'
+      strategy_class = OmicronStrategyNew
+    when 'PI'
+      strategy_class = PiStrategyNew
+    when 'SIGMA'
+      strategy_class = SigmaStrategyNew
+    when 'TEST'
+      strategy_class = TestStrategy
+    end
+    strategy_class
+  end
+  
+  ##################################################
+  ##################################################
   
   def load_eth_status
     twenty_four_hour = @client.twenty_four_hour( symbol: 'ETHUSDT' )

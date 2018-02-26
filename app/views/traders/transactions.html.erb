@@ -14,12 +14,12 @@
         <tr>
           <th>BUY ORDER ID</th>
           <th>BUY DATE</th>
-          <th>BUY PRICE (<%= "#{@trader.trading_pair.coin.symbol}" %>)</th>
-          <th>BUY QTY (<%= "#{@trader.trading_pair.token.symbol}" %>)</th>
+          <th>BUY PRICE (<%= "#{@trader.campaign.exchange_trading_pair.coin2.symbol}" %>)</th>
+          <th>BUY QTY (<%= "#{@trader.campaign.exchange_trading_pair.coin1.symbol}" %>)</th>
           <th>SELL ORDER ID</th>
           <th>SELL DATE</th>
-          <th>SELL PRICE (<%= "#{@trader.trading_pair.coin.symbol}" %>)</th>
-          <th>SELL QTY (<%= "#{@trader.trading_pair.token.symbol}" %>)</th>
+          <th>SELL PRICE (<%= "#{@trader.campaign.exchange_trading_pair.coin2.symbol}" %>)</th>
+          <th>SELL QTY (<%= "#{@trader.campaign.exchange_trading_pair.coin1.symbol}" %>)</th>
           <th>PCT CHANGE</th>
         </tr>
       </thead>
@@ -30,12 +30,12 @@
           <tr>
             <td><%= buy_order ? buy_order.id : '---' %></td>
             <td><%= buy_order ? buy_order.filled_at.strftime("%Y-%m-%d %H:%M") : '---' %></td>
-            <td><%= buy_order ? number_with_precision( buy_order.price, precision: @trader.trading_pair.precision ) : '---' %></td>
-            <td><%= buy_order ? number_with_precision( buy_order.qty, precision: @trader.trading_pair.precision ) : '---' %></td>
+            <td><%= buy_order ? number_with_precision( buy_order.price, precision: @trader.campaign.exchange_trading_pair.price_precision ) : '---' %></td>
+            <td><%= buy_order ? number_with_precision( buy_order.qty, precision: @trader.campaign.exchange_trading_pair.qty_precision ) : '---' %></td>
             <td><%= sell_order ? sell_order.id : '---' %></td>
             <td><%= sell_order ? sell_order.filled_at.strftime("%Y-%m-%d %H:%M") : '---' %></td>
-            <td><%= sell_order ? number_with_precision( sell_order.price, precision: @trader.trading_pair.precision ) : '---' %></td>
-            <td><%= sell_order ? number_with_precision( sell_order.qty, precision: @trader.trading_pair.precision ) : '---' %></td>
+            <td><%= sell_order ? number_with_precision( sell_order.price, precision: @trader.campaign.exchange_trading_pair.price_precision ) : '---' %></td>
+            <td><%= sell_order ? number_with_precision( sell_order.qty, precision: @trader.campaign.exchange_trading_pair.qty_precision ) : '---' %></td>
             <td><%= buy_order && sell_order ? number_to_percentage(  ( ( sell_order.price / buy_order.price - 1 ) * 100 ), precision: 3, format: "%n" ) : '---'  %></td>
           </tr>  
         <% end %>

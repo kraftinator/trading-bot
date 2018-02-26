@@ -2,6 +2,7 @@ class Trader < ApplicationRecord
   
   belongs_to  :user
   belongs_to  :trading_pair
+  belongs_to  :campaign
   belongs_to  :strategy
   has_many  :limit_orders
 
@@ -12,6 +13,43 @@ class Trader < ApplicationRecord
   
   def current_order
     limit_orders.where( open: true ).first
+  end
+  
+  def cancel_current_order
+    order = current_order
+    if order
+      cancelled_order = campaign.exchange.cancel_order( client: campaign.client, trading_pair: campaign.exchange_trading_pair, order_id: order.order_uid )
+      #puts cancelled_order.show
+      if cancelled_order.success?
+        order.update( open: false, state: LimitOrder::STATES[:canceled] )
+        return true
+      else
+        puts cancelled_order.print_error_msg
+        return false
+      end
+    else
+      return false
+    end
+  end
+  
+  def disable
+    update( active: false )
+  end
+  
+  ## Print trader info
+  def show
+    output = []
+    output << "----------------------------"
+    output << "Trading Pair: #{campaign.trading_pair_display_name}"
+    output << "Coin Qty:     #{coin_qty}"
+    output << "Token Qty:    #{token_qty}"
+    output << "Buy Pct:      #{buy_pct}"
+    output << "Sell Pct:     #{sell_pct}"
+    output << "Strategy:     #{strategy.name}"
+    output << "Exchange:     #{campaign.exchange.name}"
+    output << "Coin Amount:  #{coin_amount}"
+    output << "----------------------------"
+    puts output
   end
   
   def avg_sells_per_day
@@ -51,7 +89,11 @@ class Trader < ApplicationRecord
     order = current_order
     if order and order.side == 'SELL' and limit_orders.size > 1
       buy_order = order.buy_order
-      coin_qty + ( buy_order.price * buy_order.qty )
+      if buy_order
+        coin_qty + ( buy_order.price * buy_order.qty )
+      else
+        coin_qty
+      end
     else
       coin_qty
     end

@@ -19,7 +19,7 @@ class LimitOrder < ApplicationRecord
     return nil unless filled?
     trader.limit_orders.filled.where( "created_at < '#{created_at}'" ).order( 'created_at desc' ).first
   end
-  
+
   def partially_filled?
     partially_filled_order
   end
@@ -27,5 +27,5 @@ class LimitOrder < ApplicationRecord
   def filled?
     !filled_at.nil? || state == 'FILLED'
   end
-  
+
 end

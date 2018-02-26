@@ -13,7 +13,9 @@ gem 'bootstrap', '~> 4.0.0.beta3'
 # Postgre
 gem 'pg'
 # Binance
-gem 'binance'
+gem 'binance', '~> 0.4.3'
+# Coinbase
+gem 'coinbase-exchange'
 # HTTParty
 gem 'httparty'
 # Use Puma as the app server
