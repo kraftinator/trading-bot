@@ -45,7 +45,7 @@ namespace :scheduler do
   
   desc 'Run all bots'
   task :process_all => :environment do
-    BotTrader.process_all
+    #BotTrader.process_all
   end
   
   desc 'Run all bots secret method'
