@@ -24,9 +24,9 @@ module BinanceFactory
       ## Get Coin 2
       exchange_coin2 = exchange.coins.where( symbol: tp['quoteAsset'] ).first
       unless exchange_coin2
-        coin = Coin.where( symbol: tp['baseAsset'] ).first
+        coin = Coin.where( symbol: tp['quoteAsset'] ).first
         unless coin
-          coin = Coin.create( symbol: tp['baseAsset'] )
+          coin = Coin.create( symbol: tp['quoteAsset'] )
           puts "Created new coin: #{coin.symbol}"
         end
         exchange_coin2 = exchange.coins.create( coin: coin, symbol: coin.symbol )
