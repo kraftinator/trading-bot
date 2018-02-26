@@ -21,7 +21,7 @@ class ExchangeTradingPair < ApplicationRecord
      
      tps = stats
      #if tps.nil? or tps.updated_at < 1.minute.ago
-     if tps.nil? or tps.updated_at < 10.seconds.ago
+     if tps.nil? or tps.updated_at < 30.seconds.ago
        
        case exchange.name
        when 'Binance'

@@ -51,9 +51,9 @@ class Exchange < ApplicationRecord
       
       
       coin1 = base_coin
-      puts "FLAG 1: #{coin1.id} - #{coin1.symbol}"
+      #puts "FLAG 1: #{coin1.id} - #{coin1.symbol}"
       coin2 = coins.where( symbol: 'USDT' ).first
-      puts "FLAG 2: #{coin2.id} - #{coin2.symbol}"
+      #puts "FLAG 2: #{coin2.id} - #{coin2.symbol}"
       trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
       #trading_pair.load_stats
       stats = trading_pair.tps

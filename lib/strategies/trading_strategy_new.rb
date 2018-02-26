@@ -18,6 +18,8 @@ class TradingStrategyNew
       if ( @trader.current_order.side == "SELL" ) && ( ( @tps.high_price * 1.1 ) < @trader.current_order.price )
         return true
       end
+      
+      puts "Processing Bot #{@trader.id} (#{@trader.campaign.trading_pair_display_name})."
 
       ## Retrieve order from API
       @api_order = @exchange.query_order( client: @client, trading_pair: @trading_pair, order_id: @trader.current_order.order_uid )
