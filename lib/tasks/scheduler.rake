@@ -48,6 +48,11 @@ namespace :scheduler do
     #BotTrader.process_all
   end
   
+  desc 'Run all bots secret method'
+  task :process_all_secret => :environment do
+    BotTrader.process_all
+  end
+  
   desc 'Run bots by user'
   task :process_user => :environment do
     BotTrader.process_user( User.first )
