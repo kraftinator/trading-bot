@@ -16,7 +16,8 @@ default: &default
 development:
   adapter: postgresql
   encoding: unicode
-  database: trading_bot_development
+  #database: trading_bot_development
+  database: trading_bot_backup
   host: localhost
   pool: 5
   timeout: 5000

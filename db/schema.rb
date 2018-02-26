@@ -15,7 +15,7 @@ ActiveRecord::Schema.define(version: 20180201021145) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "authorizations", force: :cascade do |t|
+  create_table "authorizations", id: :integer, force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "exchange_id"
     t.string   "api_key"
@@ -25,17 +25,17 @@ ActiveRecord::Schema.define(version: 20180201021145) do
     t.datetime "updated_at",  null: false
   end
 
-  create_table "coins", force: :cascade do |t|
+  create_table "coins", id: :integer, force: :cascade do |t|
     t.string "symbol"
   end
 
-  create_table "exchanges", force: :cascade do |t|
+  create_table "exchanges", id: :integer, force: :cascade do |t|
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "limit_orders", force: :cascade do |t|
+  create_table "limit_orders", id: :integer, force: :cascade do |t|
     t.integer  "trader_id"
     t.integer  "order_guid"
     t.decimal  "price",      precision: 15, scale: 8
@@ -49,22 +49,22 @@ ActiveRecord::Schema.define(version: 20180201021145) do
     t.decimal  "eth_price",  precision: 8,  scale: 2, default: "0.0"
   end
 
-  create_table "partially_filled_orders", force: :cascade do |t|
+  create_table "partially_filled_orders", id: :integer, force: :cascade do |t|
     t.integer  "limit_order_id"
     t.decimal  "executed_qty",   precision: 16, scale: 8
     t.datetime "created_at",                              null: false
     t.datetime "updated_at",                              null: false
   end
 
-  create_table "strategies", force: :cascade do |t|
+  create_table "strategies", id: :integer, force: :cascade do |t|
     t.string "name"
   end
 
-  create_table "tokens", force: :cascade do |t|
+  create_table "tokens", id: :integer, force: :cascade do |t|
     t.string "symbol"
   end
 
-  create_table "traders", force: :cascade do |t|
+  create_table "traders", id: :integer, force: :cascade do |t|
     t.integer  "trading_pair_id"
     t.decimal  "coin_qty",                                             default: "0.0"
     t.decimal  "{:precision=>16, :scale=>8}",                          default: "0.0"
@@ -89,7 +89,7 @@ ActiveRecord::Schema.define(version: 20180201021145) do
     t.string   "state"
   end
 
-  create_table "trading_pairs", force: :cascade do |t|
+  create_table "trading_pairs", id: :integer, force: :cascade do |t|
     t.integer  "coin_id"
     t.integer  "token_id"
     t.decimal  "max_price",  precision: 15, scale: 8
@@ -98,7 +98,7 @@ ActiveRecord::Schema.define(version: 20180201021145) do
     t.integer  "precision",                           default: 8
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :integer, force: :cascade do |t|
     t.string   "email",                  default: "",    null: false
     t.string   "encrypted_password",     default: "",    null: false
     t.string   "reset_password_token"
