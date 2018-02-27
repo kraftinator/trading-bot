@@ -3,6 +3,7 @@ require './lib/bot_trader.rb'
 class TradersController < ApplicationController
   
   before_action :set_trader, only: [:show, :edit, :update, :order_history, :transactions]
+  before_action :load_trader_attributes, only: [:new]
   
   def edit
     @strategies = Strategy.all.order( 'name' )
@@ -13,6 +14,39 @@ class TradersController < ApplicationController
   end
 
   def new
+    campaign = Campaign.find( params[:campaign_id] )
+    @trader = Trader.new( campaign: campaign, wait_period: 1440, active: true)
+  end
+  
+  def create
+    @trader = Trader.new( trader_params )
+    @trader.user = current_user
+    
+
+    ## Validate iniital coin quantities
+    error_msg = nil
+    if @trader.coin_qty == 0 && @trader.token_qty == 0
+      error_msg = "Coin quantity is required"
+    elsif @trader.coin_qty > 0 && @trader.token_qty > 0
+      error_msg = "At least one coin quantity must be 0"
+    elsif @trader.coin_qty < 0 || @trader.token_qty < 0
+      error_msg = "Coin quantity cannot be less than 0"
+    end
+    
+    if error_msg
+      flash[:error] = error_msg
+      load_trader_attributes
+      return redirect_to campaign_traders_new_path( @trader.campaign )
+    end
+    
+    if @trader.save
+      redirect_to campaign_path( @trader.campaign )
+    else
+      flash[:error] = @trader.errors.full_messages.to_sentence
+      load_trader_attributes
+      redirect_to campaign_traders_new_path( @trader.campaign )
+    end
+    
   end
 
   def show
@@ -62,12 +96,15 @@ class TradersController < ApplicationController
   private
   
   def trader_params
-    params.require(:trader).permit(:id, :strategy_id, :buy_pct, :sell_pct, :ceiling_pct, :sell_count_trigger)
+    params.require(:trader).permit(:id, :strategy_id, :buy_pct, :sell_pct, :ceiling_pct, :sell_count_trigger, :coin_qty, :token_qty, :active, :campaign_id, :wait_period )
   end
   
   def set_trader
     @trader = Trader.find( params[:id] )
   end
   
-  
+  def load_trader_attributes
+    @strategies = Strategy.all.order( 'name' ).to_a
+  end
+
 end

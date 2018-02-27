@@ -44,13 +44,11 @@
             <td>
               <%= link_to edit_campaign_path( campaign ) do %>Edit<% end %>
               &nbsp;
-<% if campaign.active? %>
-  <%= link_to 'Deactivate', toggle_active_campaign_path( campaign ), data: { confirm: 'Are you sure?' } %>
-<% else %>
-  <%= link_to 'Activate', toggle_active_campaign_path( campaign ), data: { confirm: 'Are you sure?' } %>
-<% end %>
-
-              
+              <% if campaign.active? %>
+                <%= link_to 'Deactivate', toggle_active_campaign_path( campaign ), data: { confirm: 'Are you sure?' } %>
+              <% else %>
+                <%= link_to 'Activate', toggle_active_campaign_path( campaign ), data: { confirm: 'Are you sure?' } %>
+              <% end %>
             </td>
           </tr>  
         <% end %>

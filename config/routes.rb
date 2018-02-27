@@ -2,7 +2,24 @@ Rails.application.routes.draw do
   
   resources :campaigns do
     get :toggle_active, on: :member
+    get 'traders/new'
+    #post 'traders/create'
   end
+  
+  resources :traders do
+    get :order_history, on: :member
+    get :transactions, on: :member
+  end
+
+  #resources :campaigns do
+  #  get :toggle_active, on: :member
+  #  resources :traders do
+  #    get :order_history, on: :member
+  #    get :transactions, on: :member
+  #  end
+  #end
+  
+
 
   resources :exchanges do
     resources :authorizations
@@ -22,10 +39,7 @@ Rails.application.routes.draw do
     get :revenue, on: :member
   end
   
-  resources :traders do
-    get :order_history, on: :member
-    get :transactions, on: :member
-  end
+
 
   devise_for :users
   

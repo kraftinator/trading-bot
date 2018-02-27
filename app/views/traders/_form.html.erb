@@ -1,0 +1,95 @@
+<%= render partial: "layouts/alerts" %>
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="well bs-component">
+      
+      <%= form_for @trader, :html => { :class => 'form-horizontal' } do |f| %>
+        <fieldset>
+          
+
+          <%= f.hidden_field :campaign_id, :value => @trader.campaign.id %>
+          
+          <div class="form-group">
+            <label for="exchange_trading_pair" class="col-lg-4 control-label">Trading Pair</label>
+            <div class="col-lg-8">
+              <strong><input type="text" value="<%= @trader.campaign.trading_pair_display_name %>" class="form-control" readonly="true"></input></strong>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="coin_qty" class="col-lg-4 control-label">Initial Qty (<%= @trader.campaign.exchange_trading_pair.coin2.symbol %>)</label>
+            <div class="col-lg-8">
+              <%= f.number_field( :coin_qty, step: 0.001, min: 0, value: @trader.coin_qty, class: 'form-control' ) %>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="token_qty" class="col-lg-4 control-label">Initial Qty (<%= @trader.campaign.exchange_trading_pair.coin1.symbol %>)</label>
+            <div class="col-lg-8">
+              <%= f.number_field( :token_qty, step: 0.001, min: 0, value: @trader.token_qty, class: 'form-control' ) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="strategy" class="col-lg-4 control-label">Strategy</label>
+            <div class="col-lg-8">
+              <%= f.select( :strategy_id , options_from_collection_for_select( @strategies, :id, :name, @trader.strategy_id ), {}, {:class=>'form-control'}) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="buy_pct" class="col-lg-4 control-label">Buy Pct</label>
+            <div class="col-lg-8">
+              <%= f.number_field( :buy_pct, step: 0.001, in: 0.000..100.000, value: @trader.buy_pct, class: 'form-control' ) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="sell_pct" class="col-lg-4 control-label">Sell Pct</label>
+            <div class="col-lg-8">
+              <%= f.number_field( :sell_pct, step: 0.001, in: 0.000..100.000, value: @trader.sell_pct, class: 'form-control' ) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="ceiling_pct" class="col-lg-4 control-label">Ceiling Pct</label>
+            <div class="col-lg-8">
+              <%= f.number_field( :ceiling_pct, step: 0.001, in: 0.000..100.000, value: @trader.ceiling_pct, class: 'form-control' ) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="sell_count_trigger" class="col-lg-4 control-label">Sell Count Trigger</label>
+            <div class="col-lg-8">
+              <%= f.number_field( :sell_count_trigger, step: 1, min: 0, value: @trader.sell_count_trigger, class: 'form-control' ) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="wait_period" class="col-lg-4 control-label">Wait Period</label>
+            <div class="col-lg-8">
+              <%= f.number_field( :wait_period, step: 1, min: 0, value: @trader.wait_period, class: 'form-control' ) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="active" class="col-lg-4 control-label">Active</label>
+            <div class="col-lg-8">
+              <%= f.select( :active, options_for_select( [['true', true], ['false', false]] ), {}, {:class=>'form-control'} )  %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="col-lg-10 col-lg-offset-2">
+              <%= link_to 'Cancel', campaign_path( @trader.campaign ), class: "btn btn-default"%>
+              <%= submit_tag "Submit", {:class=>'btn btn-primary'} %>
+            </div>
+          </div>
+          
+        </fieldset>
+      <% end %>
+      
+    </div>
+  </div>
+</div>

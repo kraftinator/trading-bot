@@ -1,7 +1,7 @@
 class Trader < ApplicationRecord
   
   belongs_to  :user
-  belongs_to  :trading_pair
+  #belongs_to  :trading_pair
   belongs_to  :campaign
   belongs_to  :strategy
   has_many  :limit_orders
@@ -11,6 +11,13 @@ class Trader < ApplicationRecord
   
   scope :active, -> { where( active: true ) }
   scope :inactive, -> { where( active: false ) }
+  
+  def initial_coin_quantites_valid?
+    return false if self.coin_qty > 0 and self.token_qty > 0
+    return false if self.coin_qty == 0 and self.token_qty == 0
+    return false if self.coin_qty < 0 or self.token_qty < 0
+    true
+  end
   
   def current_order
     limit_orders.where( open: true ).first
