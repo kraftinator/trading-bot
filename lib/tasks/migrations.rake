@@ -68,7 +68,7 @@ namespace :migrations do
     
     ## 20180223215024_add_fiat_price_to_limit_orders.rb
     #orders = LimitOrder.all.to_a
-    orders = LimitOrder.where( "state != 'CANCELED'").all.to_a
+    orders = LimitOrder.where( "fiat_price = 0 and eth_price > 0").all.to_a
     orders.each do |order|
       if order.fiat_price == 0 && order.eth_price > 0
         order.update( fiat_price: order.eth_price )
