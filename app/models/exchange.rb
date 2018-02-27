@@ -320,6 +320,9 @@ class Exchange < ApplicationRecord
       ##    "code"=>-2011, 
       ##    "msg"=>"UNKNOWN_ORDER"
       ############################################################
+      
+      puts "FLAG A - trading_pair = #{trading_pair.symbol}"
+      puts "FLAG B - order_id = #{order_id}"
 
       ## Cancel order using API
       order = client.cancel_order( trading_pair: trading_pair.symbol, orderId: order_id )
