@@ -30,6 +30,7 @@ class Trader < ApplicationRecord
     else
       return false
     end
+    true
   end
   
   def disable
