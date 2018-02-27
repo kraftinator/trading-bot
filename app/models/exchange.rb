@@ -325,7 +325,7 @@ class Exchange < ApplicationRecord
       puts "FLAG B - order_id = #{order_id}"
 
       ## Cancel order using API
-      order = client.cancel_order( trading_pair: trading_pair.symbol, orderId: order_id )
+      order = client.cancel_order( symbol: trading_pair.symbol, orderId: order_id )
       ## Extract fields
       unless order['code']
         uid = order['orderId']
