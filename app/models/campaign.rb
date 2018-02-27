@@ -5,6 +5,8 @@ class Campaign < ApplicationRecord
   has_many    :traders
   delegate    :exchange, :to => :exchange_trading_pair
   
+  validates_presence_of :user_id, :exchange_trading_pair_id, :max_price
+  
   scope :active, -> { where( 'deactivated_at is null' ) }
   
   def disable

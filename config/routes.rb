@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   
-  resources :campaigns
+  resources :campaigns do
+    get :toggle_active, on: :member
+  end
 
   resources :exchanges do
     resources :authorizations

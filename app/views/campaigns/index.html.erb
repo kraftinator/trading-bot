@@ -6,7 +6,15 @@
   </div>
 </div>
 
-<br><br>
+
+
+<div class="row">
+  <div class="col-lg-6">
+    <%= link_to 'Create Campaign', new_campaign_path, class: "btn btn-warning"%>
+  </div>
+</div>
+
+<br>
 
 <% if @campaigns.any? %>
 <div class="row">
@@ -17,18 +25,33 @@
           <th>Pair</th>
           <th>Exchange</th>
           <th>Max Price</th>
+          <th>Active</th>
           <th>Active Bots</th>
+          <th>Inactive Bots</th>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
         <% @campaigns.each do |campaign| %>
+          <% campaign.active? ? row_class = 'success' : row_class = 'danger' %>
           <tr>
             <td><%= link_to campaign.exchange_trading_pair.display_name, campaign_path( campaign ) %></td>
             <td><%= campaign.exchange.name %>
             <td><%= "#{number_with_precision( campaign.max_price, precision: campaign.exchange_trading_pair.price_precision )} #{campaign.exchange_trading_pair.coin2.symbol}" %></td>
-            <td><%= campaign.traders.active.size %></td>
-            <td><%= link_to edit_campaign_path( campaign ) do %><span class="glyphicon glyphicon-pencil"></span><% end %></td>
+            <td><% if campaign.active? %><i class="glyphicon glyphicon-ok" style="color: green;" ></i><% else %><i class="glyphicon glyphicon-remove" style="color: red;" ></i><% end %></td>
+            <td><% if campaign.active? %><%= link_to campaign.traders.active.size, campaign_path( campaign ) %><% else %>--<% end %></td>
+            <td><%= campaign.traders.inactive.size %></td>
+            <td>
+              <%= link_to edit_campaign_path( campaign ) do %>Edit<% end %>
+              &nbsp;
+<% if campaign.active? %>
+  <%= link_to 'Deactivate', toggle_active_campaign_path( campaign ), data: { confirm: 'Are you sure?' } %>
+<% else %>
+  <%= link_to 'Activate', toggle_active_campaign_path( campaign ), data: { confirm: 'Are you sure?' } %>
+<% end %>
+
+              
+            </td>
           </tr>  
         <% end %>
       </tbody>

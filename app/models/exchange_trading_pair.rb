@@ -140,6 +140,9 @@ class ExchangeTradingPair < ApplicationRecord
      "#{coin1.symbol}/#{coin2.symbol}"
    end   
   
+   def full_display_name
+     "#{exchange.name} - #{display_name}"
+   end
    
    def force_load_stats
      
