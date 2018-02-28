@@ -14,8 +14,8 @@
         <tr>
           <th>ID</th>
           <th>SIDE</th>
-          <th>QTY (<%= "#{@trader.trading_pair.token.symbol}" %>)</th>
-          <th>PRICE (<%= "#{@trader.trading_pair.coin.symbol}" %>)</th>
+          <th>QTY (<%= "#{@trader.exchange_trading_pair.coin1.symbol}" %>)</th>
+          <th>PRICE (<%= "#{@trader.exchange_trading_pair.coin2.symbol}" %>)</th>
           <th>STATE</th>
           <th>CREATED</th>
           <th>CANCELED</th>
@@ -27,8 +27,8 @@
           <tr>
             <td><%= order.id.to_s %></td>
             <td><%= order.side %></td>
-            <td><%= "#{order.qty.to_i}" %></td>
-            <td><%= number_with_precision( order.price, precision: @trader.trading_pair.precision ) %></td>
+            <td><%= number_with_precision( order.qty, precision: @trader.exchange_trading_pair.qty_precision ) %></td>
+            <td><%= number_with_precision( order.price, precision: @trader.exchange_trading_pair.price_precision ) %></td>
             <td><%= order.state %></td>
             <td><%= order.created_at.strftime("%Y-%m-%d %H:%M") %></td>
             <td><%= order.state == LimitOrder::STATES[:canceled] ? order.updated_at.strftime("%Y-%m-%d %H:%M") : '---' %></td>

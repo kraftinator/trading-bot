@@ -1,0 +1,29 @@
+<h2>Fulfilled Orders</h2>
+<div class="row">
+  <div class="col-lg-12">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>ORDER ID</th>
+          <th>SIDE</th>
+          <th>QTY (<%= "#{@trader.exchange_trading_pair.coin1.symbol}" %>)</th>
+          <th>PRICE (<%= "#{@trader.exchange_trading_pair.coin2.symbol}" %>)</th>
+		      <th>FIAT PRICE</th>
+		      <th>FILLED AT</th>
+        </tr>
+      </thead>
+      <tbody>
+		  <% @orders.each do |order| %>
+          <tr>
+            <td><%= order.id %></td>
+			      <td><%= order.side %></td>
+            <td><%= number_with_precision( order.qty, precision: @trader.exchange_trading_pair.qty_precision ) %></td>
+            <td><%= number_with_precision( order.price, precision: @trader.exchange_trading_pair.price_precision ) %></td>
+			      <td><%= number_with_precision( order.fiat_price, precision: 2 ) %></td>
+			      <td><%= order.filled_at ? time_ago_in_words( order.filled_at ) + ' ago' : '---' %></td>
+          </tr>
+		  <% end %>
+      </tbody>
+    </table>
+  </div>  
+</div>

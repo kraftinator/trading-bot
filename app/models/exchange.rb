@@ -46,24 +46,36 @@ class Exchange < ApplicationRecord
     ## Choose API
     case name
     when 'Binance'
-      #coin1 = coins.where( symbol: 'ETH' ).first
-      
-      
-      
       coin1 = base_coin
-      #puts "FLAG 1: #{coin1.id} - #{coin1.symbol}"
       coin2 = coins.where( symbol: 'USDT' ).first
-      #puts "FLAG 2: #{coin2.id} - #{coin2.symbol}"
       trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
-      #trading_pair.load_stats
       stats = trading_pair.tps
     when 'Coinbase'
-      #coin1 = coins.where( symbol: 'ETH' ).first
       coin1 = base_coin
       coin2 = coins.where( symbol: 'USD' ).first
       trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
-      #trading_pair.load_stats
       stats = trading_pair.tps
+    end
+    stats
+  end
+  
+  def cached_fiat_stats( base_coin )
+    ## Choose API
+    case name
+    when 'Binance'
+      coin1 = base_coin
+      coin2 = coins.where( symbol: 'USDT' ).first
+      trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
+      stats = trading_pair.cached_stats
+    when 'Coinbase'
+      coin1 = base_coin
+      coin2 = coins.where( symbol: 'USD' ).first
+      
+      puts "coin1 = #{coin1.symbol} - #{coin1.id}"
+      puts "coin2 = #{coin2.symbol} - #{coin2.id}"
+      
+      trading_pair = trading_pairs.where( coin1: coin1, coin2: coin2 ).first
+      stats = trading_pair.cached_stats
     end
     stats
   end

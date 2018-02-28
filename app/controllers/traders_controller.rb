@@ -15,13 +15,12 @@ class TradersController < ApplicationController
 
   def new
     campaign = Campaign.find( params[:campaign_id] )
-    @trader = Trader.new( campaign: campaign, wait_period: 1440, active: true)
+    @trader = Trader.new( campaign: campaign, wait_period: 1440, active: true )
   end
   
   def create
     @trader = Trader.new( trader_params )
     @trader.user = current_user
-    
 
     ## Validate iniital coin quantities
     error_msg = nil
@@ -48,23 +47,21 @@ class TradersController < ApplicationController
     end
     
   end
-
+  
   def show
-
-    ## Get USD value
-    client = BotTrader.client
-    twenty_four_hour = client.twenty_four_hour( symbol: 'ETHUSDT' )
-    @eth_price = twenty_four_hour['lastPrice'].to_f
     ## Get summary values
     @total_coin_amount = @total_profit = @total_original_coin_amount = 0
     @total_coin_amount += @trader.coin_amount
     @total_profit += @trader.profit
     @total_original_coin_amount += @trader.original_coin_qty
-    
-    @orders = LimitOrder.where("trader_id = #{params[:id]} AND filled_at IS NOT NULL").order('created_at DESC')
-    
+    ## Get fulfilled orders
+    @orders = @trader.limit_orders.filled.order(' created_at desc' )
+    ## Get USD value
+    unless @trader.exchange_trading_pair.coin2.fiat?
+      @fiat_tps = @trader.campaign.exchange.cached_fiat_stats( @trader.exchange_trading_pair.coin2 )
+    end
   end
-  
+
   def update
     @trader.update(trader_params)
     redirect_to trading_pair_path( @trader.trading_pair )

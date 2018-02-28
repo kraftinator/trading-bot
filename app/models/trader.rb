@@ -5,6 +5,7 @@ class Trader < ApplicationRecord
   belongs_to  :campaign
   belongs_to  :strategy
   has_many  :limit_orders
+  delegate :exchange_trading_pair, :to => :campaign
 
   belongs_to :merged_trader, :class_name => "Trader", optional: true
   has_many :children, :class_name => "Trader", :foreign_key => "merged_trader_id"
@@ -17,6 +18,10 @@ class Trader < ApplicationRecord
     return false if self.coin_qty == 0 and self.token_qty == 0
     return false if self.coin_qty < 0 or self.token_qty < 0
     true
+  end
+  
+  def last_action
+    limit_orders.order( 'created_at desc' ).first
   end
   
   def current_order

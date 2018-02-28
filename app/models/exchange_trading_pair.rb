@@ -12,6 +12,14 @@ class ExchangeTradingPair < ApplicationRecord
      trading_pair_stats.order( 'created_at desc' ).first
    end
    
+   def cached_stats
+     if trading_pair_stats.empty?
+       load_stats
+     end
+     trading_pair_stats.order( 'created_at desc' ).first
+   end
+   
+   
    def tps
      load_stats
      trading_pair_stats.order( 'created_at desc' ).first
