@@ -22,8 +22,8 @@
       <tbody>
         <% @traders.each do |trader| %>
           <tr>
-            <td><%= link_to trader.id.to_s, trader_path( trader ) %></td>
-            <td><%= link_to trader.trading_pair.display_name, trading_pair_path( trader.trading_pair ) %></td>
+            <td><%= link_to trader.id, trader_path( trader ) %></td>
+            <td><%= link_to trader.exchange_trading_pair.display_name, campaign_path( trader.campaign ) %></td>
             <td><%= trader.display_name %></td>
             <td class="text-right"><%= trader.sell_count.to_s %></td>
             <td class="text-right"><%= number_with_precision( trader.avg_sells_per_day, precision: 2 ) %></td>
