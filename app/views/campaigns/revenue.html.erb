@@ -1,0 +1,97 @@
+<div class="page-header">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1 class=""><%= @campaign.trading_pair_display_name %> Revenue</h1>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-4">
+    <table class="table table-striped table-hover">
+      <tbody>
+        <tr class="info">
+          <td class="text-right"><label class="font-weight-bold">AMOUNT INVESTED:</label></td>
+          <td>
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_with_precision( @total_original_coin_amount, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+            <% end %>
+          <td class="text-right">
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_to_currency( @total_original_coin_amount * @fiat_price, precision: 2 ) %>
+            <% else %>
+              <%= number_to_currency( @total_original_coin_amount, precision: 2 ) %>
+            <% end %>
+          </td>
+        </tr>   
+        <tr class="success">
+          <td class="text-right"><label class="font-weight-bold">PROFIT:</label></td>
+          <td>
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_with_precision( @total_profit, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+            <% end %>
+          <td class="text-right">
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_to_currency( @total_profit * @fiat_price, precision: 2 ) %>
+            <% else %>
+              <%= number_to_currency( @total_profit, precision: 2 ) %>
+            <% end %>
+          </td>
+        </tr>   
+        <tr class="danger">
+          <td class="text-right"><label class="font-weight-bold">TOTAL VALUE:</label></td>
+          <td>
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_with_precision( @total_coin_amount, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+            <% end %>
+          <td class="text-right">
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_to_currency( @total_coin_amount * @fiat_price, precision: 2 ) %>
+            <% else %>
+              <%= number_to_currency( @total_coin_amount, precision: 2 ) %>
+            <% end %>
+            </td>
+        </tr>   
+      </tbody>
+    </table>
+  </div>  
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <table class="table table-striped table-hover datatable-list">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>STRATEGY</th>
+          <th>BUY%</th>
+          <th>SELL%</th>
+          <th>CLG%</th>
+          <th>SELLS</th>
+          <th class="text-right">VALUE (<%= @campaign.exchange_trading_pair.coin2.symbol %>)</th>
+          <th></th>
+          <th class="text-right">PROFIT (<%= @campaign.exchange_trading_pair.coin2.symbol %>)</th>
+          <th></th>
+          <th>LAST ACTION</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @traders.each do |trader| %>
+          <tr>
+            <td><%= link_to trader.id, trader_path( trader ) %></td>
+            <td><%= trader.display_name %></td>
+            <td><%= number_to_percentage( trader.buy_pct * 100, precision: 1, format: "%n" ) %></td>
+            <td><%= number_to_percentage( trader.sell_pct * 100, precision: 1, format: "%n" ) %></td>
+            <td><%= trader.ceiling_pct > 0 ? number_to_percentage( trader.ceiling_pct * 100, precision: 1, format: "%n" ) : '---' %></td>
+            <td><%= trader.sell_count.to_s %></td>
+            <td class="text-right"><%= number_with_precision( trader.coin_amount, precision: trader.exchange_trading_pair.price_precision ) %></td>
+            <td class="text-right"><%= @fiat_price ? trader.formatted_fiat_amount( @fiat_price ) : '---' %></td>
+            <td class="text-right"><%= number_with_precision( trader.profit, precision: trader.exchange_trading_pair.precision ) %></td>
+            <td class="text-right"><%= @fiat_price ? trader.formatted_fiat_profit( @fiat_price ) : '---' %></td>
+            <td><%= trader.last_action ? time_ago_in_words( trader.last_action.created_at ) + ' ago' : '---' %></td>
+          </tr>   
+        <% end %>
+      </tbody>
+    </table>
+  </div>  
+</div>

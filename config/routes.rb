@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   
   resources :campaigns do
     get :toggle_active, on: :member
+    get :revenue, on: :member
     get 'traders/new'
     #post 'traders/create'
   end
