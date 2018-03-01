@@ -21,6 +21,18 @@ class Campaign < ApplicationRecord
     opts
   end
   
+  # opts[:token_holdings] = Array
+  
+  def total_coins_and_tokens
+    coins = tokens = 0
+    traders = self.traders.active
+    traders.each do |trader|
+      coins += trader.coin_qty
+      tokens += trader.token_qty
+    end
+    return coins, tokens      
+  end
+  
   def disable
     update( deactivated_at: Time.current )
   end

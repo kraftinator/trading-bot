@@ -65,6 +65,30 @@
         </tr>   
       </tbody>
     </table>
-  </div>  
+    
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>COIN</th>
+          <th class="text-right">QTY</th>
+          <th class="text-right"><%= holding[:coin].symbol %> VALUE</th>
+          <th class="text-right">USD VALUE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% holding[:token_holdings].each do |token_holding| %>
+          <tr>
+            <td><%= token_holding[:campaign].exchange_trading_pair.coin1.coin.symbol %></td>
+            <td class="text-right"><%= number_with_precision( token_holding[:token_amount], precision: token_holding[:campaign].exchange_trading_pair.qty_precision ) %></td>
+            <td class="text-right"><%= number_with_precision( token_holding[:coin_value], precision: token_holding[:campaign].exchange_trading_pair.price_precision ) %></td>
+            <td class="text-right"><%= number_to_currency( token_holding[:fiat_value], precision: 2 ) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+    
+  </div>
+
 <% end %>
+
 </div>

@@ -7,12 +7,18 @@ class AccountsController < ApplicationController
   
   def dashboard
     @holdings = current_user.total_holdings
-    @eth_price = 1000
-    ## Get USD value
-    #unless @campaign.exchange_trading_pair.coin2.fiat?
-    #  fiat_tps = @campaign.exchange.cached_fiat_stats( @campaign.exchange_trading_pair.coin2 )
-    #  @fiat_price = fiat_tps.last_price      
-    #end
+    @holdings.each do |holding|
+      holding[:token_holdings].each do |token_holding|
+        tps = token_holding[:campaign].exchange_trading_pair.cached_stats
+        token_holding[:coin_value] = token_holding[:token_amount] * tps.last_price
+        if holding[:fiat_price]
+          token_holding[:fiat_value] = token_holding[:coin_value] *  holding[:fiat_price]
+        else
+          token_holding[:fiat_value] = token_holding[:coin_value]
+        end
+      end
+      holding[:token_holdings] = holding[:token_holdings].sort_by { |th| th[:coin_value] }.reverse
+    end 
     @precision = 8
   end
   

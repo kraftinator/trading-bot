@@ -43,11 +43,28 @@ class User < ApplicationRecord
         opts[:fiat_price] = fiat_tps.last_price
       end      
       opts[:coin_amount] = opts[:profit] = opts[:original_coin_amount] = 0
+      
+      token_holdings = []
       campaigns.each do |campaign|
+
         opts[:coin_amount] += campaign.holdings[:coin_amount]
         opts[:profit] += campaign.holdings[:profit]
         opts[:original_coin_amount] += campaign.holdings[:original_coin_amount]
+        
+        ## Get token holdings
+        coins = tokens = 0
+        traders = campaign.traders.active
+        token_holding = {}
+        traders.each do |trader|
+          coins += trader.coin_qty
+          tokens += trader.token_qty
+        end
+        token_holding[:campaign] = campaign
+        token_holding[:token_amount] = tokens
+        token_holdings << token_holding if tokens > 0 and coins > 0
+        
       end
+      opts[:token_holdings] = token_holdings
       results << opts if opts[:coin_amount] > 0
     end
     
@@ -66,7 +83,7 @@ class User < ApplicationRecord
     end
     opts
   end
-  
+
   def token_holdings
     results = []
     coin_total = 0
