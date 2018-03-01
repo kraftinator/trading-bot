@@ -92,20 +92,37 @@ def awesome_oscillator(pair_symbol, interval_time, limit_size)
   hold = false
   awesome_oscillator.each_with_index{ |val, index|
     if awesome_oscillator[index-1]
+      x = val * 1000
       if awesome_oscillator[index-1] < 0 && val > 0 && hold == false  #BUY
         hold = true
         token_total = eth_total / price_holder[index]
         buy_price = price_holder[index]
-        puts "#{val}    #{price_holder[index]}    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    BUY"
+        if price_holder[index-1] > price_holder[index]
+          puts "#{x.round(8)}    #{price_holder[index]}    ---    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    BUY"
+        else
+          puts "#{x.round(8)}    #{price_holder[index]}    +++    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    BUY"
+        end
       elsif awesome_oscillator[index-1] > 0 && val < 0 && hold == true  #SELL
         hold = false
         profit_total += (token_total * price_holder[index]) - eth_total
         eth_total = token_total * price_holder[index]
-        puts "#{val}    #{price_holder[index]}    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    SELL    #{profit_total.round(8)}"
+        if price_holder[index-1] > price_holder[index]
+          puts "#{x.round(8)}    #{price_holder[index]}    ---    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    SELL    #{profit_total.round(8)}"
+        else
+          puts "#{x.round(8)}    #{price_holder[index]}    +++    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    SELL    #{profit_total.round(8)}"
+        end
       elsif hold == true
-        #puts "#{val}    #{price_holder[index]}    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    HOLD"
+        if price_holder[index-1] > price_holder[index]
+          puts "#{x.round(8)}    #{price_holder[index]}    ---    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    HOLD"
+        else
+          puts "#{x.round(8)}    #{price_holder[index]}    +++    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}    HOLD"
+        end
       else
-        #puts "#{val}    #{price_holder[index]}    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}"
+        if price_holder[index-1] > price_holder[index]
+          puts "#{x.round(8)}    #{price_holder[index]}    ---    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}"
+        else
+          puts "#{x.round(8)}    #{price_holder[index]}    +++    #{DateTime.strptime(time_holder[index].to_s, '%Q').in_time_zone('Pacific Time (US & Canada)').to_s(:long)}"
+        end
       end
     end
   }

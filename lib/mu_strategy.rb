@@ -19,12 +19,12 @@ class MuStrategy < TradingStrategy
       else
         limit_price = @tps['last_price']
       end
-      if ((@tps['high_price'] * 0.95) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.2))
+      if ((@tps['high_price'] * 0.95) <= limit_price) && (@tps['high_price'] > (@tps['low_price'] * 1.15))
         puts "High price is #{@tps['high_price']} and low price is #{@tps['low_price']} and limit price is #{limit_price}"
         @trader.update(state: 'kappa_bear')
         ## Set limit price to low price
-        limit_price =  @tps['low_price']
-        limit_price =  limit_price * ( 1 - @trader.buy_pct.to_f )
+        limit_price = @tps['low_price']
+        limit_price = limit_price * ( 1 - @trader.buy_pct.to_f )
         limit_price = limit_price.round( @precision )
         limit_order = @trader.current_order
         if limit_order
@@ -150,6 +150,40 @@ class MuStrategy < TradingStrategy
     puts "Bot id is #{@trader.id} and Bot state is #{@trader.state}"
     ## Create new buy order
     create_buy_order( buy_order_limit_price )
+  end
+  
+  def process_open_sell_order
+    ## Get current limit order
+    limit_order = @trader.current_order
+    ## Lower limit price after 12 hours
+    #if 1.day.ago > limit_order.created_at
+    if 8.hours.ago > limit_order.created_at && @trader.state == 'gamma'
+      @trader.update(state:'iota')
+    end
+    if 12.hours.ago > limit_order.created_at
+      ## Get buy price
+      buy_order = limit_order.buy_order
+      if buy_order      
+        ## Lower price to 1 percent above buy
+        limit_price = buy_order.price.to_f * 1.01
+        limit_price = @tps['last_price'] if limit_price < @tps['last_price']
+        ## Add precision to limit price. API will reject if too long.           
+        limit_price = limit_price.round( @precision )
+        if limit_price < limit_order.price.to_f
+          ## Cancel current order
+          result = @client.cancel_order( symbol: @trader.trading_pair.symbol, orderId: limit_order.order_guid )
+          if result['code']
+            puts "ERROR: #{result['code']} #{result['msg']}"
+            return false
+          end
+          puts "Order #{limit_order.order_guid} canceled."
+          ## Cancel local limit order
+          limit_order.update( open: false, state: LimitOrder::STATES[:canceled] )        
+          ## Create new limit order
+          create_sell_order( limit_price )
+        end
+      end      
+    end
   end
   
 end
