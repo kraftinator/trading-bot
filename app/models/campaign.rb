@@ -9,6 +9,18 @@ class Campaign < ApplicationRecord
   
   scope :active, -> { where( 'deactivated_at is null' ) }
   
+  def holdings
+    traders = self.traders.active
+    opts = {}
+    opts[:coin_amount] = opts[:profit] = opts[:original_coin_amount] = 0
+    traders.each do |trader|
+      opts[:coin_amount] += trader.coin_amount
+      opts[:profit] += trader.profit
+      opts[:original_coin_amount] += trader.original_coin_qty
+    end
+    opts
+  end
+  
   def disable
     update( deactivated_at: Time.current )
   end

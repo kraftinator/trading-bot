@@ -16,6 +16,44 @@ class User < ApplicationRecord
   def authorization( exchange )
     self.authorizations.where( exchange: exchange ).first
   end
+  
+  def total_holdings
+    
+    ## Group campaigns by base coin
+    base_coins = {}
+    campaigns.active.each do |campaign|
+      etp = campaign.exchange_trading_pair
+      key = etp.coin2.id
+      if base_coins[key]
+        base_coins[key] << campaign
+      else
+        base_coins[key] = [campaign]
+      end
+    end
+    
+    ## Create revenue object for each base coin
+    results = []
+    keys = base_coins.keys
+    keys.each do |key|
+      campaigns = base_coins[key]
+      opts = {}
+      opts[:coin] = ExchangeCoin.find( key )
+      unless opts[:coin].fiat?
+        fiat_tps = campaigns.first.exchange.cached_fiat_stats( opts[:coin] )
+        opts[:fiat_price] = fiat_tps.last_price
+      end      
+      opts[:coin_amount] = opts[:profit] = opts[:original_coin_amount] = 0
+      campaigns.each do |campaign|
+        opts[:coin_amount] += campaign.holdings[:coin_amount]
+        opts[:profit] += campaign.holdings[:profit]
+        opts[:original_coin_amount] += campaign.holdings[:original_coin_amount]
+      end
+      results << opts if opts[:coin_amount] > 0
+    end
+    
+    results
+
+  end
 
   def holdings
     trading_pairs = TradingPair.with_active_traders

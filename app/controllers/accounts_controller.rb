@@ -5,6 +5,17 @@ class AccountsController < ApplicationController
   before_action :authenticate_user!
   before_action :active_required, :except => [:inactive]
   
+  def dashboard
+    @holdings = current_user.total_holdings
+    @eth_price = 1000
+    ## Get USD value
+    #unless @campaign.exchange_trading_pair.coin2.fiat?
+    #  fiat_tps = @campaign.exchange.cached_fiat_stats( @campaign.exchange_trading_pair.coin2 )
+    #  @fiat_price = fiat_tps.last_price      
+    #end
+    @precision = 8
+  end
+  
   def index
     @holdings = current_user.holdings
     
