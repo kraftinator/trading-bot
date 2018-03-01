@@ -6,6 +6,7 @@ class AccountsController < ApplicationController
   before_action :active_required, :except => [:inactive]
   
   def dashboard
+    
     @holdings = current_user.total_holdings
     @holdings.each do |holding|
       holding[:token_holdings].each do |token_holding|
@@ -17,9 +18,27 @@ class AccountsController < ApplicationController
           token_holding[:fiat_value] = token_holding[:coin_value]
         end
       end
+      
+      ## Add real coin qty
+      if holding[:real_coin_qty] > 0
+        token_holding = {}
+        token_holding[:token_amount] = holding[:real_coin_qty]
+        token_holding[:coin_value] = holding[:real_coin_qty]
+        ## Get fiat value
+        if holding[:fiat_price]
+          token_holding[:fiat_value] = token_holding[:coin_value] *  holding[:fiat_price]
+        else
+          token_holding[:fiat_value] = token_holding[:coin_value]
+        end
+        holding[:token_holdings] << token_holding
+      end
+      
       holding[:token_holdings] = holding[:token_holdings].sort_by { |th| th[:coin_value] }.reverse
-    end 
-    @precision = 8
+
+    end
+    
+    @holdings = @holdings.sort_by { |h| h[:coin].symbol }
+
   end
   
   def index

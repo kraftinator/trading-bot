@@ -45,6 +45,7 @@ class User < ApplicationRecord
       opts[:coin_amount] = opts[:profit] = opts[:original_coin_amount] = 0
       
       token_holdings = []
+      coins = 0
       campaigns.each do |campaign|
 
         opts[:coin_amount] += campaign.holdings[:coin_amount]
@@ -52,7 +53,7 @@ class User < ApplicationRecord
         opts[:original_coin_amount] += campaign.holdings[:original_coin_amount]
         
         ## Get token holdings
-        coins = tokens = 0
+        tokens = 0
         traders = campaign.traders.active
         token_holding = {}
         traders.each do |trader|
@@ -61,10 +62,23 @@ class User < ApplicationRecord
         end
         token_holding[:campaign] = campaign
         token_holding[:token_amount] = tokens
-        token_holdings << token_holding if tokens > 0 and coins > 0
+        token_holdings << token_holding if tokens > 0 #and coins > 0
         
       end
+      
+      ## Add coins to token holdings
+      
+      
+      #token_holding = {}
+      #token_holding[:campaign] = campaigns.first
+      #token_holding[:token_amount] = coins
+      #token_holdings << token_holding if coins > 0
+      
+      
       opts[:token_holdings] = token_holdings
+      
+      opts[:real_coin_qty] = coins
+      
       results << opts if opts[:coin_amount] > 0
     end
     
