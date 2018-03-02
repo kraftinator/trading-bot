@@ -41,14 +41,14 @@
           <div class="form-group">
             <label for="buy_pct" class="col-lg-4 control-label">Buy Pct</label>
             <div class="col-lg-8">
-              <%= f.number_field( :buy_pct, step: 0.001, in: 0.000..100.000, value: @trader.buy_pct, class: 'form-control' ) %>
+              <%= f.number_field( :buy_pct, step: 0.001, in: 0.000..1.000, min: 0, max: 1, value: @trader.buy_pct, class: 'form-control' ) %>
             </div>
           </div>
           
           <div class="form-group">
             <label for="sell_pct" class="col-lg-4 control-label">Sell Pct</label>
             <div class="col-lg-8">
-              <%= f.number_field( :sell_pct, step: 0.001, in: 0.000..100.000, value: @trader.sell_pct, class: 'form-control' ) %>
+              <%= f.number_field( :sell_pct, step: 0.001, in: 0.000..1.000, min: 0, max: 1, value: @trader.sell_pct, class: 'form-control' ) %>
             </div>
           </div>
           

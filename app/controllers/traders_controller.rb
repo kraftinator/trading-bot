@@ -38,6 +38,14 @@ class TradersController < ApplicationController
       return redirect_to campaign_traders_new_path( @trader.campaign )
     end
     
+    ## Set original coin qty
+    if @trader.coin_qty > 0
+      @trader.original_coin_qty = @trader.coin_qty
+    elsif @trader.token_qty > 0
+      tps = @trader.exchange_trading_pair.tps
+      @trader.original_coin_qty = @trader.token_qty * tps.last_price
+    end
+    
     if @trader.save
       redirect_to campaign_path( @trader.campaign )
     else
@@ -64,7 +72,7 @@ class TradersController < ApplicationController
 
   def update
     @trader.update(trader_params)
-    redirect_to trading_pair_path( @trader.trading_pair )
+    redirect_to campaign_path( @trader.campaign )
   end
   
   def order_history

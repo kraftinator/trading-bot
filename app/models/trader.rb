@@ -54,14 +54,15 @@ class Trader < ApplicationRecord
   def show
     output = []
     output << "----------------------------"
-    output << "Trading Pair: #{campaign.trading_pair_display_name}"
-    output << "Coin Qty:     #{coin_qty}"
-    output << "Token Qty:    #{token_qty}"
-    output << "Buy Pct:      #{buy_pct}"
-    output << "Sell Pct:     #{sell_pct}"
-    output << "Strategy:     #{strategy.name}"
-    output << "Exchange:     #{campaign.exchange.name}"
-    output << "Coin Amount:  #{coin_amount}"
+    output << "Trading Pair:     #{campaign.trading_pair_display_name}"
+    output << "Initial Coin Qty: #{original_coin_qty}"
+    output << "Coin Qty:         #{coin_qty}"
+    output << "Token Qty:        #{token_qty}"
+    output << "Buy Pct:          #{buy_pct}"
+    output << "Sell Pct:         #{sell_pct}"
+    output << "Strategy:         #{strategy.name}"
+    output << "Exchange:         #{campaign.exchange.name}"
+    output << "Coin Amount:      #{coin_amount}"
     output << "----------------------------"
     puts output
   end
@@ -98,7 +99,32 @@ class Trader < ApplicationRecord
     #nil
     1.year.ago
   end
-  
+
+  def coin_amount
+    
+    if sell_count > 0
+      order = current_order
+      if order and order.side == 'SELL' and limit_orders.size > 1
+        buy_order = order.buy_order
+        if buy_order
+          coin_qty + ( buy_order.price * buy_order.qty )
+        else
+          coin_qty
+        end
+      else
+        coin_qty
+      end
+    else
+      if coin_qty == 0
+        original_coin_qty
+      else
+        coin_qty
+      end 
+    end
+    
+  end
+
+=begin
   def coin_amount
     order = current_order
     if order and order.side == 'SELL' and limit_orders.size > 1
@@ -112,7 +138,8 @@ class Trader < ApplicationRecord
       coin_qty
     end
   end
-  
+=end
+    
   def fiat_amount( exchange_rate )
     coin_amount * exchange_rate
   end
@@ -124,7 +151,7 @@ class Trader < ApplicationRecord
   end
   
   def profit
-    coin_amount - original_coin_qty
+    sell_count > 0 ? coin_amount - original_coin_qty : 0
   end
   
   def fiat_profit( exchange_rate )
