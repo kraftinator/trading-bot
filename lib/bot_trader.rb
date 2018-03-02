@@ -95,6 +95,17 @@ module BotTrader
       end
     end
   end
+  
+  def process_trader( trader )
+    client = trader.campaign.client
+    strategy_class = strategy_class( trader.strategy )
+    if strategy_class
+      strategy = strategy_class.new( client: client, trader: trader )
+      strategy.process
+    else
+      puts "ERROR: Invalid strategy - #{trader.strategy.name}."
+    end
+  end
 
   def strategy_class( strategy )
     case strategy.name
@@ -261,6 +272,7 @@ module BotTrader
     end ## Loop over trading pairs
   end
   
+=begin  
   def process_trader( trader )
     set_client
     @tps = trading_pair_status( trader.trading_pair )
@@ -271,7 +283,8 @@ module BotTrader
       puts "ERROR: Invalid strategy - #{trader.strategy.name}."
     end
   end
-  
+=end
+    
   ## Test methods
   def process_test
     

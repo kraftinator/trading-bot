@@ -8,7 +8,8 @@ class TradingStrategyNew
     @trading_pair = @trader.campaign.exchange_trading_pair
     @tps = @trading_pair.tps
     @exchange = @trader.campaign.exchange
-    @fiat_tps = @exchange.fiat_stats( @trading_pair.coin2 )
+    #@fiat_tps = @exchange.fiat_stats( @trading_pair.coin2 )
+    @fiat_tps = @trading_pair.coin2.fiat? ? @tps : @exchange.fiat_stats( @trading_pair.coin2 )
   end
    
   def process
@@ -83,8 +84,8 @@ class TradingStrategyNew
   
   def create_initial_sell_order
     # sell_coin_total = buy_coin_total * ( 1 + @trader.sell_pct )
-    limit_price = @tps.last_price * ( 1 + @trader.sell_pct )
-    #limit_price = @tps.last_price * 1.005
+    #limit_price = @tps.last_price * ( 1 + @trader.sell_pct )
+    limit_price = @tps.last_price * 1.005
     limit_price = limit_price.round( @trading_pair.price_precision )
     create_sell_order( limit_price )    
   end
