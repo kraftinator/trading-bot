@@ -31,6 +31,7 @@ require './lib/strategies/lambda_strategy_new.rb'
 require './lib/strategies/omicron_strategy_new.rb'
 require './lib/strategies/pi_strategy_new.rb'
 require './lib/strategies/sigma_strategy_new.rb'
+require './lib/strategies/tau_strategy_new.rb'
 
 module BotTrader
 
@@ -137,6 +138,8 @@ module BotTrader
       strategy_class = PiStrategyNew
     when 'SIGMA'
       strategy_class = SigmaStrategyNew
+    when 'TAU'
+      strategy_class = TauStrategyNew
     when 'TEST'
       strategy_class = TestStrategy
     end
