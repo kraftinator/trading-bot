@@ -30,7 +30,8 @@ Rails.application.routes.draw do
   get 'accounts/dashboard'
   get 'accounts/inactive'
 
-  root to: 'accounts#index'
+  #root to: 'accounts#index'
+  root to: 'accounts#dashboard'
 
 
   get 'home/index'
