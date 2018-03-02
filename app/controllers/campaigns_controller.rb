@@ -37,7 +37,8 @@ class CampaignsController < ApplicationController
   end
 
   def show
-    @traders = @campaign.traders.active.to_a.sort_by( &:show_last_fulfilled_order_date ).reverse
+    #@traders = @campaign.traders.active.to_a.sort_by( &:show_last_fulfilled_order_date ).reverse
+    @traders = @campaign.traders.active.to_a.sort_by( &:last_action ).reverse
   end
   
   def toggle_active
