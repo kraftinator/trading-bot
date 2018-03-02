@@ -21,7 +21,12 @@ class Trader < ApplicationRecord
   end
   
   def last_action
-    limit_orders.order( 'created_at desc' ).first
+    if limit_orders.any?
+      #limit_orders.order( 'created_at desc' ).first
+      limit_orders.order( 'created_at desc' ).first.created_at
+    else
+      created_at
+    end
   end
   
   def current_order
