@@ -37,7 +37,10 @@ class AccountsController < ApplicationController
 
     end
     
+    ## Sort holdings
     @holdings = @holdings.sort_by { |h| h[:coin].symbol }
+    ## Get partially filled orders
+    @partially_filled_orders = current_user.partially_filled_orders
 
   end
   

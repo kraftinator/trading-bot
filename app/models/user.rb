@@ -65,18 +65,8 @@ class User < ApplicationRecord
         token_holdings << token_holding if tokens > 0 #and coins > 0
         
       end
-      
-      ## Add coins to token holdings
-      
-      
-      #token_holding = {}
-      #token_holding[:campaign] = campaigns.first
-      #token_holding[:token_amount] = coins
-      #token_holdings << token_holding if coins > 0
-      
-      
+
       opts[:token_holdings] = token_holdings
-      
       opts[:real_coin_qty] = coins
       
       results << opts if opts[:coin_amount] > 0
@@ -115,7 +105,8 @@ class User < ApplicationRecord
   
   def partially_filled_orders
     pfos = []
-    traders.each { |t| pfos << t.current_order.partially_filled_order if t.current_order and t.current_order.partially_filled_order }
+    #traders.each { |t| pfos << t.current_order.partially_filled_order if t.current_order and t.current_order.partially_filled_order }
+    pfos = PartiallyFilledOrder.all
     pfos
   end
   
