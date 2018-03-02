@@ -61,6 +61,10 @@ module BinanceFactory
         puts "Created #{etp.symbol}"
       end
       
+      ## Update exchange coin precisions
+      exchange_coin1.update( precision: qty_precision )
+      exchange_coin2.update( precision: price_precision )
+      
     end
     
   end

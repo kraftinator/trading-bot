@@ -44,7 +44,7 @@
             <td><%= trader.ceiling_pct > 0 ? number_to_percentage( trader.ceiling_pct * 100, precision: 1, format: "%n" ) : '---' %></td>
             <td><%= trader.sell_count.to_s %></td>
             <td><%= number_with_precision( trader.coin_amount, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
-            <td><%= trader.last_fulfilled_order ? time_ago_in_words( trader.last_fulfilled_order.updated_at ) + ' ago' : '---' %></td>
+            <td><%= trader.last_action ? time_ago_in_words( trader.last_action.created_at ) + ' ago' : '---' %></td>
             <td><%= trader.current_order ? trader.current_order.side : '---' %>
             <td><%= trader.current_order ? number_with_precision( trader.current_order.price, precision: @campaign.exchange_trading_pair.price_precision ) : '---'  %></td>
           </tr>  
