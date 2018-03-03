@@ -11,8 +11,14 @@ class MuStrategyNew < TradingStrategyNew
   
   ### Sets buy price
   def buy_order_limit_price
+    
+    ## Default state to gamma
+    if @trader.state.nil?
+      @trader.update( state: 'gamma' )
+    end
+    
     ### Gamma behavior
-    if @trader.state == 'gamma'
+    if @trader.state == 'gamma' or @trader.state.nil?
       puts "Running gamma behavior"
       if ( @trader.ceiling_pct > 0 ) and ( @tps.last_price > ( @tps.weighted_avg_price * ( 1 + @trader.ceiling_pct ) ) )
         limit_price = ( @tps.last_price < @tps.weighted_avg_price ) ? @tps.last_price : @tps.weighted_avg_price
