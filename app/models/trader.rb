@@ -119,6 +119,20 @@ class Trader < ApplicationRecord
       else
         coin_qty
       end
+      
+    elsif sell_count == 0 and buy_count == 1
+      order = current_order
+      if order and order.side == 'SELL' and limit_orders.size > 1
+        buy_order = order.buy_order
+        if buy_order
+          coin_qty + ( buy_order.price * buy_order.qty )
+        else
+          coin_qty
+        end
+      else
+        coin_qty
+      end
+        
     else
       if coin_qty == 0
         original_coin_qty
