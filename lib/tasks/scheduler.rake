@@ -58,7 +58,7 @@ namespace :scheduler do
     BotTrader.process_user( User.first )
   end
   
-  desc 'Run bots by campaign and user'
+  desc 'Run bots by campaign'
   task :process_exchange => :environment do
     
     ## Validate parameters
@@ -86,6 +86,32 @@ namespace :scheduler do
     end
     
     
+  end
+  
+  desc 'Run Binance bots'
+  task :process_binance => :environment do
+    exchange = Exchange.where( name: 'Binance' ).first
+    trading_pairs = exchange.trading_pairs
+    trading_pairs.each do |trading_pair|
+      campaigns = trading_pair.campaigns.active
+      campaigns.each do |campaign|
+        puts "Processing campaign #{campaign.trading_pair_display_name}"
+        BotTrader.process_campaign( campaign )
+      end
+    end
+  end
+  
+  desc 'Run Coinbase bots'
+  task :process_coinbase => :environment do
+    exchange = Exchange.where( name: 'Coinbase' ).first
+    trading_pairs = exchange.trading_pairs
+    trading_pairs.each do |trading_pair|
+      campaigns = trading_pair.campaigns.active
+      campaigns.each do |campaign|
+        puts "Processing campaign #{campaign.trading_pair_display_name}"
+        BotTrader.process_campaign( campaign )
+      end
+    end
   end
   
   desc 'Run specific bot'
