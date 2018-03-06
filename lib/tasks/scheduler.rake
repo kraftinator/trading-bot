@@ -58,6 +58,35 @@ namespace :scheduler do
     BotTrader.process_user( User.first )
   end
   
+  desc 'Run bots by campaign and user'
+  task :process_exchange => :environment do
+    
+    ## Validate parameters
+    exchange_id = ENV["EXCHANGE_ID"]
+    unless exchange_id
+      puts "ERROR: Parameter EXCHANGE_ID not found."
+      exit
+    end
+    
+    exchange = Exchange.find_by( id: exchange_id )
+    unless exchange
+      puts "ERROR: Invalid EXCHANGE_ID - #{exchange_id}"
+      exit
+    end
+    
+    puts "Process exchange #{exchange.name}"
+    
+    trading_pairs = exchange.trading_pairs
+    trading_pairs.each do |trading_pair|
+      campaigns = trading_pair.campaigns.active
+      campaigns.each do |campaign|
+        puts "Processing campaign #{campaign.trading_pair_display_name}"
+        BotTrader.process_campaign( campaign )
+      end
+    end
+    
+    
+  end
   
   desc 'Run specific bot'
   task :process_trader => :environment do
