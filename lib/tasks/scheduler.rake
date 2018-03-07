@@ -58,6 +58,11 @@ namespace :scheduler do
     BotTrader.process_user( User.first )
   end
   
+  desc 'Run jobs to process campaigns'
+  task :process_campaigns => :environment do
+    BotTrader.process_campaigns
+  end
+  
   desc 'Run bots by campaign'
   task :process_exchange => :environment do
     
@@ -84,7 +89,6 @@ namespace :scheduler do
         BotTrader.process_campaign( campaign )
       end
     end
-    
     
   end
   

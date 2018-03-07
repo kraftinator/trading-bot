@@ -16,6 +16,8 @@ gem 'pg'
 gem 'binance', '~> 0.4.3'
 # Coinbase
 gem 'coinbase-exchange'
+# Sidekiq
+gem 'sidekiq'
 # HTTParty
 gem 'httparty'
 # Use Puma as the app server

@@ -34,6 +34,10 @@ require './lib/strategies/sigma_strategy_new.rb'
 require './lib/strategies/tau_strategy_new.rb'
 require './lib/strategies/mu_strategy_new.rb'
 
+## Workers
+require './app/workers/campaign_worker.rb'
+require './app/workers/trader_worker.rb'
+
 module BotTrader
 
   module_function
@@ -60,6 +64,121 @@ module BotTrader
   ##################################################
   ##################################################
   
+  def process_campaigns
+    users = User.all
+    users.each do |user|
+      campaigns = user.campaigns.active
+      campaigns.each do |campaign|
+        CampaignWorker.perform_async( campaign.id )
+      end
+    end
+  end
+  
+  def process_campaign( campaign_id )
+    
+    puts "Processing campaign #{campaign_id}..."
+    
+    campaign = Campaign.find( campaign_id )
+    traders = campaign.traders.active
+    if traders.any?
+      ## Get stats
+      trading_pair = campaign.exchange_trading_pair
+      ## Get client
+      client = campaign.client
+      ## If campaign's max price > 24 hour high price, keep processing
+      if campaign.max_price > trading_pair.tps.high_price
+        ## Process bots
+        traders.each do |trader|
+          TraderWorker.perform_async( trader.id )
+          #strategy_class = strategy_class( trader.strategy )
+          #if strategy_class
+          #  strategy = strategy_class.new( client: client, trader: trader )
+          #  strategy.process
+          #else
+          #  puts "ERROR: Invalid strategy - #{trader.strategy.name}."
+          #end
+        end
+      else
+        ## Freeze bots!
+        puts "WARNING: Max price reached. High price #{trading_pair.stats.high_price} > max price #{campaign.max_price.to_f}."
+        traders.each do |trader|
+          if trader.current_order and trader.current_order.side == 'BUY'
+            trader.cancel_current_order
+          end
+          trader.disable
+          puts "Bot #{trader.id} deactivated."
+        end
+        campaign.disable
+        puts "Campaign #{campaign.exchange.name} #{campaign.symbol} deactivated."
+      end
+    end
+    
+  end
+  
+  def process_bot( trader_id )
+    puts "Processing bot #{trader_id}..."
+    trader = Trader.find( trader_id )
+    client = trader.campaign.client
+    strategy_class = strategy_class( trader.strategy )
+    if strategy_class
+      strategy = strategy_class.new( client: client, trader: trader )
+      strategy.process
+    else
+      puts "ERROR: Invalid strategy - #{trader.strategy.name}."
+    end
+  end
+  
+  def process_jobs
+    users = User.all
+    users.each do |user|
+      campaigns = user.campaigns.active
+      campaigns.each do |campaign|
+        traders = campaign.traders.active
+        if traders.any?
+          ## Get stats
+          trading_pair = campaign.exchange_trading_pair
+          ## Get client
+          client = campaign.client
+          ## If campaign's max price > 24 hour high price, keep processing
+          if campaign.max_price > trading_pair.tps.high_price
+            ## Process bots
+            traders.each do |trader|
+              strategy_class = strategy_class( trader.strategy )
+              if strategy_class
+                strategy = strategy_class.new( client: client, trader: trader )
+                strategy.process
+              else
+                puts "ERROR: Invalid strategy - #{trader.strategy.name}."
+              end
+            end
+          else
+            ## Freeze bots!
+            puts "WARNING: Max price reached. High price #{trading_pair.stats.high_price} > max price #{campaign.max_price.to_f}."
+            traders.each do |trader|
+              if trader.current_order and trader.current_order.side == 'BUY'
+                trader.cancel_current_order
+              end
+              trader.disable
+              puts "Bot #{trader.id} deactivated."
+            end
+            campaign.disable
+            puts "Campaign #{campaign.exchange.name} #{campaign.symbol} deactivated."
+          end
+        end
+      end
+    end
+  end
+  
+  ##################################################
+  ##################################################
+  ##################################################
+  ##################################################
+  
+  ##################################################
+  ##################################################
+  ##################################################
+  ##################################################
+=begin  
   def process_campaign( campaign )
    
       traders = campaign.traders.active
@@ -96,7 +215,7 @@ module BotTrader
       end
  
   end
-  
+=end  
   ##################################################
   ##################################################
   ##################################################
