@@ -55,7 +55,7 @@ namespace :scheduler do
   
   desc 'Run bots by user'
   task :process_user => :environment do
-    #BotTrader.process_user( User.first )
+    BotTrader.process_user( User.first )
   end
   
   desc 'Run jobs to process campaigns'
