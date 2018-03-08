@@ -17,6 +17,72 @@ class User < ApplicationRecord
     self.authorizations.where( exchange: exchange ).first
   end
   
+  
+  ## New
+  def coin_holdings
+    
+    ## Group campaigns by base coin
+    base_coins = {}
+    campaigns.active.each do |campaign|
+      etp = campaign.exchange_trading_pair
+      key = etp.coin2.id
+      if base_coins[key]
+        base_coins[key] << campaign
+      else
+        base_coins[key] = [campaign]
+      end
+    end
+    
+    
+    ## Create revenue object for each base coin
+    results = []
+    keys = base_coins.keys
+    keys.each do |key|
+      campaigns = base_coins[key]
+      opts = {}
+      opts[:coin] = ExchangeCoin.find( key )
+      unless opts[:coin].fiat?
+        fiat_tps = campaigns.first.exchange.cached_fiat_stats( opts[:coin] )
+        opts[:fiat_price] = fiat_tps.last_price
+      end      
+      opts[:coin_amount] = opts[:profit] = opts[:original_coin_amount] = 0
+      
+      token_holdings = []
+      coins = 0
+      campaigns.each do |campaign|
+        
+        cct = campaign.cached_coin_total
+
+        opts[:coin_amount] += cct.projected_coin2_total #campaign.holdings[:coin_amount]
+        opts[:profit] += cct.profit  #campaign.holdings[:profit]
+        opts[:original_coin_amount] += cct.initial_coin2_total #campaign.holdings[:original_coin_amount]
+        
+        ## Get token holdings
+        #tokens = 0
+        #traders = campaign.traders.active
+        token_holding = {}
+        #traders.each do |trader|
+        #  coins += trader.coin_qty
+        #  tokens += trader.token_qty
+        #end
+        token_holding[:campaign] = campaign
+        token_holding[:token_amount] = cct.coin1_total #tokens
+        token_holdings << token_holding if cct.coin1_total > 0 #and coins > 0
+        
+        coins += cct.coin2_total
+        
+      end
+
+      opts[:token_holdings] = token_holdings
+      opts[:real_coin_qty] = coins
+      
+      results << opts if opts[:coin_amount] > 0
+    end
+    
+    results
+    
+  end
+  
   def total_holdings
     
     ## Group campaigns by base coin

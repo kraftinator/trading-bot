@@ -62,11 +62,17 @@ class CampaignsController < ApplicationController
     end
     
     ## Get summary values
-    @total_coin_amount = @total_profit = @total_original_coin_amount = 0
-    @traders.each do |trader|
-      @total_coin_amount += trader.coin_amount
-      @total_profit += trader.profit
-      @total_original_coin_amount += trader.original_coin_qty
+    #@total_coin_amount = @total_profit = @total_original_coin_amount = 0
+    #@traders.each do |trader|
+    #  @total_coin_amount += trader.coin_amount
+    #  @total_profit += trader.profit
+    #  @total_original_coin_amount += trader.original_coin_qty
+    #end
+    
+    @coin_total = @campaign.campaign_coin_total
+    unless @coin_total
+      @campaign.calculate_coin_totals
+      @coin_total = @campaign.campaign_coin_total
     end
 
   end

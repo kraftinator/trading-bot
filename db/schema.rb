@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180223215024) do
+ActiveRecord::Schema.define(version: 20180308212755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -23,6 +23,17 @@ ActiveRecord::Schema.define(version: 20180223215024) do
     t.string   "api_pass"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
+  end
+
+  create_table "campaign_coin_totals", force: :cascade do |t|
+    t.integer  "campaign_id"
+    t.decimal  "coin1_total",                 default: "0.0"
+    t.decimal  "{:precision=>16, :scale=>8}", default: "0.0"
+    t.decimal  "coin2_total",                 default: "0.0"
+    t.decimal  "initial_coin2_total",         default: "0.0"
+    t.decimal  "projected_coin2_total",       default: "0.0"
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
   end
 
   create_table "campaigns", force: :cascade do |t|

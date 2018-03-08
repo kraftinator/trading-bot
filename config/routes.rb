@@ -28,6 +28,7 @@ Rails.application.routes.draw do
 
   get 'accounts/index'
   get 'accounts/dashboard'
+  get 'accounts/dashboard2'
   get 'accounts/inactive'
 
   #root to: 'accounts#index'

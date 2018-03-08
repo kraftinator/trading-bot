@@ -14,13 +14,13 @@
           <td class="text-right"><label class="font-weight-bold">AMOUNT INVESTED:</label></td>
           <td>
             <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
-              <%= number_with_precision( @total_original_coin_amount, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+              <%= number_with_precision( @coin_total.initial_coin2_total, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
             <% end %>
           <td class="text-right">
             <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
-              <%= number_to_currency( @total_original_coin_amount * @fiat_price, precision: 2 ) %>
+              <%= number_to_currency( @coin_total.initial_coin2_total * @fiat_price, precision: 2 ) %>
             <% else %>
-              <%= number_to_currency( @total_original_coin_amount, precision: 2 ) %>
+              <%= number_to_currency( @coin_total.initial_coin2_total, precision: 2 ) %>
             <% end %>
           </td>
         </tr>   
@@ -28,13 +28,13 @@
           <td class="text-right"><label class="font-weight-bold">PROFIT:</label></td>
           <td>
             <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
-              <%= number_with_precision( @total_profit, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+              <%= number_with_precision( @coin_total.profit, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
             <% end %>
           <td class="text-right">
             <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
-              <%= number_to_currency( @total_profit * @fiat_price, precision: 2 ) %>
+              <%= number_to_currency( @coin_total.profit * @fiat_price, precision: 2 ) %>
             <% else %>
-              <%= number_to_currency( @total_profit, precision: 2 ) %>
+              <%= number_to_currency( @coin_total.profit, precision: 2 ) %>
             <% end %>
           </td>
         </tr>   
@@ -42,13 +42,13 @@
           <td class="text-right"><label class="font-weight-bold">TOTAL VALUE:</label></td>
           <td>
             <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
-              <%= number_with_precision( @total_coin_amount, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+              <%= number_with_precision( @coin_total.projected_coin2_total, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
             <% end %>
           <td class="text-right">
             <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
-              <%= number_to_currency( @total_coin_amount * @fiat_price, precision: 2 ) %>
+              <%= number_to_currency( @coin_total.projected_coin2_total * @fiat_price, precision: 2 ) %>
             <% else %>
-              <%= number_to_currency( @total_coin_amount, precision: 2 ) %>
+              <%= number_to_currency( @coin_total.projected_coin2_total, precision: 2 ) %>
             <% end %>
             </td>
         </tr>   

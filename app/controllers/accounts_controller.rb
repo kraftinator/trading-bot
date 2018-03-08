@@ -5,6 +5,45 @@ class AccountsController < ApplicationController
   before_action :authenticate_user!
   before_action :active_required, :except => [:inactive]
   
+  def dashboard2
+    
+    @holdings = current_user.coin_holdings
+    @holdings.each do |holding|
+      holding[:token_holdings].each do |token_holding|
+        tps = token_holding[:campaign].exchange_trading_pair.cached_stats
+        token_holding[:coin_value] = token_holding[:token_amount] * tps.last_price
+        if holding[:fiat_price]
+          token_holding[:fiat_value] = token_holding[:coin_value] *  holding[:fiat_price]
+        else
+          token_holding[:fiat_value] = token_holding[:coin_value]
+        end
+      end
+      
+      ## Add real coin qty
+      if holding[:real_coin_qty] > 0
+        token_holding = {}
+        token_holding[:token_amount] = holding[:real_coin_qty]
+        token_holding[:coin_value] = holding[:real_coin_qty]
+        ## Get fiat value
+        if holding[:fiat_price]
+          token_holding[:fiat_value] = token_holding[:coin_value] *  holding[:fiat_price]
+        else
+          token_holding[:fiat_value] = token_holding[:coin_value]
+        end
+        holding[:token_holdings] << token_holding
+      end
+      
+      holding[:token_holdings] = holding[:token_holdings].sort_by { |th| th[:coin_value] }.reverse
+
+    end
+    
+    ## Sort holdings
+    @holdings = @holdings.sort_by { |h| h[:coin].symbol }
+    ## Get partially filled orders
+    @partially_filled_orders = current_user.partially_filled_orders
+    
+  end
+  
   def dashboard
     
     @holdings = current_user.total_holdings
