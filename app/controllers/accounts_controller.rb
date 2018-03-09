@@ -5,7 +5,7 @@ class AccountsController < ApplicationController
   before_action :authenticate_user!
   before_action :active_required, :except => [:inactive]
   
-  def dashboard2
+  def dashboard
     
     @holdings = current_user.coin_holdings
     @holdings.each do |holding|
@@ -44,7 +44,7 @@ class AccountsController < ApplicationController
     
   end
   
-  def dashboard
+  def dashboard2
     
     @holdings = current_user.total_holdings
     @holdings.each do |holding|
