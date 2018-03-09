@@ -138,4 +138,15 @@ namespace :scheduler do
     
   end
   
+  desc 'Summarize campaign coin totals'
+  task :process_campaign_coin_totals => :environment do
+    users = User.all
+    users.each do |user|
+      campaigns = user.campaigns.active
+      campaigns.each do |campaign|
+        CampaignCoinTotalWorker.perform_async( campaign.id )
+      end
+    end
+  end
+  
 end
