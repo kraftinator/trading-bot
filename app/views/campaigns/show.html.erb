@@ -7,6 +7,52 @@
 </div>
 
 <div class="row">
+  <div class="col-lg-4">
+    <%= render "revenue" %>
+  </div>
+  <div class="col-lg-4">
+   <table class="table  table-hover">
+      <tr>
+        <td><strong>Last Price:</strong></td>
+        <td><%= number_with_precision( @tps.last_price, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+      </tr>
+      <tr>
+        <td><strong>24h Weighted Avg:</strong></td>
+        <td><%= number_with_precision( @tps.weighted_avg_price, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+      </tr>
+      <tr>
+        <td><strong>24h High:</strong></td>
+        <td><%= number_with_precision( @tps.high_price, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+      </tr>
+      <tr>
+        <td><strong>24h Low:</strong></td>
+        <td><%= number_with_precision( @tps.low_price, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-lg-4">
+   <table class="table  table-hover">
+      <tr>
+        <td><strong>Total Bots:</strong></td>
+        <td><%= @campaign.traders.active.size %></td>
+      </tr>
+      <tr>
+        <td><strong>Highest Buy Order:</strong></td>
+        <td><%= @highest_buy_price ? number_with_precision( @highest_buy_price, precision: @campaign.exchange_trading_pair.price_precision ) : '---' %></td>
+      </tr>
+      <tr>
+        <td><strong>Lowest Sell Order:</strong></td>
+        <td><%= @lowest_sell_price ? number_with_precision( @lowest_sell_price, precision: @campaign.exchange_trading_pair.price_precision ) : '---' %></td>
+      </tr>
+      <tr>
+        <td><strong>Spread:</strong></td>
+        <td><%= @spread_pct ? number_to_percentage( @spread_pct * 100, precision: 2, format: "%n" ) + '%' : '---'  %></td>
+      </tr>    
+    </table>
+  </div>
+</div>
+
+<div class="row">
   <div class="col-lg-6">
     <%= link_to 'Create Bot', campaign_traders_new_path( @campaign ), class: "btn btn-warning"%>
   </div>

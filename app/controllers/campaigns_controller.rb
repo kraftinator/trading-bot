@@ -37,9 +37,34 @@ class CampaignsController < ApplicationController
   end
 
   def show
-    #@traders = @campaign.traders.active.to_a.sort_by( &:show_last_fulfilled_order_date ).reverse
+    ## Get traders
     @traders = @campaign.traders.active.to_a.sort_by( &:last_action ).reverse
+    ## Revenue stats
+    unless @campaign.exchange_trading_pair.coin2.fiat?
+      fiat_tps = @campaign.exchange.cached_fiat_stats( @campaign.exchange_trading_pair.coin2 )
+      @fiat_price = fiat_tps.last_price      
+    end
+    @coin_total = @campaign.campaign_coin_total
+    unless @coin_total
+      @campaign.calculate_coin_totals
+      @coin_total = @campaign.campaign_coin_total
+    end
+    ## Get stats
+    @tps = @campaign.exchange_trading_pair.cached_stats
+    ## Get highest buy order
+    buy_bots = @traders.select{ |bot| bot.current_order.side == 'BUY' if bot.current_order }
+    max_buy_bot = buy_bots.max_by{ |bot| bot.current_order.price }
+    @highest_buy_price = max_buy_bot.current_order.price if max_buy_bot
+    ## Get lowest sell order
+    sell_bots = @traders.select{ |bot| bot.current_order.side == 'SELL' if bot.current_order }
+    min_sell_bot = sell_bots.min_by{ |bot| bot.current_order.price if bot.current_order and bot.current_order.side == 'SELL' }
+    @lowest_sell_price = min_sell_bot.current_order.price if min_sell_bot
+    ## Get spread pct
+    if @highest_buy_price and @lowest_sell_price
+      @spread_pct = ( @lowest_sell_price - @highest_buy_price ) / @highest_buy_price
+    end
   end
+  
   
   def toggle_active
     if @campaign.active?

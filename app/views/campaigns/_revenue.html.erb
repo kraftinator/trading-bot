@@ -1,0 +1,46 @@
+    <table class="table table-striped table-hover">
+      <tbody>
+        <tr class="info">
+          <td class="text-right"><label class="font-weight-bold">AMOUNT INVESTED:</label></td>
+          <td>
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_with_precision( @coin_total.initial_coin2_total, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+            <% end %>
+          <td class="text-right">
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_to_currency( @coin_total.initial_coin2_total * @fiat_price, precision: 2 ) %>
+            <% else %>
+              <%= number_to_currency( @coin_total.initial_coin2_total, precision: 2 ) %>
+            <% end %>
+          </td>
+        </tr>   
+        <tr class="success">
+          <td class="text-right"><label class="font-weight-bold">PROFIT:</label></td>
+          <td>
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_with_precision( @coin_total.profit, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+            <% end %>
+          <td class="text-right">
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_to_currency( @coin_total.profit * @fiat_price, precision: 2 ) %>
+            <% else %>
+              <%= number_to_currency( @coin_total.profit, precision: 2 ) %>
+            <% end %>
+          </td>
+        </tr>   
+        <tr class="danger">
+          <td class="text-right"><label class="font-weight-bold">TOTAL VALUE:</label></td>
+          <td>
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_with_precision( @coin_total.projected_coin2_total, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+            <% end %>
+          <td class="text-right">
+            <% unless @campaign.exchange_trading_pair.coin2.fiat? %>
+              <%= number_to_currency( @coin_total.projected_coin2_total * @fiat_price, precision: 2 ) %>
+            <% else %>
+              <%= number_to_currency( @coin_total.projected_coin2_total, precision: 2 ) %>
+            <% end %>
+            </td>
+        </tr>   
+      </tbody>
+    </table>
