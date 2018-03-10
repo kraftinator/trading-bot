@@ -36,7 +36,7 @@
             <td><%= sell_order ? sell_order.filled_at.strftime("%Y-%m-%d %H:%M") : '---' %></td>
             <td><%= sell_order ? number_with_precision( sell_order.qty, precision: @trader.campaign.exchange_trading_pair.qty_precision ) : '---' %></td>
             <td><%= sell_order ? number_with_precision( sell_order.price, precision: @trader.campaign.exchange_trading_pair.price_precision ) : '---' %></td>            
-            <td><%= buy_order && sell_order ? number_to_percentage(  ( ( sell_order.price / buy_order.price - 1 ) * 100 ), precision: 3, format: "%n" ) : '---'  %></td>
+            <td><%= buy_order && sell_order ? number_to_percentage(  ( ( sell_order.price / buy_order.price - 1 ) * 100 ), precision: 2, format: "%n" ) : '---'  %></td>
           </tr>  
         <% end %>
       </tbody>
