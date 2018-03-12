@@ -63,6 +63,7 @@ class CampaignsController < ApplicationController
     if @highest_buy_price and @lowest_sell_price
       @spread_pct = ( @lowest_sell_price - @highest_buy_price ) / @highest_buy_price
     end
+    test_var = true
   end
   
   
