@@ -3,7 +3,7 @@ require './lib/strategies/trading_strategy_new.rb'
 class SigmaStrategyNew < TradingStrategyNew
   
   def buy_order_limit_price
-    if @trader.sell_count_trigger > 0 && @trader.sell_count % @trader.sell_count_trigger == 0
+    if @trader.sell_count_trigger > 0 && @trader.sell_count > 0 && @trader.sell_count % @trader.sell_count_trigger == 0
       limit_price = ( @tps.last_price < @tps.weighted_avg_price ) ? @tps.last_price : @tps.weighted_avg_price
       limit_price = limit_price * ( 1 - @trader.buy_pct - 0.05 )
     else
