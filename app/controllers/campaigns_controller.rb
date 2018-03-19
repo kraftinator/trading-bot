@@ -44,11 +44,14 @@ class CampaignsController < ApplicationController
       fiat_tps = @campaign.exchange.cached_fiat_stats( @campaign.exchange_trading_pair.coin2 )
       @fiat_price = fiat_tps.last_price      
     end
-    @coin_total = @campaign.campaign_coin_total
-    unless @coin_total
-      @campaign.calculate_coin_totals
-      @coin_total = @campaign.campaign_coin_total
-    end
+    
+    #@coin_total = @campaign.campaign_coin_total
+    #unless @coin_total
+    #  @campaign.calculate_coin_totals
+    #  @coin_total = @campaign.campaign_coin_total
+    #end
+    @coin_total = @campaign.cached_stats
+    
     ## Get stats
     @tps = @campaign.exchange_trading_pair.cached_stats
     ## Get highest buy order
@@ -94,11 +97,12 @@ class CampaignsController < ApplicationController
     #  @total_original_coin_amount += trader.original_coin_qty
     #end
     
-    @coin_total = @campaign.campaign_coin_total
-    unless @coin_total
-      @campaign.calculate_coin_totals
-      @coin_total = @campaign.campaign_coin_total
-    end
+    @coin_total = @campaign.cached_stats
+    #@coin_total = @campaign.campaign_coin_total
+    #unless @coin_total
+    #  @campaign.calculate_coin_totals
+    #  @coin_total = @campaign.campaign_coin_total
+    #end
 
   end
 

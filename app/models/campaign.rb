@@ -3,18 +3,18 @@ class Campaign < ApplicationRecord
   belongs_to  :user
   belongs_to  :exchange_trading_pair
   has_many    :traders
-  has_one     :campaign_coin_total
+  has_many    :campaign_coin_totals
   delegate    :exchange, :to => :exchange_trading_pair
   
   validates_presence_of :user_id, :exchange_trading_pair_id, :max_price
   
   scope :active, -> { where( 'deactivated_at is null' ) }
   
-  def calculate_coin_totals
+  def load_stats
     
-    unless self.campaign_coin_total
-      CampaignCoinTotal.create( campaign: self )
-    end
+    #unless self.campaign_coin_totals.empty?
+      #CampaignCoinTotal.create( campaign: self )
+      #end
     
     traders = self.traders.active
     coin1_total = coin2_total = initial_coin2_total = projected_coin2_total = 0
@@ -25,7 +25,8 @@ class Campaign < ApplicationRecord
       projected_coin2_total += trader.coin_amount
     end
 
-    self.campaign_coin_total.update( 
+    CampaignCoinTotal.create(
+        campaign: self,
         coin1_total: coin1_total, 
         coin2_total: coin2_total, 
         initial_coin2_total: initial_coin2_total,
@@ -34,12 +35,19 @@ class Campaign < ApplicationRecord
 
   end
   
-  def cached_coin_total
-    if !self.campaign_coin_total
-      calculate_coin_totals
+  def cached_stats
+    if self.campaign_coin_totals.empty?
+      load_stats
     end
-    self.campaign_coin_total
+    self.campaign_coin_totals.order( 'created_at desc' ).first
   end
+  
+  #def cached_coin_total
+  #  if !self.campaign_coin_total
+  #    calculate_coin_totals
+  #  end
+  #  self.campaign_coin_total
+  #end
   
   def holdings
     traders = self.traders.active

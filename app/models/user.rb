@@ -51,7 +51,7 @@ class User < ApplicationRecord
       coins = 0
       campaigns.each do |campaign|
         
-        cct = campaign.cached_coin_total
+        cct = campaign.cached_stats
 
         opts[:coin_amount] += cct.projected_coin2_total #campaign.holdings[:coin_amount]
         opts[:profit] += cct.profit  #campaign.holdings[:profit]
