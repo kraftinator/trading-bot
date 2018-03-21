@@ -13,51 +13,39 @@
   <div class="col-lg-4">
    <table class="table  table-hover">
      <tr>
-       <td><strong>24h Profit:</strong></td>
+       <td><strong>24h Change:</strong></td>
        <td>
-         <% if @coin_total.profit > 0 and @one_day_coin_total.profit > 0 %>
-           <% if @coin_total.profit > @one_day_coin_total.profit %>
-             <span class="text-success">
-               <strong>
-                 +<%= number_to_percentage( ( ( @coin_total.profit / @one_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
-               </strong>
-             </span>
-            <% else %>
-              <%= number_to_percentage( ( ( @coin_total.profit / @one_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
-            <% end %>
-         <% end %>
+         <% if @one_day_pct_change > 0 %>
+           <span class="text-success">
+             +<%= number_to_percentage( @one_day_pct_change, precision: 2, format: "%n" ) %>%
+           </span>
+        <% else %>
+          <%= number_to_percentage( @one_day_pct_change, precision: 2, format: "%n" ) %>%
+        <% end %>
        </td>
      </tr>
      <tr>
-       <td><strong>72h Profit:</strong></td>
+       <td><strong>72h Change:</strong></td>
        <td>
-         <% if @coin_total.profit > 0 and @three_day_coin_total.profit > 0 %>
-           <% if @coin_total.profit > @three_day_coin_total.profit %>
-             <span class="text-success">
-               <strong>
-                 +<%= number_to_percentage( ( ( @coin_total.profit / @three_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
-               </strong>
-             </span>
-            <% else %>
-              <%= number_to_percentage( ( ( @coin_total.profit / @three_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
-            <% end %>
-         <% end %>
+         <% if @three_day_pct_change > 0 %>
+           <span class="text-success">
+             +<%= number_to_percentage( @three_day_pct_change, precision: 2, format: "%n" ) %>%
+           </span>
+        <% else %>
+          <%= number_to_percentage( @three_day_pct_change, precision: 2, format: "%n" ) %>%
+        <% end %>
        </td>
      </tr>
      <tr>
-       <td><strong>1w Profit:</strong></td>
+       <td><strong>1w Change:</strong></td>
        <td>
-         <% if @coin_total.profit > 0 and @seven_day_coin_total.profit > 0 %>
-           <% if @coin_total.profit > @seven_day_coin_total.profit %>
-             <span class="text-success">
-               <strong>
-                 +<%= number_to_percentage( ( ( @coin_total.profit / @seven_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
-               </strong>
-             </span>
-            <% else %>
-              <%= number_to_percentage( ( ( @coin_total.profit / @seven_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
-            <% end %>
-         <% end %>
+         <% if @seven_day_pct_change > 0 %>
+           <span class="text-success">
+             +<%= number_to_percentage( @seven_day_pct_change, precision: 2, format: "%n" ) %>%
+           </span>
+        <% else %>
+          <%= number_to_percentage( @seven_day_pct_change, precision: 2, format: "%n" ) %>%
+        <% end %>
        </td>
      </tr>
      <tr>

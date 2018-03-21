@@ -56,7 +56,8 @@ class User < ApplicationRecord
 
         opts[:coin_amount] += cct.projected_coin2_total #campaign.holdings[:coin_amount]
         opts[:profit] += cct.profit  #campaign.holdings[:profit]
-        opts[:one_day_ago_profit] += one_day_ago_cct.profit  
+        #opts[:one_day_ago_profit] += one_day_ago_cct.profit  
+        opts[:one_day_ago_profit] += one_day_ago_cct.projected_coin2_total
         opts[:original_coin_amount] += cct.initial_coin2_total #campaign.holdings[:original_coin_amount]
         
         ## Get token holdings
