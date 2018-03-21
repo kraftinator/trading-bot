@@ -42,6 +42,10 @@ class Campaign < ApplicationRecord
     self.campaign_coin_totals.order( 'created_at desc' ).first
   end
   
+  def historical_stats( target_date )
+    self.campaign_coin_totals.where( "created_at < '#{target_date}'" ).order( 'created_at desc' ).first    
+  end
+  
   #def cached_coin_total
   #  if !self.campaign_coin_total
   #    calculate_coin_totals

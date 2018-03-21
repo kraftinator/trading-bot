@@ -45,16 +45,18 @@ class User < ApplicationRecord
         fiat_tps = campaigns.first.exchange.cached_fiat_stats( opts[:coin] )
         opts[:fiat_price] = fiat_tps.last_price
       end      
-      opts[:coin_amount] = opts[:profit] = opts[:original_coin_amount] = 0
+      opts[:coin_amount] = opts[:profit] = opts[:original_coin_amount] = opts[:one_day_ago_profit] = 0
       
       token_holdings = []
       coins = 0
       campaigns.each do |campaign|
         
         cct = campaign.cached_stats
+        one_day_ago_cct = campaign.historical_stats( 1.day.ago )
 
         opts[:coin_amount] += cct.projected_coin2_total #campaign.holdings[:coin_amount]
         opts[:profit] += cct.profit  #campaign.holdings[:profit]
+        opts[:one_day_ago_profit] += one_day_ago_cct.profit  
         opts[:original_coin_amount] += cct.initial_coin2_total #campaign.holdings[:original_coin_amount]
         
         ## Get token holdings

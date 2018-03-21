@@ -9,7 +9,30 @@
 <div class="row">
 <% @holdings.each do |holding| %>
   <div class="col-lg-4">
-    <h2><%= "#{holding[:coin].symbol}" %></h2>
+    
+
+      
+    
+
+    <div class="row">
+       <div class="col-lg-6">
+         
+         <span style="font-size:175%; font-weight: 300; float:left;">
+           <%= "#{holding[:coin].symbol}" %></span>
+         
+       </div>
+        <div class="col-lg-6">
+        <span style="font-size:125%; float:right;" class="text-success">
+          <% if holding[:profit] > 0 and holding[:one_day_ago_profit] > 0 %>
+            +<%= number_to_percentage( ( ( holding[:profit] / holding[:one_day_ago_profit] - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
+          <% end %>
+      </span>
+    </div>
+    </div>
+      
+    
+
+    
     <table class="table table-striped table-hover">
       <tbody>
         <tr class="info">
