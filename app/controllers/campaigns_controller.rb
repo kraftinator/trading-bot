@@ -52,6 +52,12 @@ class CampaignsController < ApplicationController
     #end
     @coin_total = @campaign.cached_stats
     
+    ##########
+    @one_day_coin_total = @campaign.historical_stats( 1.day.ago )
+    @three_day_coin_total = @campaign.historical_stats( 3.days.ago )
+    @seven_day_coin_total = @campaign.historical_stats( 7.days.ago )
+    ##########
+    
     ## Get stats
     @tps = @campaign.exchange_trading_pair.cached_stats
     ## Get highest buy order

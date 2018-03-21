@@ -12,6 +12,68 @@
   </div>
   <div class="col-lg-4">
    <table class="table  table-hover">
+     <tr>
+       <td><strong>24h Profit:</strong></td>
+       <td>
+         <% if @coin_total.profit > 0 and @one_day_coin_total.profit > 0 %>
+           <% if @coin_total.profit > @one_day_coin_total.profit %>
+             <span class="text-success">
+               <strong>
+                 +<%= number_to_percentage( ( ( @coin_total.profit / @one_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
+               </strong>
+             </span>
+            <% else %>
+              <%= number_to_percentage( ( ( @coin_total.profit / @one_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
+            <% end %>
+         <% end %>
+       </td>
+     </tr>
+     <tr>
+       <td><strong>72h Profit:</strong></td>
+       <td>
+         <% if @coin_total.profit > 0 and @three_day_coin_total.profit > 0 %>
+           <% if @coin_total.profit > @three_day_coin_total.profit %>
+             <span class="text-success">
+               <strong>
+                 +<%= number_to_percentage( ( ( @coin_total.profit / @three_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
+               </strong>
+             </span>
+            <% else %>
+              <%= number_to_percentage( ( ( @coin_total.profit / @three_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
+            <% end %>
+         <% end %>
+       </td>
+     </tr>
+     <tr>
+       <td><strong>1w Profit:</strong></td>
+       <td>
+         <% if @coin_total.profit > 0 and @seven_day_coin_total.profit > 0 %>
+           <% if @coin_total.profit > @seven_day_coin_total.profit %>
+             <span class="text-success">
+               <strong>
+                 +<%= number_to_percentage( ( ( @coin_total.profit / @seven_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
+               </strong>
+             </span>
+            <% else %>
+              <%= number_to_percentage( ( ( @coin_total.profit / @seven_day_coin_total.profit - 1 ) * 100 ) , precision: 2, format: "%n" ) %>%
+            <% end %>
+         <% end %>
+       </td>
+     </tr>
+     <tr>
+       <td><strong>Profit Ratio:</strong></td>
+       <td>
+         <%= number_to_percentage( ( ( @coin_total.profit / @coin_total.initial_coin2_total ) * 100 ) , precision: 2, format: "%n" ) %>%
+       </td>
+     </tr>
+      <tr>
+        <td><strong>Total Bots:</strong></td>
+        <td><%= @campaign.traders.active.size %></td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-lg-4">
+   <table class="table  table-hover">
       <tr>
         <td><strong>Last Price:</strong></td>
         <td><%= number_with_precision( @tps.last_price, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
@@ -28,14 +90,6 @@
         <td><strong>24h Low:</strong></td>
         <td><%= number_with_precision( @tps.low_price, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
       </tr>
-    </table>
-  </div>
-  <div class="col-lg-4">
-   <table class="table  table-hover">
-      <tr>
-        <td><strong>Total Bots:</strong></td>
-        <td><%= @campaign.traders.active.size %></td>
-      </tr>
       <tr>
         <td><strong>Highest Buy Order:</strong></td>
         <td><%= @highest_buy_price ? number_with_precision( @highest_buy_price, precision: @campaign.exchange_trading_pair.price_precision ) : '---' %></td>
@@ -47,9 +101,10 @@
       <tr>
         <td><strong>Spread:</strong></td>
         <td><%= @spread_pct ? number_to_percentage( @spread_pct * 100, precision: 2, format: "%n" ) + '%' : '---'  %></td>
-      </tr>    
+      </tr>
     </table>
   </div>
+
 </div>
 
 <div class="row">
