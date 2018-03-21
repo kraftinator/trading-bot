@@ -4,8 +4,12 @@ Rails.application.routes.draw do
     get :toggle_active, on: :member
     get :revenue, on: :member
     get 'traders/new'
+    get 'revenue_report', on: :collection    
     #post 'traders/create'
   end
+  
+
+
   
   resources :traders do
     get :order_history, on: :member

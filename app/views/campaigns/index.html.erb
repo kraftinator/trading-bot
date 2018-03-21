@@ -6,8 +6,6 @@
   </div>
 </div>
 
-
-
 <div class="row">
   <div class="col-lg-6">
     <%= link_to 'Create Campaign', new_campaign_path, class: "btn btn-warning"%>
@@ -15,6 +13,8 @@
 </div>
 
 <br>
+<%= link_to "Revenue Report", revenue_report_campaigns_path %>
+<br><br>
 
 <% if @campaigns.any? %>
 <div class="row">

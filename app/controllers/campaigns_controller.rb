@@ -115,6 +115,56 @@ class CampaignsController < ApplicationController
     #end
 
   end
+  
+  def revenue_report
+    campaigns = current_user.campaigns.active.all.to_a
+    @revenue_report = []
+    campaigns.each do |campaign|
+      row = {}
+      row[:campaign] = campaign
+      
+      coin_total = campaign.cached_stats
+      ##########
+      fiat_value = coin_total.projected_coin2_total
+      unless campaign.exchange_trading_pair.coin2.fiat?
+        fiat_tps = campaign.exchange.cached_fiat_stats( campaign.exchange_trading_pair.coin2 )
+        fiat_value = fiat_value * fiat_tps.last_price
+      end
+      row[:fiat_value] = fiat_value
+      ##########
+      one_day_coin_total = campaign.historical_stats( 1.day.ago )
+      three_day_coin_total = campaign.historical_stats( 3.days.ago )
+      seven_day_coin_total = campaign.historical_stats( 7.days.ago )
+      ##########
+      if one_day_coin_total
+        row[:one_day_pct_change] = ( ( coin_total.projected_coin2_total / one_day_coin_total.projected_coin2_total - 1 ) * 100 )
+      else
+        row[:one_day_pct_change] = 0
+      end
+      if three_day_coin_total  
+        row[:three_day_pct_change] = ( ( coin_total.projected_coin2_total / three_day_coin_total.projected_coin2_total - 1 ) * 100 )
+      else
+        row[:three_day_pct_change] = 0
+      end
+      if seven_day_coin_total
+        row[:seven_day_pct_change] = ( ( coin_total.projected_coin2_total / seven_day_coin_total.projected_coin2_total - 1 ) * 100 )
+      else
+        row[:seven_day_pct_change] = 0
+      end
+      ##########
+      if coin_total.profit > 0 and coin_total.initial_coin2_total > 0
+        row[:profit_ratio] = ( ( coin_total.profit / coin_total.initial_coin2_total ) * 100 )
+      else
+        row[:profit_ratio] = 0
+      end
+      
+      @revenue_report << row
+      
+      ## Sort
+      @revenue_report = @revenue_report.sort_by { |rr| rr[:fiat_value] }.reverse
+      
+    end
+  end
 
   private
   
