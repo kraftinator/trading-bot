@@ -167,8 +167,8 @@ class CampaignsController < ApplicationController
   end
   
   def price_history
-    #@stats = @campaign.exchange_trading_pair.trading_pair_stats.where( "created_at > '#{24.hours.ago}'" ).order( 'created_at asc' ).all.to_a
-    @stats = @campaign.exchange_trading_pair.trading_pair_stats.order( 'created_at asc' ).all.to_a
+    @stats = @campaign.exchange_trading_pair.trading_pair_stats.where( "created_at > '#{24.hours.ago}'" ).order( 'created_at asc' ).all.to_a
+    #@stats = @campaign.exchange_trading_pair.trading_pair_stats.order( 'created_at asc' ).all.to_a
   end
 
   private
