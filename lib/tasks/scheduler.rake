@@ -149,4 +149,9 @@ namespace :scheduler do
     end
   end
   
+  desc 'Clear old records from database'
+  task :process_clear_records => :environment do
+    ClearRecordsWorker.perform_async
+  end
+
 end
