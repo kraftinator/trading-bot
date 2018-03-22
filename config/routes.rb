@@ -3,8 +3,9 @@ Rails.application.routes.draw do
   resources :campaigns do
     get :toggle_active, on: :member
     get :revenue, on: :member
+    get :price_history, on: :member
     get 'traders/new'
-    get 'revenue_report', on: :collection    
+    get 'revenue_report', on: :collection
     #post 'traders/create'
   end
   

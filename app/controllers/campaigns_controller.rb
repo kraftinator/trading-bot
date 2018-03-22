@@ -1,6 +1,6 @@
 class CampaignsController < ApplicationController
   
-  before_action :set_campaign, only: [:show, :edit, :update, :toggle_active, :revenue]
+  before_action :set_campaign, only: [:show, :edit, :update, :toggle_active, :revenue, :price_history]
   before_action :load_campaign_attributes, only: [:new, :edit]
 
   def index
@@ -164,6 +164,11 @@ class CampaignsController < ApplicationController
       @revenue_report = @revenue_report.sort_by { |rr| rr[:fiat_value] }.reverse
       
     end
+  end
+  
+  def price_history
+    #@stats = @campaign.exchange_trading_pair.trading_pair_stats.where( "created_at > '#{24.hours.ago}'" ).order( 'created_at asc' ).all.to_a
+    @stats = @campaign.exchange_trading_pair.trading_pair_stats.order( 'created_at asc' ).all.to_a
   end
 
   private

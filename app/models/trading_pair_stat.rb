@@ -12,6 +12,20 @@ class TradingPairStat < ApplicationRecord
     client = authorization.client
   end
   
+  def self.standard_deviation( etp, time_period )
+    stats = etp.trading_pair_stats.where( "created_at > '#{time_period.hours.ago}'" ).order( 'created_at asc' ).all.to_a
+    mean = stats.sum( &:last_price ) / stats.size
+    distance_squared_list = []
+    stats.each do |tps|
+      distance = tps.last_price - mean
+      distance_squared_list << ( distance * distance )
+    end
+    distance_squared_sum = distance_squared_list.sum
+    distance_squared_avg = distance_squared_sum / stats.size
+    sd = Math.sqrt( distance_squared_avg )
+    sd
+  end
+  
   ## Print trading pair stats
   def show
     output = []

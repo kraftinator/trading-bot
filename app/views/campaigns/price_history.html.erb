@@ -1,0 +1,43 @@
+<div class="page-header">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1><%= @campaign.trading_pair_display_name %> Price History</h1>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-4">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>DATE</th>
+          <th class="text-right">PRICE</th>
+          <th class="text-right">+/-</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% previous_tps = nil %>
+        <% @stats.each do |tps| %>
+          <tr>
+            <td><%= tps.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+            <td class="text-right"><%= number_with_precision( tps.last_price, precision: @campaign.exchange_trading_pair.price_precision ) %></td>
+            <td class="text-right">
+              <% if previous_tps %>
+                <% pct_chg = ( ( tps.last_price / previous_tps.last_price - 1 ) * 100 ) %>
+                <% pct_chg_class = '' %>
+                <% pct_chg_class = "text-success" if pct_chg > 0 %>
+                <% pct_chg_class = "text-danger" if pct_chg < 0 %>
+                <span class="<%= pct_chg_class %>">
+                  <% modifier = pct_chg > 0 ? '+' : '' %>
+                  <%= modifier + number_to_percentage( "#{pct_chg}" , precision: 2, format: "%n" ) %>%
+                </span>
+              <% end %>
+            </td>
+          </tr>
+          <% previous_tps = tps %>
+        <% end %>
+      </tbody>
+    </table>
+  </div>  
+</div>
