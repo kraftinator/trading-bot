@@ -149,6 +149,17 @@ namespace :scheduler do
     end
   end
   
+  desc 'Summarize campaign coin totals without sidekiq'
+  task :process_campaign_coin_totals_without_sidekiq => :environment do
+    users = User.all
+    users.each do |user|
+      campaigns = user.campaigns.active
+      campaigns.each do |campaign|
+        campaign.load_stats
+      end
+    end
+  end
+  
   desc 'Clear old records from database'
   task :process_clear_records => :environment do
     ClearRecordsWorker.perform_async
