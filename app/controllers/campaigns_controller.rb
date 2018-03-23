@@ -56,10 +56,19 @@ class CampaignsController < ApplicationController
     one_day_coin_total = @campaign.historical_stats( 1.day.ago )
     three_day_coin_total = @campaign.historical_stats( 3.days.ago )
     seven_day_coin_total = @campaign.historical_stats( 7.days.ago )
+    
+    ## init variables
+    @one_day_pct_change = @three_day_pct_change = @seven_day_pct_change = 0
     ##########
-    @one_day_pct_change = ( ( @coin_total.projected_coin2_total / one_day_coin_total.projected_coin2_total - 1 ) * 100 )
-    @three_day_pct_change = ( ( @coin_total.projected_coin2_total / three_day_coin_total.projected_coin2_total - 1 ) * 100 )
-    @seven_day_pct_change = ( ( @coin_total.projected_coin2_total / seven_day_coin_total.projected_coin2_total - 1 ) * 100 )
+    if one_day_coin_total
+      @one_day_pct_change = ( ( @coin_total.projected_coin2_total / one_day_coin_total.projected_coin2_total - 1 ) * 100 )
+    end
+    if three_day_coin_total
+      @three_day_pct_change = ( ( @coin_total.projected_coin2_total / three_day_coin_total.projected_coin2_total - 1 ) * 100 )
+    end
+    if seven_day_coin_total
+      @seven_day_pct_change = ( ( @coin_total.projected_coin2_total / seven_day_coin_total.projected_coin2_total - 1 ) * 100 )
+    end
     ##########
     
     ## Get stats
