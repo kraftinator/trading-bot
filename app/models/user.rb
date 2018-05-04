@@ -174,7 +174,7 @@ class User < ApplicationRecord
   
   def partially_filled_orders
     pfos = []
-    traders.each { |t| pfos << t.current_order.partially_filled_order if t.current_order and t.current_order.partially_filled_order }
+    #traders.each { |t| pfos << t.current_order.partially_filled_order if t.current_order and t.current_order.partially_filled_order }
     pfos
   end
   
