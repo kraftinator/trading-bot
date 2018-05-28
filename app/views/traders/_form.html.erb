@@ -53,6 +53,13 @@
           </div>
           
           <div class="form-group">
+            <label for="loss_pct" class="col-lg-4 control-label">Loss Pct</label>
+            <div class="col-lg-8">
+              <%= f.number_field( :loss_pct, step: 0.001, in: 0.000..100.000, value: @trader.loss_pct, class: 'form-control' ) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
             <label for="ceiling_pct" class="col-lg-4 control-label">Ceiling Pct</label>
             <div class="col-lg-8">
               <%= f.number_field( :ceiling_pct, step: 0.001, in: 0.000..100.000, value: @trader.ceiling_pct, class: 'form-control' ) %>

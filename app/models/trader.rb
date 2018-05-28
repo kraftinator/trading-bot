@@ -72,6 +72,10 @@ class Trader < ApplicationRecord
     puts output
   end
   
+  def takes_loss?
+    loss_pct > 0 ? true : false
+  end
+  
   def avg_sells_per_day
     return 0 if sell_count == 0
     start_date = created_at.to_date

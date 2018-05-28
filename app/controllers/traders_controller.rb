@@ -101,7 +101,7 @@ class TradersController < ApplicationController
   private
   
   def trader_params
-    params.require(:trader).permit(:id, :strategy_id, :buy_pct, :sell_pct, :ceiling_pct, :sell_count_trigger, :coin_qty, :token_qty, :active, :campaign_id, :wait_period, :state )
+    params.require(:trader).permit(:id, :strategy_id, :buy_pct, :sell_pct, :ceiling_pct, :loss_pct, :sell_count_trigger, :coin_qty, :token_qty, :active, :campaign_id, :wait_period, :state )
   end
   
   def set_trader
