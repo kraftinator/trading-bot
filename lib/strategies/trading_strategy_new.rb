@@ -197,7 +197,59 @@ class TradingStrategyNew
       
     end
   end
-   
+  
+  def process_open_sell_order
+    ## Get current limit order
+    limit_order = @trader.current_order
+    ## Lower limit price after 12 hours
+    if 12.hours.ago > limit_order.created_at
+      
+      if @trader.takes_loss?
+        
+        limit_price = ( @tps.last_price < @tps.weighted_avg_price ) ? @tps.last_price : @tps.weighted_avg_price
+        limit_price = limit_price * 1.01
+        ## Add precision to limit price. API will reject if too long.           
+        limit_price = limit_price.round( @trading_pair.price_precision )
+        
+        ## Calculate new coin qty
+        new_coin_qty = limit_order.qty * limit_price
+        
+        ## Calculate percentage difference
+        percentage_diff = ( 1 - limit_price / limit_order.price )
+        
+        ## If original coin qty < new coin qty and diff less than loss_pct, place loss SELL order      
+        if new_coin_qty > @trader.original_coin_qty && percentage_diff < @trader.loss_pct
+          if @trader.cancel_current_order
+            create_sell_order( limit_price )
+          else
+            return false
+          end
+        end
+        
+      else
+        ## Get buy price
+        buy_order = limit_order.buy_order
+        if buy_order      
+          ## Lower price to half percent above buy
+          limit_price = buy_order.price * 1.005
+          limit_price = @tps.last_price if limit_price < @tps.last_price
+          ## Add precision to limit price. API will reject if too long.           
+          limit_price = limit_price.round( @trading_pair.price_precision )
+          if limit_price < limit_order.price
+            if @trader.cancel_current_order
+              create_sell_order( limit_price )
+            else
+              return false
+            end
+          end
+        end
+      end
+      
+    end # 12 hours
+    
+  end
+
+=begin   
   def process_open_sell_order
     ## Get current limit order
     limit_order = @trader.current_order
@@ -231,7 +283,8 @@ class TradingStrategyNew
       end      
     end
   end
-   
+=end
+     
   def process_canceled_buy_order
     ## Close limit order
     limit_order = @trader.current_order
