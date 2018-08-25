@@ -72,7 +72,8 @@ class TradersController < ApplicationController
 
   def update
     @trader.update(trader_params)
-    redirect_to campaign_path( @trader.campaign )
+    #redirect_to campaign_path( @trader.campaign )
+    redirect_to trader_path( @trader )
   end
   
   def order_history
