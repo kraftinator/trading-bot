@@ -204,55 +204,71 @@ class TradingStrategyNew
     ## Get last buy order
     buy_order = limit_order.buy_order
     return unless buy_order
-    ## Lower limit price after 12 hours
-    if 24.hours.ago > buy_order.filled_at
-      
-      if @trader.takes_loss?
-        
-        limit_price = ( @tps.last_price < @tps.weighted_avg_price ) ? @tps.last_price : @tps.weighted_avg_price
-        limit_price = limit_price * 1.005
-        ## Add precision to limit price. API will reject if too long.           
-        limit_price = limit_price.round( @trading_pair.price_precision )
-        
-        ## Calculate new coin qty
-        new_coin_qty = limit_order.qty * limit_price
-        
-        ## Calculate percentage difference
-        percentage_diff = ( 1 - limit_price / limit_order.price )
-        
-        ## If original coin qty < new coin qty and diff less than loss_pct, place loss SELL order      
-        if new_coin_qty > @trader.original_coin_qty && percentage_diff < @trader.loss_pct && limit_price < limit_order.price
-          if @trader.cancel_current_order
-            create_sell_order( limit_price )
-          else
-            return false
-          end
-        end
-        
-      else
-
-        ## Try to sell for any profit
-        limit_price = @tps.last_price
-        ## Add precision to limit price. API will reject if too long.           
-        limit_price = limit_price.round( @trading_pair.price_precision )
-        
-        if limit_price < limit_order.price && limit_price > buy_order.price
-          if @trader.cancel_current_order
-            create_sell_order( limit_price )
-          else
-            return false
-          end
-        end
-
-      end # else
     
-    elsif 12.hours.ago > buy_order.filled_at
+    ## Lower limit price after 12 hours
+    if 72.hours.ago > buy_order.filled_at && @trader.takes_loss?
+
+      limit_price = ( @tps.last_price < @tps.weighted_avg_price ) ? @tps.last_price : @tps.weighted_avg_price
+      limit_price = limit_price * 1.005
+      ## Add precision to limit price. API will reject if too long.           
+      limit_price = limit_price.round( @trading_pair.price_precision )
+        
+      ## Calculate new coin qty
+      new_coin_qty = limit_order.qty * limit_price
+        
+      ## Calculate percentage difference
+      percentage_diff = ( 1 - limit_price / limit_order.price )
+        
+      ## If original coin qty < new coin qty and diff less than loss_pct, place loss SELL order      
+      if new_coin_qty > @trader.original_coin_qty && percentage_diff <= @trader.loss_pct && limit_price < limit_order.price
+        if @trader.cancel_current_order
+          create_sell_order( limit_price )
+        else
+          return false
+        end
+      end
+    
+    elsif 36.hours.ago > buy_order.filled_at
+      
+      ## Try to sell for any profit
+      limit_price = @tps.last_price
+      ## Add precision to limit price. API will reject if too long.           
+      limit_price = limit_price.round( @trading_pair.price_precision )
+      
+      if limit_price < limit_order.price && limit_price > buy_order.price
+        if @trader.cancel_current_order
+          create_sell_order( limit_price )
+        else
+          return false
+        end
+      end
+      
+    elsif 24.hours.ago > buy_order.filled_at
       
       ## Get buy price
       buy_order = limit_order.buy_order
       if buy_order      
         ## Lower price to half percent above buy
         limit_price = buy_order.price * 1.005
+        limit_price = @tps.last_price if limit_price < @tps.last_price
+        ## Add precision to limit price. API will reject if too long.           
+        limit_price = limit_price.round( @trading_pair.price_precision )
+        if limit_price < limit_order.price
+          if @trader.cancel_current_order
+            create_sell_order( limit_price )
+          else
+            return false
+          end
+        end
+      end
+      
+    elsif 12.hours.ago > buy_order.filled_at
+      
+      ## Get buy price
+      buy_order = limit_order.buy_order
+      if buy_order      
+        ## Lower price to half percent above buy
+        limit_price = buy_order.price * 1.01
         limit_price = @tps.last_price if limit_price < @tps.last_price
         ## Add precision to limit price. API will reject if too long.           
         limit_price = limit_price.round( @trading_pair.price_precision )
