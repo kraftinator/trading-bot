@@ -191,7 +191,8 @@ class MuStrategyNew < TradingStrategyNew
     if 8.hours.ago > limit_order.created_at && @trader.state == 'gamma'
       @trader.update(state:'iota')
     end
-    
+    super
+=begin    
     if 24.hours.ago > limit_order.created_at
       
       if @trader.takes_loss?
@@ -237,25 +238,11 @@ class MuStrategyNew < TradingStrategyNew
           end
         end
              
-             
-        ## Lower price to 1 percent above buy
-        #limit_price = buy_order.price * 1.01
-        #limit_price = @tps.last_price if limit_price < @tps.last_price
-        ## Add precision to limit price. API will reject if too long.           
-        #limit_price = limit_price.round( @trading_pair.price_precision )
-        #if limit_price < limit_order.price
-        #  if @trader.cancel_current_order
-        #    create_sell_order( limit_price )
-        #  else
-        #    return false
-        #  end
-        #end
-        
         
       end # if buy_order
            
     end # if 24.hours.ago > limit_order.created_at
-    
+=end    
   end # def process_open_sell_order
   
 end
