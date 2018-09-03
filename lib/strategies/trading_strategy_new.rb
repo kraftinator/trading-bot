@@ -217,7 +217,7 @@ class TradingStrategyNew
       new_coin_qty = limit_order.qty * limit_price
         
       ## Calculate percentage difference
-      percentage_diff = ( 1 - limit_price / limit_order.price )
+      percentage_diff = ( 1 - limit_price / buy_order.price )
         
       ## If original coin qty < new coin qty and diff less than loss_pct, place loss SELL order      
       if new_coin_qty > @trader.original_coin_qty && percentage_diff <= @trader.loss_pct && limit_price < limit_order.price
