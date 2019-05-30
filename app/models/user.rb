@@ -3,6 +3,7 @@ class User < ApplicationRecord
   has_many  :authorizations
   has_many  :campaigns
   has_many  :traders
+  has_many  :index_funds
   
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable

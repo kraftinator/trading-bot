@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180528175846) do
+ActiveRecord::Schema.define(version: 20190524181837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,6 +74,46 @@ ActiveRecord::Schema.define(version: 20180528175846) do
     t.string   "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "index_fund_coins", force: :cascade do |t|
+    t.integer  "index_fund_id"
+    t.integer  "exchange_trading_pair_id"
+    t.decimal  "allocation_pct",              precision: 5, scale: 4
+    t.decimal  "qty",                                                 default: "0.0"
+    t.decimal  "{:precision=>16, :scale=>8}",                         default: "0.0"
+    t.datetime "created_at",                                                          null: false
+    t.datetime "updated_at",                                                          null: false
+  end
+
+  create_table "index_fund_deposits", force: :cascade do |t|
+    t.integer  "index_fund_coin_id"
+    t.decimal  "qty",                precision: 16, scale: 8
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
+  end
+
+  create_table "index_fund_orders", force: :cascade do |t|
+    t.integer  "index_fund_coin_id"
+    t.string   "side"
+    t.decimal  "price",                       precision: 15, scale: 8
+    t.decimal  "qty",                                                  default: "0.0"
+    t.decimal  "{:precision=>16, :scale=>8}",                          default: "0.0"
+    t.string   "order_uid"
+    t.datetime "created_at",                                                           null: false
+    t.datetime "updated_at",                                                           null: false
+  end
+
+  create_table "index_funds", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "name"
+    t.integer  "base_coin_id"
+    t.integer  "rebalance_period",           default: 0
+    t.decimal  "rebalance_trigger_pct",      default: "0.02"
+    t.decimal  "{:precision=>5, :scale=>4}", default: "0.02"
+    t.boolean  "active",                     default: false
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
   end
 
   create_table "limit_orders", force: :cascade do |t|

@@ -1,5 +1,21 @@
 Rails.application.routes.draw do
   
+  #get 'index_fund_coins/edit'
+
+  #get 'index_fund_coins/new'
+
+  #get 'index_funds/edit'
+  #get 'index_funds/index'
+  #get 'index_funds/new'
+  #get 'index_funds/show'
+  
+  resources :index_fund_coins
+  
+  resources :index_funds do
+    get :allocations, on: :member
+    get 'index_fund_coins/new'
+  end
+
   resources :campaigns do
     get :toggle_active, on: :member
     get :revenue, on: :member

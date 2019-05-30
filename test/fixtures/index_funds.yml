@@ -1,0 +1,17 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user_id: 1
+  name: MyString
+  base_coin_id: 1
+  rebalance_frequency: 1
+  rebalance_trigger_pct: 9.99
+  active: false
+
+two:
+  user_id: 1
+  name: MyString
+  base_coin_id: 1
+  rebalance_frequency: 1
+  rebalance_trigger_pct: 9.99
+  active: false

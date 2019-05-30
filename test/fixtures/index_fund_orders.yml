@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  index_fund_coin_id: 1
+  side: MyString
+  price: 9.99
+  qty: 9.99
+  order_uid: MyString
+
+two:
+  index_fund_coin_id: 1
+  side: MyString
+  price: 9.99
+  qty: 9.99
+  order_uid: MyString

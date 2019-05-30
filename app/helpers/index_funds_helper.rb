@@ -1,0 +1,2 @@
+module IndexFundsHelper
+end

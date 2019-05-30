@@ -1,0 +1,43 @@
+<%= render partial: "layouts/alerts" %>
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="well bs-component">
+      <%= form_for @index_fund_coin, :html => { :class => 'form-horizontal' } do |f| %>
+        <fieldset>
+          
+          <%= f.hidden_field :index_fund_id, :value => @index_fund_coin.index_fund.id %>
+          
+          <div class="form-group">
+            <label for="index_fund_base_coin" class="col-lg-4 control-label">Base Coin</label>
+            <div class="col-lg-8">
+              <strong><input type="text" value="<%= @index_fund_coin.index_fund.base_coin.symbol %>" class="form-control" readonly="true"></input></strong>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="exchange_trading_pair" class="col-lg-4 control-label">Asset Coin</label>
+            <div class="col-lg-8">
+              <%= f.select(:exchange_trading_pair_id , options_from_collection_for_select(@exchange_trading_pairs, :id, :coin1_symbol, @index_fund_coin.exchange_trading_pair_id), {:prompt=>'—'}, {:class=>'form-control'}) %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="allocation_pct" class="col-lg-4 control-label">Allocation Pct</label>
+            <div class="col-lg-8">
+              <%= f.number_field(:allocation_pct, step: 0.01, in: 0.00..100.00, min: 0, max: 100, value: @index_fund_coin.allocation_pct*100, class: 'form-control') %>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <div class="col-lg-8 col-lg-offset-4">
+              <%= link_to 'Cancel', edit_index_fund_path(@index_fund_coin.index_fund), class: "btn btn-default"%>
+              <%= submit_tag "Submit", {:class=>'btn btn-primary'} %>
+            </div>
+          </div>
+          
+        </fieldset>
+      <% end %>
+    </div>
+  </div>
+</div>

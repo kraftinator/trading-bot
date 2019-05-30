@@ -6,6 +6,7 @@ class ExchangeTradingPair < ApplicationRecord
    
    has_many :campaigns
    has_many :trading_pair_stats
+   has_many :index_fund_coins
    
    def stats
      return nil if trading_pair_stats.empty?
@@ -150,6 +151,10 @@ class ExchangeTradingPair < ApplicationRecord
   
    def full_display_name
      "#{exchange.name} - #{display_name}"
+   end
+   
+   def coin1_symbol
+     coin1.symbol
    end
    
    def force_load_stats

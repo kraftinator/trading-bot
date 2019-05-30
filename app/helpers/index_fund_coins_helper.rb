@@ -1,0 +1,2 @@
+module IndexFundCoinsHelper
+end
