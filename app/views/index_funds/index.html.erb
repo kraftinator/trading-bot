@@ -38,7 +38,7 @@
             <td><%= index_fund.base_coin.symbol %></td>
             <td><%= index_fund.exchange.name %></td>
             <td><%= index_fund.rebalance_period %></td>
-            <td><%= index_fund.rebalance_trigger_pct %></td>
+            <td><%= number_to_percentage(index_fund.rebalance_trigger_pct * 100, precision: 2, format: "%n") %>%</td>
             <td><% if index_fund.active? %><i class="glyphicon glyphicon-ok" style="color: green;" ></i><% else %><i class="glyphicon glyphicon-remove" style="color: red;" ></i><% end %></td>
             <td><% if index_fund.active? %><%= link_to index_fund.index_fund_coins.size, index_fund_path(index_fund) %><% else %>--<% end %></td>
             <td>

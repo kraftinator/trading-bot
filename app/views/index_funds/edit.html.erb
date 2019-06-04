@@ -18,6 +18,12 @@
   </div>
 </div>
 
+<br>
+<strong>Percent Total:</strong>&nbsp;&nbsp;
+<%= number_to_percentage(@index_fund.allocation_pct_total * 100, precision: 2, format: "%n") %>%&nbsp;&nbsp;
+<% if @index_fund.allocations_valid? %><i class="glyphicon glyphicon-ok" style="color: green;" ></i><% else %><i class="glyphicon glyphicon-remove" style="color: red;" ></i><% end %>
+<br><br>
+
 <% if @index_fund.index_fund_coins.any? %>
   <div class="row">
     <div class="col-lg-8">
