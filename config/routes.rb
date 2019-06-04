@@ -13,6 +13,7 @@ Rails.application.routes.draw do
   
   resources :index_funds do
     get :allocations, on: :member
+    get :toggle_active, on: :member
     get 'index_fund_coins/new'
   end
 

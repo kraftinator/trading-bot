@@ -16,7 +16,7 @@
 
 <% if @index_funds.any? %>
 <div class="row">
-  <div class="col-lg-8">
+  <div class="col-lg-9">
     <table class="table table-striped table-hover">
       <thead>
         <tr>
@@ -43,6 +43,12 @@
             <td><% if index_fund.active? %><%= link_to index_fund.index_fund_coins.size, index_fund_path(index_fund) %><% else %>--<% end %></td>
             <td>
               <%= link_to edit_index_fund_path(index_fund) do %>Edit<% end %>
+              &nbsp;
+              <% if index_fund.active? %>
+                <%= link_to 'Deactivate', toggle_active_index_fund_path(index_fund), data: { confirm: 'Are you sure?' } %>
+              <% else %>
+                <%= link_to 'Activate', toggle_active_index_fund_path(index_fund), data: { confirm: 'Are you sure?' } %>
+              <% end %>
             </td>
           </tr>  
         <% end %>

@@ -1,6 +1,6 @@
 class IndexFundsController < ApplicationController
   
-  before_action :set_index_fund, only: [:show, :edit, :update, :allocations]
+  before_action :set_index_fund, only: [:show, :edit, :update, :allocations, :toggle_active]
   before_action :load_index_fund_attributes, only: [:new, :edit]
 
   def index
@@ -28,6 +28,15 @@ class IndexFundsController < ApplicationController
   
   def allocations
     @ifc = IndexFundCoin.new(index_fund: @index_fund)
+  end
+  
+  def toggle_active
+    if @index_fund.active?
+      @index_fund.update_column(:active, false)
+    else
+      @index_fund.update_column(:active, true)
+    end
+    redirect_to index_funds_path
   end
   
   def edit

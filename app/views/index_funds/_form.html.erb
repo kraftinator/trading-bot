@@ -41,7 +41,7 @@
           <div class="form-group">
             <label for="active" class="col-lg-4 control-label">Active</label>
             <div class="col-lg-8">
-              <%= f.select(:active, options_for_select( [['true', true], ['false', false]] ), {}, {:class=>'form-control'}) %>
+              <%= f.select(:active, options_for_select( [['true', true], ['false', false]], @index_fund.active ), {}, {:class=>'form-control'}) %>
             </div>
           </div>
           
