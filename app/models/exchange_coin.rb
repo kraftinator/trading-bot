@@ -6,7 +6,7 @@ class ExchangeCoin < ApplicationRecord
   has_many    :index_funds
   
   def fiat?
-    symbol == 'USD' || symbol == 'USDT'
+    symbol == 'USD' || symbol == 'USDT' || symbol == 'USDC'
   end
   
   def self.base_coins

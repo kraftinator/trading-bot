@@ -6,6 +6,10 @@ class IndexFundCoin < ApplicationRecord
   has_many  :index_fund_orders
   has_many  :index_fund_deposits
   
+  attr_accessor :price
+  attr_accessor :base_coin_value
+  attr_accessor :current_allocation_pct
+  
   validates :allocation_pct, numericality: { greater_than: 0 }
   
   validate :percentage_total, :unique_allocations
@@ -42,6 +46,14 @@ class IndexFundCoin < ApplicationRecord
   
   def coin_symbol
     coin.symbol
+  end
+  
+  def qty_precision
+    if self.exchange_trading_pair
+      return exchange_trading_pair.qty_precision
+    else
+      return self.coin.precision
+    end
   end
   
 end

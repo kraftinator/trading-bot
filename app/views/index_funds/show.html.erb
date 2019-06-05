@@ -1,30 +1,95 @@
 <div class="page-header">
   <div class="row">
     <div class="col-lg-12">
-      <h1><%= @index_fund.name %> Index Fund</h1>
+      <h1><%= @index_fund.name %></h1>
     </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-4">
+    <table class="table table-striped table-hover">
+      <tbody>
+        <tr class="info">
+          <td class="text-right"><label class="font-weight-bold">AMOUNT INVESTED:</label></td>
+          <td>0</td>
+          <td class="text-right">0</td>
+        </tr>   
+        <tr class="success">
+          <td class="text-right"><label class="font-weight-bold">PROFIT:</label></td>
+          <td>0</td>
+          <td class="text-right">0</td>
+        </tr>   
+        <tr class="danger">
+          <td class="text-right"><label class="font-weight-bold">TOTAL VALUE:</label></td>
+          <td>0</td>
+          <td class="text-right">0</td>
+        </tr>   
+      </tbody>
+    </table>
+  </div>
+  <div class="col-lg-4">
+    <table class="table  table-hover">
+     <tr>
+       <td><strong>24h Change:</strong></td>
+       <td>0</td>
+     </tr>
+     <tr>
+       <td><strong>72h Change:</strong></td>
+       <td>0</td>
+     </tr>
+     <tr>
+       <td><strong>1w Change:</strong></td>
+       <td>0</td>
+     </tr>
+
+    </table>
+  </div>
+  <div class="col-lg-4">
+    <table class="table  table-hover">
+      <tr>
+        <td><strong>Base Coin:</strong></td>
+        <td><%= @index_fund.base_coin.symbol %></td>
+      </tr>
+      <tr>
+        <td><strong>Exchange:</strong></td>
+        <td><%= @index_fund.exchange.name %></td>
+      </tr>
+      <tr>
+        <td><strong>Total Assets:</strong></td>
+        <td><%= @index_fund.index_fund_coins.size %></td>
+      </tr>
+    </table>
   </div>
 </div>
 
 <br><br>
 
-<h2>Allocations</h2>
+<h2>Assets</h2>
 
-<% if @index_fund.index_fund_coins.any? %>
+<% if @assets.any? %>
   <div class="row">
     <div class="col-lg-8">
       <table class="table table-striped table-hover">
         <thead>
           <tr>
-            <th>Coin</th>
+            <th>COIN</th>
+            <th class="text-right">PCT</th>
+            <th class="text-right"><%= @index_fund.base_coin.symbol %> VALUE</th>
+            <th class="text-right">QTY</th>
+            <th class="text-right">PRICE</th>
+            <th class="text-right">TARGET PCT</th>
           </tr>
         </thead>
         <tbody>
-          <% @index_fund.index_fund_coins.each do |index_fund_coin| %>
+          <% @assets.each do |asset| %>
             <tr>
-              <td>
-                <%= index_fund_coin.coin.symbol %>
-              </td>
+              <td><%= asset.coin.symbol %></td>
+              <td class="text-right"><%= number_to_percentage(asset.current_allocation_pct*100, precision: 2, format: "%n") %>%</td>
+              <td class="text-right"><%= number_with_precision(asset.base_coin_value, precision: @index_fund.base_coin.precision) %></td>
+              <td class="text-right"><%= number_with_precision(asset.qty, precision: asset.qty_precision) %></td>
+              <td class="text-right"><%= asset.base_coin? ? '---' : number_with_precision(asset.price, precision: @index_fund.base_coin.precision) %></td>
+              <td class="text-right"><%= number_to_percentage(asset.allocation_pct*100, precision: 2, format: "%n") %>%</td>
             </tr>
           <% end %>
         </tbody>

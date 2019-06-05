@@ -53,6 +53,25 @@ class IndexFundsController < ApplicationController
   end
 
   def show
+    @assets = @index_fund.index_fund_coins
+    @assets.each do |asset|
+      if asset.base_coin?
+        asset.price = 1.0
+        asset.base_coin_value = asset.qty
+      else
+        asset.price = @index_fund.exchange.cached_fiat_stats(asset.coin).last_price
+        asset.base_coin_value = asset.qty*asset.price
+      end
+    end
+    
+    total_base_coin_value = 0
+    @assets.each { |asset| total_base_coin_value+=asset.base_coin_value }
+
+    @assets.each { |asset| asset.current_allocation_pct = asset.base_coin_value/total_base_coin_value}
+    
+    
+    @assets = @assets.sort_by(&:base_coin_value).reverse
+    
   end
   
   private
