@@ -18,7 +18,7 @@ class IndexFundDepositsController < ApplicationController
   private
   
   def index_fund_deposit_params
-    params.require(:index_fund_deposit).permit(:index_fund_coin_id, :qty)
+    params.require(:index_fund_deposit).permit(:index_fund_coin_id, :qty, :base_coin_qty)
   end
   
 end

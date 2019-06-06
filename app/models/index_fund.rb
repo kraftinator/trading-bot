@@ -53,7 +53,8 @@ class IndexFund < ApplicationRecord
         asset.base_coin_value = asset.qty
       else
         #asset.price = self.exchange.cached_fiat_stats(asset.coin).last_price
-        asset.price = self.exchange.fiat_stats(asset.coin).last_price
+        #asset.price = self.exchange.fiat_stats(asset.coin).last_price
+        asset.price = asset.exchange_trading_pair.tps.last_price
         asset.base_coin_value = asset.qty*asset.price
       end
     end
@@ -64,11 +65,10 @@ class IndexFund < ApplicationRecord
     return assets, total_base_coin_value
   end
   
-  # TODO: Add base_coin_value column to index_fund_deposits table
   def deposit_total
     total = 0
     self.index_fund_coins.each do |asset|
-      total+=asset.index_fund_deposits.sum(:qty)
+      total+=asset.index_fund_deposits.sum(:base_coin_qty)
     end
     total
   end

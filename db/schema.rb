@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190524181837) do
+ActiveRecord::Schema.define(version: 20190606172257) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -89,8 +89,9 @@ ActiveRecord::Schema.define(version: 20190524181837) do
   create_table "index_fund_deposits", force: :cascade do |t|
     t.integer  "index_fund_coin_id"
     t.decimal  "qty",                precision: 16, scale: 8
-    t.datetime "created_at",                                  null: false
-    t.datetime "updated_at",                                  null: false
+    t.datetime "created_at",                                                  null: false
+    t.datetime "updated_at",                                                  null: false
+    t.decimal  "base_coin_qty",      precision: 16, scale: 8, default: "0.0"
   end
 
   create_table "index_fund_orders", force: :cascade do |t|
