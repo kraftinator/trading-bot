@@ -1,0 +1,2 @@
+module IndexFundDepositsHelper
+end

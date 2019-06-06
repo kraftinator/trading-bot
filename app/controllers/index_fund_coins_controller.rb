@@ -1,6 +1,6 @@
 class IndexFundCoinsController < ApplicationController
   
-  before_action :set_index_fund_coin, only: [:show, :edit, :update, :destroy]
+  before_action :set_index_fund_coin, only: [:show, :edit, :update, :destroy, :new_deposit]
   before_action :load_index_fund_coin_attributes, only: [:edit]
 
   def new

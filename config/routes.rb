@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
   
+  #get 'index_fund_deposits/new'
+
   #get 'index_fund_coins/edit'
 
   #get 'index_fund_coins/new'
@@ -9,7 +11,15 @@ Rails.application.routes.draw do
   #get 'index_funds/new'
   #get 'index_funds/show'
   
-  resources :index_fund_coins
+  resources :index_fund_deposits
+  
+  resources :index_fund_coins do
+    get 'index_fund_deposits/new'
+  end
+  
+  #resources :index_fund_coins do
+  #  get 'index_fund_deposits/new'
+  #end
   
   resources :index_funds do
     get :allocations, on: :member

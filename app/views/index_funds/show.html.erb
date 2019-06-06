@@ -12,18 +12,33 @@
       <tbody>
         <tr class="info">
           <td class="text-right"><label class="font-weight-bold">AMOUNT INVESTED:</label></td>
-          <td>0</td>
-          <td class="text-right">0</td>
+          <td><%= number_with_precision(@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+          <td class="text-right">
+            <% if @index_fund.base_coin.fiat? %>
+              $<%= number_with_precision(@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %>
+            <% else %>
+            <% end %>
+          </td>
         </tr>   
         <tr class="success">
           <td class="text-right"><label class="font-weight-bold">PROFIT:</label></td>
-          <td>0</td>
-          <td class="text-right">0</td>
+          <td><%= number_with_precision(@fund_total-@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+          <td class="text-right">
+            <% if @index_fund.base_coin.fiat? %>
+              $<%= number_with_precision(@fund_total-@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %>
+            <% else %>
+            <% end %>
+          </td>
         </tr>   
         <tr class="danger">
           <td class="text-right"><label class="font-weight-bold">TOTAL VALUE:</label></td>
-          <td>0</td>
-          <td class="text-right">0</td>
+          <td><%= number_with_precision(@fund_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+          <td class="text-right">
+            <% if @index_fund.base_coin.fiat? %>
+              $<%= number_with_precision(@fund_total, precision: @index_fund.base_coin.precision, delimiter: ',') %>
+            <% else %>
+            <% end %>
+          </td>
         </tr>   
       </tbody>
     </table>
@@ -35,11 +50,11 @@
        <td>0</td>
      </tr>
      <tr>
-       <td><strong>72h Change:</strong></td>
+       <td><strong>1w Change:</strong></td>
        <td>0</td>
      </tr>
      <tr>
-       <td><strong>1w Change:</strong></td>
+       <td><strong>1m Change:</strong></td>
        <td>0</td>
      </tr>
 
@@ -56,6 +71,14 @@
         <td><%= @index_fund.exchange.name %></td>
       </tr>
       <tr>
+        <td><strong>Rebalance Frequency:</strong></td>
+        <td><%= @index_fund.rebalance_period %></td>
+      </tr>      
+      <tr>
+        <td><strong>PCT Trigger:</strong></td>
+        <td><%= number_to_percentage(@index_fund.rebalance_trigger_pct*100, precision: 2, format: "%n") %>%</td>
+      </tr>
+      <tr>
         <td><strong>Total Assets:</strong></td>
         <td><%= @index_fund.index_fund_coins.size %></td>
       </tr>
@@ -63,6 +86,8 @@
   </div>
 </div>
 
+<br><br>
+<%= link_to 'Edit Fund', edit_index_fund_path(@index_fund) %>
 <br><br>
 
 <h2>Assets</h2>
@@ -74,7 +99,7 @@
         <thead>
           <tr>
             <th>COIN</th>
-            <th class="text-right">PCT</th>
+            <th class="text-right">CURRENT PCT</th>
             <th class="text-right"><%= @index_fund.base_coin.symbol %> VALUE</th>
             <th class="text-right">QTY</th>
             <th class="text-right">PRICE</th>
@@ -86,9 +111,9 @@
             <tr>
               <td><%= asset.coin.symbol %></td>
               <td class="text-right"><%= number_to_percentage(asset.current_allocation_pct*100, precision: 2, format: "%n") %>%</td>
-              <td class="text-right"><%= number_with_precision(asset.base_coin_value, precision: @index_fund.base_coin.precision) %></td>
-              <td class="text-right"><%= number_with_precision(asset.qty, precision: asset.qty_precision) %></td>
-              <td class="text-right"><%= asset.base_coin? ? '---' : number_with_precision(asset.price, precision: @index_fund.base_coin.precision) %></td>
+              <td class="text-right"><%= number_with_precision(asset.base_coin_value, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+              <td class="text-right"><%= number_with_precision(asset.qty, precision: asset.qty_precision, delimiter: ',') %></td>
+              <td class="text-right"><%= asset.base_coin? ? '---' : number_with_precision(asset.price, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
               <td class="text-right"><%= number_to_percentage(asset.allocation_pct*100, precision: 2, format: "%n") %>%</td>
             </tr>
           <% end %>

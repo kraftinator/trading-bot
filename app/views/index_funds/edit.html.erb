@@ -32,6 +32,7 @@
           <tr>
             <th>Coin</th>
             <th>Percent</th>
+            <th>Deposits</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -40,7 +41,10 @@
             <tr>
               <td><%= index_fund_coin.coin.symbol %></td>
               <td><%= number_to_percentage(index_fund_coin.allocation_pct * 100, precision: 2, format: "%n") %>%</td>
+              <td><%= number_with_precision(index_fund_coin.index_fund_deposits.sum(:qty), precision: index_fund_coin.qty_precision) %></td>
               <td>
+                <%= link_to 'Deposit', index_fund_coin_index_fund_deposits_new_path(index_fund_coin) %>
+                &nbsp;
                 <%= link_to edit_index_fund_coin_path(index_fund_coin) do %>Edit<% end %>
                 &nbsp;
                 <%= link_to 'Delete', index_fund_coin_path(index_fund_coin), { data: { confirm: 'Are you sure?' }, method: 'delete' } %>
