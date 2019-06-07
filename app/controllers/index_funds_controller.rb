@@ -75,6 +75,20 @@ class IndexFundsController < ApplicationController
     @assets = @assets.sort_by(&:base_coin_value).reverse
     
   end
+  
+  
+  def show
+    @assets, @fund_total = @index_fund.calculate_fund_stats
+    @assets.each { |asset| asset.current_allocation_pct = asset.base_coin_value/@fund_total}
+    @assets = @assets.sort_by(&:base_coin_value).reverse
+    @deposit_total = @index_fund.deposit_total
+
+    @deposits = []
+    @assets.each { |asset| @deposits.concat(asset.index_fund_deposits) }
+    @deposits = @deposits.sort_by(&:created_at).reverse
+    
+
+  end
 =end  
   
   def show
@@ -82,6 +96,7 @@ class IndexFundsController < ApplicationController
     @assets.each { |asset| asset.current_allocation_pct = asset.base_coin_value/@fund_total}
     @assets = @assets.sort_by(&:base_coin_value).reverse
     @deposit_total = @index_fund.deposit_total
+    @deposits = @index_fund.deposits
   end
   
   private

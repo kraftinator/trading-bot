@@ -8,56 +8,38 @@
 
 <div class="row">
   <div class="col-lg-4">
-    <table class="table table-striped table-hover">
-      <tbody>
-        <tr class="info">
-          <td class="text-right"><label class="font-weight-bold">AMOUNT INVESTED:</label></td>
-          <td><%= number_with_precision(@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
-          <td class="text-right">
-            <% if @index_fund.base_coin.fiat? %>
-              $<%= number_with_precision(@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %>
-            <% else %>
-            <% end %>
-          </td>
-        </tr>   
-        <tr class="success">
-          <td class="text-right"><label class="font-weight-bold">PROFIT:</label></td>
-          <td><%= number_with_precision(@fund_total-@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
-          <td class="text-right">
-            <% if @index_fund.base_coin.fiat? %>
-              $<%= number_with_precision(@fund_total-@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %>
-            <% else %>
-            <% end %>
-          </td>
-        </tr>   
-        <tr class="danger">
-          <td class="text-right"><label class="font-weight-bold">TOTAL VALUE:</label></td>
-          <td><%= number_with_precision(@fund_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
-          <td class="text-right">
-            <% if @index_fund.base_coin.fiat? %>
-              $<%= number_with_precision(@fund_total, precision: @index_fund.base_coin.precision, delimiter: ',') %>
-            <% else %>
-            <% end %>
-          </td>
-        </tr>   
-      </tbody>
+    <table class="table  table-hover">
+     <tr class="info">
+       <td><strong>Amount Invested:</strong></td>
+       <td class="text-right"><%= number_with_precision(@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+       <td><%= @index_fund.base_coin.symbol %></td>
+     </tr>
+     <tr class="success">
+       <td><strong>Profit:</strong></td>
+       <td class="text-right"><%= number_with_precision(@fund_total-@deposit_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+       <td><%= @index_fund.base_coin.symbol %></td>
+     </tr>
+     <tr class="warning">
+       <td><strong>Total Value:</strong></td>
+       <td class="text-right"><strong><%= number_with_precision(@fund_total, precision: @index_fund.base_coin.precision, delimiter: ',') %></strong></td>
+       <td><%= @index_fund.base_coin.symbol %></td>
+     </tr>
     </table>
   </div>
   <div class="col-lg-4">
     <table class="table  table-hover">
      <tr>
-       <td><strong>24h Change:</strong></td>
+       <td><strong>1d Change:</strong></td>
        <td>0</td>
      </tr>
      <tr>
-       <td><strong>1w Change:</strong></td>
+       <td><strong>7d Change:</strong></td>
        <td>0</td>
      </tr>
      <tr>
-       <td><strong>1m Change:</strong></td>
+       <td><strong>30d Change:</strong></td>
        <td>0</td>
      </tr>
-
     </table>
   </div>
   <div class="col-lg-4">
@@ -75,7 +57,7 @@
         <td><%= @index_fund.rebalance_period %></td>
       </tr>      
       <tr>
-        <td><strong>PCT Trigger:</strong></td>
+        <td><strong>Rebalance Trigger:</strong></td>
         <td><%= number_to_percentage(@index_fund.rebalance_trigger_pct*100, precision: 2, format: "%n") %>%</td>
       </tr>
       <tr>
@@ -99,11 +81,12 @@
         <thead>
           <tr>
             <th>COIN</th>
-            <th class="text-right">CURRENT PCT</th>
-            <th class="text-right"><%= @index_fund.base_coin.symbol %> VALUE</th>
+            <th class="text-right">CURRENT %</th>
+            <th class="text-right">VALUE (<%= @index_fund.base_coin.symbol %>)</th>
             <th class="text-right">QTY</th>
-            <th class="text-right">PRICE</th>
-            <th class="text-right">TARGET PCT</th>
+            <th class="text-right">PRICE (<%= @index_fund.base_coin.symbol %>)</th>
+            <th class="text-right">TARGET %</th>
+            <th class="text-right">DIFF %</th>
           </tr>
         </thead>
         <tbody>
@@ -115,6 +98,42 @@
               <td class="text-right"><%= number_with_precision(asset.qty, precision: asset.qty_precision, delimiter: ',') %></td>
               <td class="text-right"><%= asset.base_coin? ? '---' : number_with_precision(asset.price, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
               <td class="text-right"><%= number_to_percentage(asset.allocation_pct*100, precision: 2, format: "%n") %>%</td>
+              <td class="text-right">
+                <% pct_diff = asset.current_allocation_pct-asset.allocation_pct %>
+                <span class="<%= get_text_color_class(pct_diff) %>">
+                  <%= print_plus_or_minus(pct_diff) %><%= number_to_percentage((pct_diff.abs)*100, precision: 2, format: "%n") %>%
+                </span>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
+
+
+
+<% if @deposits.any? %>
+  <h2>Deposits</h2>
+  <div class="row">
+    <div class="col-lg-8">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>COIN</th>
+            <th class="text-right">QTY</th>
+            <th class="text-right">VALUE (<%= @index_fund.base_coin.symbol %>)</th>
+            <th class="text-right">DATE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @deposits.each do |deposit| %>
+            <tr>
+              <td><%= deposit.index_fund_coin.coin.symbol %></td>
+              <td class="text-right"><%= number_with_precision(deposit.qty, precision: deposit.index_fund_coin.qty_precision, delimiter: ',') %></td>
+              <td class="text-right"><%= number_with_precision(deposit.base_coin_qty, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+              <td class="text-right"><%= deposit.created_at.strftime("%Y-%m-%d %H:%M") %></td>
             </tr>
           <% end %>
         </tbody>

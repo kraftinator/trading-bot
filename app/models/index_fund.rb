@@ -54,7 +54,9 @@ class IndexFund < ApplicationRecord
       else
         #asset.price = self.exchange.cached_fiat_stats(asset.coin).last_price
         #asset.price = self.exchange.fiat_stats(asset.coin).last_price
-        asset.price = asset.exchange_trading_pair.tps.last_price
+        
+        #asset.price = asset.exchange_trading_pair.tps.last_price
+        asset.price = asset.exchange_trading_pair.cached_stats.last_price
         asset.base_coin_value = asset.qty*asset.price
       end
     end
@@ -71,6 +73,12 @@ class IndexFund < ApplicationRecord
       total+=asset.index_fund_deposits.sum(:base_coin_qty)
     end
     total
+  end
+  
+  def deposits
+    @deposits = []
+    self.index_fund_coins.each { |asset| @deposits.concat(asset.index_fund_deposits) }
+    @deposits = @deposits.sort_by(&:created_at).reverse
   end
   
 end
