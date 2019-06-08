@@ -9,6 +9,7 @@ class IndexFundCoin < ApplicationRecord
   attr_accessor :price
   attr_accessor :base_coin_value
   attr_accessor :current_allocation_pct
+  attr_accessor :allocation_diff
   
   validates :allocation_pct, numericality: { greater_than: 0 }
   
