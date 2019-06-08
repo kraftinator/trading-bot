@@ -93,10 +93,26 @@ class IndexFundsController < ApplicationController
   
   def show
     @assets, @fund_total = @index_fund.calculate_fund_stats
-    @assets.each { |asset| asset.current_allocation_pct = asset.base_coin_value/@fund_total}
+    #@assets.each { |asset| asset.current_allocation_pct = asset.base_coin_value/@fund_total}
+    @assets.each { |asset| asset.current_allocation_pct = @fund_total == 0 ? 0 : asset.base_coin_value/@fund_total }    
     @assets = @assets.sort_by(&:base_coin_value).reverse
     @deposit_total = @index_fund.deposit_total
     @deposits = @index_fund.deposits
+    
+    profit = @fund_total-@deposit_total
+    @profit_change = {}
+    # 1 hour
+    snapshot = @index_fund.snapshot_by_date(1.hour.ago)
+    @profit_change['1h'] = profit/snapshot.profit-1 if snapshot
+    # 24 hours
+    snapshot = @index_fund.snapshot_by_date(1.day.ago)
+    @profit_change['24h'] = profit/snapshot.profit-1 if snapshot
+    # 1 week
+    snapshot = @index_fund.snapshot_by_date(1.week.ago)
+    @profit_change['1w'] = profit/snapshot.profit-1 if snapshot
+    # 1 month
+    snapshot = @index_fund.snapshot_by_date(30.days.ago)
+    @profit_change['1m'] = profit/snapshot.profit-1 if snapshot
   end
   
   private

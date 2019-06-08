@@ -29,16 +29,52 @@
   <div class="col-lg-4">
     <table class="table  table-hover">
      <tr>
-       <td><strong>1d Change:</strong></td>
-       <td>0</td>
+       <td><strong>1h Change:</strong></td>
+       <td>
+         <% if @profit_change['1h'] %>
+           <span class="<%= get_text_color_class(@profit_change['1h']) %>">
+             <%= print_plus_or_minus(@profit_change['1h']) %><%= number_to_percentage((@profit_change['1h'].abs)*100, precision: 2, format: "%n") %>%
+           </span>
+         <% else %>
+           <span>---</span>
+         <% end %>
+       </td>
      </tr>
      <tr>
-       <td><strong>7d Change:</strong></td>
-       <td>0</td>
+       <td><strong>24h Change:</strong></td>
+       <td>
+         <% if @profit_change['24h'] %>
+           <span class="<%= get_text_color_class(@profit_change['1h']) %>">
+             <%= print_plus_or_minus(@profit_change['1h']) %><%= number_to_percentage((@profit_change['1h'].abs)*100, precision: 2, format: "%n") %>%
+           </span>
+         <% else %>
+           <span>---</span>
+         <% end %>
+       </td>
      </tr>
      <tr>
-       <td><strong>30d Change:</strong></td>
-       <td>0</td>
+       <td><strong>1w Change:</strong></td>
+       <td>
+         <% if @profit_change['1w'] %>
+           <span class="<%= get_text_color_class(@profit_change['1h']) %>">
+             <%= print_plus_or_minus(@profit_change['1h']) %><%= number_to_percentage((@profit_change['1h'].abs)*100, precision: 2, format: "%n") %>%
+           </span>
+         <% else %>
+           <span>---</span>
+         <% end %>
+       </td>
+     </tr>
+     <tr>
+       <td><strong>1m Change:</strong></td>
+       <td>
+         <% if @profit_change['1m'] %>
+           <span class="<%= get_text_color_class(@profit_change['1h']) %>">
+             <%= print_plus_or_minus(@profit_change['1h']) %><%= number_to_percentage((@profit_change['1h'].abs)*100, precision: 2, format: "%n") %>%
+           </span>
+         <% else %>
+           <span>---</span>
+         <% end %>
+       </td>
      </tr>
     </table>
   </div>

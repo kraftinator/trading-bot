@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  index_fund_id: 1
+  total_fund_qty: 9.99
+  total_deposit_qty: 9.99
+
+two:
+  index_fund_id: 1
+  total_fund_qty: 9.99
+  total_deposit_qty: 9.99

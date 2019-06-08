@@ -4,6 +4,7 @@ class IndexFund < ApplicationRecord
   belongs_to  :base_coin, :class_name => "ExchangeCoin"
   
   has_many  :index_fund_coins
+  has_many  :index_fund_snapshots
   
   delegate  :exchange, :to => :base_coin
   
@@ -79,6 +80,10 @@ class IndexFund < ApplicationRecord
     @deposits = []
     self.index_fund_coins.each { |asset| @deposits.concat(asset.index_fund_deposits) }
     @deposits = @deposits.sort_by(&:created_at).reverse
+  end
+  
+  def snapshot_by_date(target_date)
+    self.index_fund_snapshots.where("created_at < '#{target_date}'").order('created_at desc').first    
   end
   
 end
