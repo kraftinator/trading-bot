@@ -104,16 +104,20 @@ class IndexFundsController < ApplicationController
     @profit_change = {}
     # 1 hour
     snapshot = @index_fund.snapshot_by_date(1.hour.ago)
-    @profit_change['1h'] = profit/snapshot.profit-1 if snapshot
+    #@profit_change['1h'] = profit/snapshot.profit-1 if snapshot
+    @profit_change['1h'] = @fund_total/snapshot.total_fund_qty-1 if snapshot
     # 24 hours
     snapshot = @index_fund.snapshot_by_date(1.day.ago)
-    @profit_change['24h'] = profit/snapshot.profit-1 if snapshot
+    #@profit_change['24h'] = profit/snapshot.profit-1 if snapshot
+    @profit_change['24h'] = @fund_total/snapshot.total_fund_qty-1 if snapshot
     # 1 week
     snapshot = @index_fund.snapshot_by_date(1.week.ago)
-    @profit_change['1w'] = profit/snapshot.profit-1 if snapshot
+    #@profit_change['1w'] = profit/snapshot.profit-1 if snapshot
+    @profit_change['1w'] = @fund_total/snapshot.total_fund_qty-1 if snapshot
     # 1 month
     snapshot = @index_fund.snapshot_by_date(30.days.ago)
-    @profit_change['1m'] = profit/snapshot.profit-1 if snapshot
+    #@profit_change['1m'] = profit/snapshot.profit-1 if snapshot
+    @profit_change['1m'] = @fund_total/snapshot.total_fund_qty-1 if snapshot
   end
   
   private
