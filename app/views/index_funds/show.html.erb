@@ -148,7 +148,37 @@
   </div>
 <% end %>
 
-
+<% if @orders.any? %>
+  <h2>Orders</h2>
+  <div class="row">
+    <div class="col-lg-8">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th>COIN</th>
+            <th class="text-right">SIDE</th>
+            <th class="text-right">QTY</th>
+            <th class="text-right">VALUE (<%= @index_fund.base_coin.symbol %>)</th>
+            <th class="text-right">STATUS</th>
+            <th class="text-right">FILLED AT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @orders.each do |order| %>
+            <tr>
+              <td><%= order.index_fund_coin.coin.symbol %></td>
+              <td class="text-right"><%= order.side %></td>
+              <td class="text-right"><%= number_with_precision(order.qty, precision: order.index_fund_coin.qty_precision, delimiter: ',') %></td>
+              <td class="text-right"><%= number_with_precision(order.qty*order.price, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+              <td class="text-right"><%= order.open? ? 'OPEN' : 'FILLED' %>
+              <td class="text-right"><%= order.filled_at ? time_ago_in_words(order.filled_at) + ' ago' : '---' %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+<% end %>
 
 <% if @deposits.any? %>
   <h2>Deposits</h2>

@@ -282,6 +282,27 @@ class IndexFund < ApplicationRecord
 
   end # rebalance
   
+  def liquidate
+    @client = client
+    self.update_column(:active, false)
+    self.assets.each do |asset|
+      next if asset.base_coin? || asset.qty <= 0
+      ## Place sell order
+      trading_pair = asset.exchange_trading_pair
+      prices = self.exchange.prices(client: @client, trading_pair: trading_pair)
+      asset_coin_sell_qty = asset.qty.truncate(trading_pair.qty_precision)
+      new_order = self.exchange.create_order(client: @client, trading_pair: trading_pair, side: 'SELL', qty: asset_coin_sell_qty, price: prices[:ask_price])
+      new_order.show
+      if new_order.success?
+        ## Create local limit order
+        index_fund_order = IndexFundOrder.create(index_fund_coin: asset, order_uid: new_order.uid, price: new_order.price, qty: new_order.original_qty, side: new_order.side, open: true, state: LimitOrder::STATES[:new])
+      else
+        puts new_order.print_error_msg
+        return false
+      end
+    end
+  end
+  
   def deposit_total
     total = 0
     self.index_fund_coins.each do |asset|
@@ -294,6 +315,12 @@ class IndexFund < ApplicationRecord
     @deposits = []
     self.index_fund_coins.each { |asset| @deposits.concat(asset.index_fund_deposits) }
     @deposits = @deposits.sort_by(&:created_at).reverse
+  end
+  
+  def orders
+    orders = []
+    self.index_fund_coins.each { |asset| orders.concat(asset.index_fund_orders.non_canceled) }
+    orders.sort_by(&:created_at).reverse
   end
   
   def snapshot_by_date(target_date)

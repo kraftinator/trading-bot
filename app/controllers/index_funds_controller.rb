@@ -98,6 +98,7 @@ class IndexFundsController < ApplicationController
     @assets = @assets.sort_by(&:base_coin_value).reverse
     @deposit_total = @index_fund.deposit_total
     @deposits = @index_fund.deposits
+    @orders = @index_fund.orders
     
     profit = @fund_total-@deposit_total
     @profit_change = {}
