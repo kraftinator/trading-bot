@@ -170,6 +170,7 @@ class Exchange < ApplicationRecord
         side = order.side.upcase
         executed_qty = BigDecimal( order.filled_size )
         price = BigDecimal( order.price )
+        fee = BigDecimal( order.fill_fees )
         ## Determine status
         case order.status
         when 'open'
@@ -182,7 +183,7 @@ class Exchange < ApplicationRecord
           status = 'FILLED'
         end
         ## Create API Order object
-        api_order = ApiOrder.new( side: side, status: status, executed_qty: executed_qty, price: price )
+        api_order = ApiOrder.new( side: side, status: status, executed_qty: executed_qty, price: price, fee: fee )
       else
         if order_canceled
           api_order = ApiOrder.new( status: 'CANCELED' )
@@ -394,6 +395,27 @@ class Exchange < ApplicationRecord
     
     balance
     
+  end
+  
+  def prices(opts)
+    client = opts[:client]
+    trading_pair = opts[:trading_pair]
+    results = {}
+    ## Choose API
+    case name
+    when 'Binance'
+      #TODO
+    when 'Coinbase'
+      depth = nil
+      client.orderbook(level: 1, product_id: "#{trading_pair.coin1.symbol}-#{trading_pair.coin2.symbol}") do |resp|
+        depth = resp
+      end
+      if depth
+        results[:bid_price] = BigDecimal(depth['bids'].first.first)
+        results[:ask_price] = BigDecimal(depth['asks'].first.first)
+      end
+    end
+    results
   end
 
 end

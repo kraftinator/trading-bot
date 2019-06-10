@@ -10,11 +10,18 @@ class IndexFund < ApplicationRecord
   
   validates :rebalance_trigger_pct, numericality: { greater_than: 0 }
   
+  scope :active, -> { where( active: true ) }
+  scope :inactive, -> { where( active: false ) }
+  
   before_validation(on: [:create, :update]) do
     self.rebalance_trigger_pct = rebalance_trigger_pct.to_f/100.to_f
   end
   
   def allocations
+    self.index_fund_coins
+  end
+  
+  def assets
     self.index_fund_coins
   end
   
@@ -28,6 +35,11 @@ class IndexFund < ApplicationRecord
   
   def base_coin_asset
     self.index_fund_coins.where(exchange_trading_pair: nil).first
+  end
+  
+  def client
+    authorization = self.user.authorization(self.exchange)
+    authorization.client
   end
   
   def fund_total
@@ -72,7 +84,7 @@ class IndexFund < ApplicationRecord
     return assets, total_base_coin_value
   end
   
-  def rebalance
+  def rebalance_list
     
     assets, fund_total = self.calculate_fund_stats
     assets.each do |asset| 
@@ -119,7 +131,156 @@ class IndexFund < ApplicationRecord
       end
     end
 
+  end # rebalance
+    
+  def process_open_buy_orders(asset)
+    return if asset.base_coin?
+    @client = client
+    base_coin_asset = self.base_coin_asset
+    trading_pair = asset.exchange_trading_pair
+    asset.index_fund_orders.where(open: true, side: 'BUY').each do |order|
+      api_order = self.exchange.query_order(client: @client, trading_pair: trading_pair, order_id: order.order_uid)
+      if api_order.status == LimitOrder::STATES[:filled] || api_order.status == LimitOrder::STATES[:partially_filled]
+        
+        order.update(open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current)
+        base_coin_buy_qty = ((api_order.executed_qty*api_order.price)+api_order.fee).truncate(trading_pair.price_precision)
+        asset_coin_buy_qty = api_order.executed_qty
+        
+        asset.update_column(:qty, asset.qty+asset_coin_buy_qty)
+        base_coin_asset.update_column(:qty, base_coin_asset.qty-base_coin_buy_qty)
+        
+        if api_order.status == LimitOrder::STATES[:partially_filled]
+          cancelled_order = self.exchange.cancel_order(client: @client, trading_pair: trading_pair, order_id: order.order_uid)
+          if cancelled_order.success?
+            order.update(open: false, state: LimitOrder::STATES[:canceled])
+          else
+            puts cancelled_order.print_error_msg
+          end
+        end
+        
+      else
+        cancelled_order = self.exchange.cancel_order(client: @client, trading_pair: trading_pair, order_id: order.order_uid)
+        if cancelled_order.success?
+          order.update(open: false, state: LimitOrder::STATES[:canceled])
+        else
+          puts cancelled_order.print_error_msg
+        end
+      end
+      
+    end    
   end
+  
+  def process_open_sell_orders(asset)
+    return if asset.base_coin?
+    @client = client
+    base_coin_asset = self.base_coin_asset
+    trading_pair = asset.exchange_trading_pair
+    asset.index_fund_orders.where(open: true, side: 'SELL').each do |order|
+      api_order = self.exchange.query_order(client: @client, trading_pair: trading_pair, order_id: order.order_uid)
+      if api_order.status == LimitOrder::STATES[:filled] || api_order.status == LimitOrder::STATES[:partially_filled]
+        
+        order.update(open: false, state: LimitOrder::STATES[:filled], filled_at: Time.current)
+        base_coin_sell_qty = ((api_order.executed_qty*api_order.price)-api_order.fee).round(trading_pair.price_precision)
+        asset_coin_sell_qty = api_order.executed_qty
+        
+        asset.update_column(:qty, asset.qty-asset_coin_sell_qty)
+        base_coin_asset.update_column(:qty, base_coin_asset.qty+base_coin_sell_qty)
+        
+        if api_order.status == LimitOrder::STATES[:partially_filled]
+          cancelled_order = self.exchange.cancel_order(client: @client, trading_pair: trading_pair, order_id: order.order_uid)
+          if cancelled_order.success?
+            order.update(open: false, state: LimitOrder::STATES[:canceled])
+          else
+            puts cancelled_order.print_error_msg
+          end
+        end
+        
+      else
+        cancelled_order = self.exchange.cancel_order(client: @client, trading_pair: trading_pair, order_id: order.order_uid)
+        if cancelled_order.success?
+          order.update(open: false, state: LimitOrder::STATES[:canceled])
+        else
+          puts cancelled_order.print_error_msg
+        end
+      end
+      
+    end    
+  end
+  
+  def rebalance
+    
+    
+    assets, fund_total = self.calculate_fund_stats
+    
+    assets.each do |asset| 
+      asset.current_allocation_pct = fund_total == 0 ? 0 : asset.base_coin_value/fund_total
+      asset.allocation_diff = asset.current_allocation_pct-asset.allocation_pct
+    end
+    assets = assets.sort_by(&:allocation_diff).reverse
+    
+    base_coin_asset = self.base_coin_asset
+    @client = client
+    
+    ## Find sell orders
+    assets.each do |asset|
+      next if asset.base_coin?
+      if asset.allocation_diff > 0 && asset.allocation_diff >= self.rebalance_trigger_pct
+        ## Place sell order
+        trading_pair = asset.exchange_trading_pair
+        prices = self.exchange.prices(client: @client, trading_pair: trading_pair)
+        base_coin_sell_qty = fund_total*asset.allocation_diff
+        asset_coin_sell_qty = (base_coin_sell_qty/prices[:ask_price]).truncate(trading_pair.qty_precision)
+        
+        ## TODO: Perform market sell order
+        ## Get prices
+        #trading_pair = asset.exchange_trading_pair
+        #@client = client
+        #new_order = self.exchange.create_order(client: @client, trading_pair: trading_pair, side: 'SELL', qty: qty, price: limit_price )
+        new_order = self.exchange.create_order(client: @client, trading_pair: trading_pair, side: 'SELL', qty: asset_coin_sell_qty, price: prices[:ask_price])
+        new_order.show
+        if new_order.success?
+          ## Create local limit order
+          index_fund_order = IndexFundOrder.create(index_fund_coin: asset, order_uid: new_order.uid, price: new_order.price, qty: new_order.original_qty, side: new_order.side, open: true, state: LimitOrder::STATES[:new])
+        else
+          puts new_order.print_error_msg
+          return false
+        end
+        
+        #asset.update_column(:qty, asset.qty-asset_coin_sell_qty)
+        #base_coin_asset.update_column(:qty, base_coin_asset.qty+base_coin_sell_qty) ## Add amount
+        #puts "#{asset.coin.symbol}"
+      end
+    end
+    
+    ## Find buy orders
+    assets.each do |asset|
+      next if asset.base_coin?
+      if asset.allocation_diff < 0 && asset.allocation_diff.abs >= self.rebalance_trigger_pct
+        ## Place buy order
+        trading_pair = asset.exchange_trading_pair
+        prices = self.exchange.prices(client: @client, trading_pair: trading_pair)
+        base_coin_buy_qty = fund_total*asset.allocation_diff.abs
+        #asset_coin_buy_qty = (base_coin_buy_qty/asset.price).truncate(trading_pair.qty_precision)
+        asset_coin_buy_qty = (base_coin_buy_qty/prices[:bid_price]).truncate(trading_pair.qty_precision)
+        new_order = self.exchange.create_order(client: @client, trading_pair: trading_pair, side: 'BUY', qty: asset_coin_buy_qty, price: prices[:bid_price] )
+        new_order.show
+        if new_order.success?
+          ## Create local limit order
+          #limit_order = LimitOrder.create( trader: @trader, order_uid: new_order.uid, price: new_order.price, qty: new_order.original_qty, side: new_order.side, open: true, state: LimitOrder::STATES[:new] )
+          index_fund_order = IndexFundOrder.create(index_fund_coin: asset, order_uid: new_order.uid, price: new_order.price, qty: new_order.original_qty, side: new_order.side, open: true, state: LimitOrder::STATES[:new])
+        else
+          puts new_order.print_error_msg
+          return false
+        end
+        
+        
+        #asset.update_column(:qty, asset.qty+asset_coin_buy_qty)
+        #base_coin_asset.update_column(:qty, base_coin_asset.qty-base_coin_buy_qty) ## Subtract amount
+        #puts "#{asset.coin.symbol}"
+      end
+    end
+
+  end # rebalance
   
   def deposit_total
     total = 0

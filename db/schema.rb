@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190607211658) do
+ActiveRecord::Schema.define(version: 20190609222450) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -103,6 +103,9 @@ ActiveRecord::Schema.define(version: 20190607211658) do
     t.string   "order_uid"
     t.datetime "created_at",                                                           null: false
     t.datetime "updated_at",                                                           null: false
+    t.string   "state"
+    t.boolean  "open"
+    t.datetime "filled_at"
   end
 
   create_table "index_fund_snapshots", force: :cascade do |t|

@@ -1,5 +1,5 @@
 class IndexFundOrder < ApplicationRecord
   
-  belongs_to: index_fund_coin
+  belongs_to :index_fund_coin
   
 end

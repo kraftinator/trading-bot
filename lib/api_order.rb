@@ -7,6 +7,7 @@ class ApiOrder
   attr_accessor :executed_qty
   attr_accessor :original_qty
   attr_accessor :price
+  attr_accessor :fee
   
   ## Error attributes
   attr_accessor :error_code
@@ -19,6 +20,7 @@ class ApiOrder
     @executed_qty = opts[:executed_qty]
     @original_qty = opts[:original_qty]
     @price = opts[:price]
+    @fee = opts[:fee]
     @error_code = opts[:error_code]
     @error_msg = opts[:error_msg]
   end
