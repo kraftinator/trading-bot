@@ -225,6 +225,10 @@ class IndexFund < ApplicationRecord
     assets.each do |asset|
       next if asset.base_coin?
       if asset.allocation_diff > 0 && asset.allocation_diff >= self.rebalance_trigger_pct
+        puts "------------------------------"
+        puts "Creating SELL Order: #{asset.coin.symbol}"
+        puts "asset.allocation_diff = #{asset.allocation_diff}"
+        puts "self.rebalance_trigger_pct = #{self.rebalance_trigger_pct}"
         ## Place sell order
         trading_pair = asset.exchange_trading_pair
         prices = self.exchange.prices(client: @client, trading_pair: trading_pair)
@@ -256,6 +260,11 @@ class IndexFund < ApplicationRecord
     assets.each do |asset|
       next if asset.base_coin?
       if asset.allocation_diff < 0 && asset.allocation_diff.abs >= self.rebalance_trigger_pct
+        puts "------------------------------"
+        puts "Creating BUY Order: #{asset.coin.symbol}"
+        puts "asset.allocation_diff.abs = #{asset.allocation_diff.abs}"
+        puts "self.rebalance_trigger_pct = #{self.rebalance_trigger_pct}"
+        
         ## Place buy order
         trading_pair = asset.exchange_trading_pair
         prices = self.exchange.prices(client: @client, trading_pair: trading_pair)
