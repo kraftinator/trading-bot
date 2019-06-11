@@ -44,8 +44,8 @@
        <td><strong>24h Change:</strong></td>
        <td>
          <% if @profit_change['24h'] %>
-           <span class="<%= get_text_color_class(@profit_change['1h']) %>">
-             <%= print_plus_or_minus(@profit_change['1h']) %><%= number_to_percentage((@profit_change['1h'].abs)*100, precision: 2, format: "%n") %>%
+           <span class="<%= get_text_color_class(@profit_change['24h']) %>">
+             <%= print_plus_or_minus(@profit_change['24h']) %><%= number_to_percentage((@profit_change['24h'].abs)*100, precision: 2, format: "%n") %>%
            </span>
          <% else %>
            <span>---</span>
@@ -56,8 +56,8 @@
        <td><strong>1w Change:</strong></td>
        <td>
          <% if @profit_change['1w'] %>
-           <span class="<%= get_text_color_class(@profit_change['1h']) %>">
-             <%= print_plus_or_minus(@profit_change['1h']) %><%= number_to_percentage((@profit_change['1h'].abs)*100, precision: 2, format: "%n") %>%
+           <span class="<%= get_text_color_class(@profit_change['1w']) %>">
+             <%= print_plus_or_minus(@profit_change['1w']) %><%= number_to_percentage((@profit_change['1w'].abs)*100, precision: 2, format: "%n") %>%
            </span>
          <% else %>
            <span>---</span>
@@ -68,8 +68,8 @@
        <td><strong>1m Change:</strong></td>
        <td>
          <% if @profit_change['1m'] %>
-           <span class="<%= get_text_color_class(@profit_change['1h']) %>">
-             <%= print_plus_or_minus(@profit_change['1h']) %><%= number_to_percentage((@profit_change['1h'].abs)*100, precision: 2, format: "%n") %>%
+           <span class="<%= get_text_color_class(@profit_change['1m']) %>">
+             <%= print_plus_or_minus(@profit_change['1m']) %><%= number_to_percentage((@profit_change['1m'].abs)*100, precision: 2, format: "%n") %>%
            </span>
          <% else %>
            <span>---</span>
