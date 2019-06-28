@@ -417,5 +417,31 @@ class Exchange < ApplicationRecord
     end
     results
   end
+  
+  def last_price(opts)
+    client = opts[:client]
+    trading_pair = opts[:trading_pair]
+    results = {}
+    last_price = nil
+    ## Choose API
+    case name
+    when 'Binance'
+      #TODO
+    when 'Coinbase'
+      daily_stats = nil
+      resp = HTTParty.get("https://min-api.cryptocompare.com/data/pricemultifull?fsyms=#{trading_pair.coin1.symbol}&tsyms=#{trading_pair.coin2.symbol}&e=#{self.name}")
+      parsed_resp = resp.parsed_response
+      if parsed_resp['Response'] == "Error"
+        client.daily_stats(product_id: "#{trading_pair.coin1.symbol}-#{trading_pair.coin2.symbol}") do |resp|
+          daily_stats = resp
+        end
+        last_price = BigDecimal(daily_stats['last'])
+      else
+        daily_stats = parsed_resp['RAW'][trading_pair.coin1.symbol][trading_pair.coin2.symbol]
+        last_price = daily_stats['PRICE']
+      end
+    end
+    last_price
+  end
 
 end
