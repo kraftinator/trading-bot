@@ -132,7 +132,7 @@
               <td class="text-right"><%= number_to_percentage(asset.current_allocation_pct*100, precision: 2, format: "%n") %>%</td>
               <td class="text-right"><%= number_with_precision(asset.base_coin_value, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
               <td class="text-right"><%= number_with_precision(asset.qty, precision: asset.qty_precision, delimiter: ',') %></td>
-              <td class="text-right"><%= asset.base_coin? ? '---' : number_with_precision(asset.price, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+              <td class="text-right"><%= asset.base_coin? ? '---' : number_with_precision(asset.price, precision: asset.exchange_trading_pair.price_precision, delimiter: ',') %></td>
               <td class="text-right"><%= number_to_percentage(asset.allocation_pct*100, precision: 2, format: "%n") %>%</td>
               <td class="text-right">
                 <% pct_diff = asset.current_allocation_pct-asset.allocation_pct %>
@@ -157,8 +157,9 @@
           <tr>
             <th>COIN</th>
             <th class="text-right">SIDE</th>
-            <th class="text-right">QTY</th>
             <th class="text-right">VALUE (<%= @index_fund.base_coin.symbol %>)</th>
+            <th class="text-right">QTY</th>
+            <th class="text-right">PRICE (<%= @index_fund.base_coin.symbol %>)</th>
             <th class="text-right">STATUS</th>
             <th class="text-right">FILLED AT</th>
           </tr>
@@ -168,8 +169,9 @@
             <tr>
               <td><%= order.index_fund_coin.coin.symbol %></td>
               <td class="text-right"><%= order.side %></td>
-              <td class="text-right"><%= number_with_precision(order.qty, precision: order.index_fund_coin.qty_precision, delimiter: ',') %></td>
               <td class="text-right"><%= number_with_precision(order.qty*order.price, precision: @index_fund.base_coin.precision, delimiter: ',') %></td>
+              <td class="text-right"><%= number_with_precision(order.qty, precision: order.index_fund_coin.qty_precision, delimiter: ',') %></td>
+              <td class="text-right"><%= number_with_precision(order.price, precision: order.index_fund_coin.exchange_trading_pair.price_precision, delimiter: ',') %></td>
               <td class="text-right"><%= order.open? ? 'OPEN' : 'FILLED' %>
               <td class="text-right"><%= order.filled_at ? time_ago_in_words(order.filled_at) + ' ago' : '---' %></td>
             </tr>
