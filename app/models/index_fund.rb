@@ -70,11 +70,11 @@ class IndexFund < ApplicationRecord
         asset.base_coin_value = asset.qty
       else
         
-        #asset.price = asset.exchange_trading_pair.tps.last_price
+        asset.price = asset.exchange_trading_pair.tps.last_price
         ## Get asset prices
 
-        prices = self.exchange.prices(client: client, trading_pair: asset.exchange_trading_pair)
-        asset.price = (prices[:ask_price]+prices[:bid_price])/2
+        #prices = self.exchange.prices(client: client, trading_pair: asset.exchange_trading_pair)
+        #asset.price = (prices[:ask_price]+prices[:bid_price])/2
 
         asset.base_coin_value = asset.qty*asset.price
       end
